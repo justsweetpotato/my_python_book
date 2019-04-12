@@ -1,0 +1,389 @@
+﻿<!DOCTYPE html>
+<html class="theme theme-white">
+<head>
+<meta charset="utf-8">
+ <a href="3.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="5.html">下一页</a>
+<title>Django-4.0-Day4</title>
+<link href="https://www.zybuluo.com/static/assets/template-theme-white.css" rel="stylesheet" media="screen">
+<style type="text/css">
+
+#wmd-preview h1  {
+    color: #0077bb; /* 将标题改为蓝色 */
+}</style>
+</head>
+<body class="theme theme-white">
+<div id="wmd-preview" class="wmd-preview wmd-preview-full-reader"><div class="md-section-divider"></div><div class="md-section-divider"></div><h1 data-anchor-id="hlf1" id="django-40-day4">Django-4.0-Day4</h1><p data-anchor-id="8xyo"><code>django</code></p><hr><div class="md-section-divider"></div><h2 data-anchor-id="xxsz" id="知识点复习">知识点复习</h2><ul data-anchor-id="xwwg">
+<li>模型 <br>
+<ol><li>orm的作用、数据库的驱动</li>
+<li>mysql的相关配置</li>
+<li>定义模型类 <br>
+字段、选项、元选项、命名限制、关联属性</li>
+<li>数据迁移</li>
+<li>模型的查询 <br>
+<ol><li>查询方法 get/all/exclude/filter</li>
+<li>查询条件</li>
+<li>F对象、Q对象</li>
+<li>聚合查询</li>
+<li>排序</li></ol></li>
+<li>QuerySet查询集</li>
+<li>模型管理器 <br>
+<ol><li>目的</li>
+<li>步骤</li></ol></li>
+<li>模型的关联查询</li>
+<li>模型的更新、删除</li></ol></li>
+<li>模板 <br>
+<ol><li>步骤 <br>
+<ol><li>配置</li>
+<li>模板文件</li>
+<li>视图渲染</li></ol></li>
+<li>模板语法 <br>
+<ol><li>变量</li>
+<li>标签</li>
+<li>注释</li>
+<li>继承</li>
+<li>控制 <br>
+<ol><li>if</li>
+<li>for</li></ol></li></ol></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="ait6" id="01django使用表单的方法">01_Django使用表单的方法</h2><ul data-anchor-id="8jhu">
+<li><p>表单的两个作用</p>
+
+<ol><li>表单显示</li>
+<li>表单校验</li></ol></li>
+<li><p>表单的使用步骤</p>
+
+<ul><li>显示表单 <br>
+<ol><li>定义表单类</li>
+<li>创建空的表单对象</li>
+<li>在模板中渲染</li></ol></li>
+<li>接受表单 <br>
+<ol><li>定义表单类</li>
+<li>创建有数据的表单(请求)</li>
+<li>利用表单进行数据的校验</li></ol></li></ul></li>
+<li><p>表单相关细节</p>
+
+<ol><li>表单类需要继承于djang.form.Form</li>
+<li>表单类的定义与模型类的定义有一定的相似之处</li>
+<li>创建有数据的表单 <code>form = XxForm(requse.POST</code></li>
+<li>校验表单 <code>form.is_valid()</code></li>
+<li>获取验证后的表单数据 'form.cleaned_data'</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="wt6w" id="02使用表单举例">02_使用表单举例</h2><ul data-anchor-id="84n4">
+<li><p>直接使用Form</p>
+
+<ul><li><p>步骤</p>
+
+<ol><li><p>在应用的forms.py中定义表单类</p></li>
+<li><p>在视图中创建表单对象，并交由模板显示</p></li>
+<li><p>在模板中，把表单对象放在form标签中，并添加提交按钮，(还需要根据情况添加 csrf_token)</p></li>
+<li><p>在提交数据后，进行校验，并根据校验结果返回对应信息</p></li></ol></li>
+<li><p>代码示例</p></li></ul>
+
+<p>forms.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code class="language-python"><span class="kwd">from</span><span class="pln"> django </span><span class="kwd">import</span><span class="pln"> forms</span></code></li><li class="L1"><code class="language-python"></code></li><li class="L2"><code class="language-python"><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookForm</span><span class="pun">(</span><span class="pln">forms</span><span class="pun">.</span><span class="typ">Form</span><span class="pun">):</span></code></li><li class="L3"><code class="language-python"><span class="pln">    title </span><span class="pun">=</span><span class="pln"> forms</span><span class="pun">.</span><span class="typ">CharField</span><span class="pun">(</span><span class="pln">label</span><span class="pun">=</span><span class="str">"书名"</span><span class="pun">,</span><span class="pln"> required</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">,</span><span class="pln"> max_length</span><span class="pun">=</span><span class="lit">50</span><span class="pun">)</span></code></li><li class="L4"><code class="language-python"><span class="pln">    pub_date </span><span class="pun">=</span><span class="pln"> forms</span><span class="pun">.</span><span class="typ">DateField</span><span class="pun">(</span><span class="pln">label</span><span class="pun">=</span><span class="str">'出版日期'</span><span class="pun">,</span><span class="pln"> required</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li></ol></pre>
+
+<p>views.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code class="language-python"><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">shortcuts </span><span class="kwd">import</span><span class="pln"> render</span></code></li><li class="L1"><code class="language-python"><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">views</span><span class="pun">.</span><span class="pln">generic </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">View</span></code></li><li class="L2"><code class="language-python"><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">http </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">HttpResponse</span></code></li><li class="L3"><code class="language-python"></code></li><li class="L4"><code class="language-python"><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln">forms </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">BookForm</span></code></li><li class="L5"><code class="language-python"></code></li><li class="L6"><code class="language-python"><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookView</span><span class="pun">(</span><span class="typ">View</span><span class="pun">):</span></code></li><li class="L7"><code class="language-python"><span class="pln">    </span><span class="kwd">def</span><span class="pln"> get</span><span class="pun">(</span><span class="pln">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L8"><code class="language-python"><span class="pln">        form </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookForm</span><span class="pun">()</span></code></li><li class="L9"><code class="language-python"><span class="pln">        </span><span class="kwd">return</span><span class="pln"> render</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="str">'book.html'</span><span class="pun">,</span><span class="pln"> </span><span class="pun">{</span><span class="str">'form'</span><span class="pun">:</span><span class="pln"> form</span><span class="pun">})</span></code></li><li class="L0"><code class="language-python"></code></li><li class="L1"><code class="language-python"><span class="pln">    </span><span class="kwd">def</span><span class="pln"> post</span><span class="pun">(</span><span class="pln">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L2"><code class="language-python"><span class="pln">        form </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookForm</span><span class="pun">(</span><span class="pln">request</span><span class="pun">.</span><span class="pln">POST</span><span class="pun">)</span></code></li><li class="L3"><code class="language-python"><span class="pln">        </span><span class="kwd">if</span><span class="pln"> form</span><span class="pun">.</span><span class="pln">is_valid</span><span class="pun">():</span><span class="pln">  </span><span class="com"># 验证表单数据</span></code></li><li class="L4"><code class="language-python"><span class="pln">            </span><span class="kwd">print</span><span class="pun">(</span><span class="pln">form</span><span class="pun">.</span><span class="pln">cleaned_data</span><span class="pun">)</span><span class="pln">  </span><span class="com"># 获取验证后的表单数据</span></code></li><li class="L5"><code class="language-python"><span class="pln">            </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">HttpResponse</span><span class="pun">(</span><span class="str">"OK"</span><span class="pun">)</span></code></li><li class="L6"><code class="language-python"><span class="pln">        </span><span class="kwd">else</span><span class="pun">:</span></code></li><li class="L7"><code class="language-python"><span class="pln">            </span><span class="kwd">return</span><span class="pln"> render</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="str">'book.html'</span><span class="pun">,</span><span class="pln"> </span><span class="pun">{</span><span class="str">'form'</span><span class="pun">:</span><span class="pln"> form</span><span class="pun">})</span></code></li></ol></pre>
+
+<p>book.html</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code class="language-html"><span class="dec">&lt;!DOCTYPE html&gt;</span></code></li><li class="L1"><code class="language-html"><span class="tag">&lt;html</span><span class="pln"> </span><span class="atn">lang</span><span class="pun">=</span><span class="atv">"en"</span><span class="tag">&gt;</span></code></li><li class="L2"><code class="language-html"><span class="tag">&lt;head&gt;</span></code></li><li class="L3"><code class="language-html"><span class="pln">    </span><span class="tag">&lt;meta</span><span class="pln"> </span><span class="atn">charset</span><span class="pun">=</span><span class="atv">"UTF-8"</span><span class="tag">&gt;</span></code></li><li class="L4"><code class="language-html"><span class="pln">    </span><span class="tag">&lt;title&gt;</span><span class="pln">书籍</span><span class="tag">&lt;/title&gt;</span></code></li><li class="L5"><code class="language-html"><span class="tag">&lt;/head&gt;</span></code></li><li class="L6"><code class="language-html"><span class="tag">&lt;body&gt;</span></code></li><li class="L7"><code class="language-html"><span class="pln">    </span><span class="tag">&lt;form</span><span class="pln"> </span><span class="atn">action</span><span class="pun">=</span><span class="atv">""</span><span class="pln"> </span><span class="atn">method</span><span class="pun">=</span><span class="atv">"post"</span><span class="tag">&gt;</span></code></li><li class="L8"><code class="language-html"><span class="pln">        {% csrf_token %}</span></code></li><li class="L9"><code class="language-html"><span class="pln">        {{ form }}</span></code></li><li class="L0"><code class="language-html"><span class="pln">        </span><span class="tag">&lt;input</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"submit"</span><span class="tag">&gt;</span></code></li><li class="L1"><code class="language-html"><span class="pln">    </span><span class="tag">&lt;/form&gt;</span></code></li><li class="L2"><code class="language-html"><span class="tag">&lt;/body&gt;</span></code></li><li class="L3"><code class="language-html"><span class="tag">&lt;/html&gt;</span></code></li></ol></pre></li>
+<li><p>ModelForm <br>
+如果表单域模型紧密相关，可以让表单类继承于ModelForm简化开发</p>
+
+<ul><li>只需要 <br>
+<ol><li>定义表单类继承于ModelForm</li>
+<li>添加元选项 <br>
+通过model， 配置对应的模型 <br>
+通过fields，配置需要哪些自动</li></ol></li>
+<li><p>帮助我们完成的工作</p>
+
+<ol><li>自动创建出与模型对应的表单类属性</li>
+<li>其中类型与模型一致，校验条件与模型类一种</li></ol></li>
+<li><p>代码示例</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookForm</span><span class="pun">(</span><span class="pln">forms</span><span class="pun">.</span><span class="typ">ModelForm</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L2"><code><span class="pln">        model </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span></code></li><li class="L3"><code><span class="pln">        fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'btitle'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'bpub_date'</span><span class="pun">)</span></code></li></ol></pre></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="4euc" id="03使用admin站点的预设值">03_使用Admin站点的预设值</h2><ul data-anchor-id="bzk1">
+<li><p>Admin站点 <br>
+django内置的后台管理模块(主要是对各种模型进行操作)</p></li>
+<li><p>主要配置/操作</p>
+
+<ol><li><p>本地化</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">settings</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">LANGUAGE_CODE </span><span class="pun">=</span><span class="pln"> </span><span class="str">'zh-hans'</span><span class="pln"> </span><span class="com"># 使用中国语言</span></code></li><li class="L3"><code><span class="pln">TIME_ZONE </span><span class="pun">=</span><span class="pln"> </span><span class="str">'Asia/Shanghai'</span><span class="pln"> </span><span class="com"># 使用中国上海时间</span></code></li></ol></pre></li>
+<li><p>添加管理员 <br>
+<code>python manage.py createsuperuser</code></p></li>
+<li><p>注册模型类</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">booktest</span><span class="pun">/</span><span class="pln">admin</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">contrib </span><span class="kwd">import</span><span class="pln"> admin</span></code></li><li class="L3"><code><span class="kwd">from</span><span class="pln"> booktest</span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">,</span><span class="typ">HeroInfo</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="pln">admin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="typ">BookInfo</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">admin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="typ">HeroInfo</span></code></li></ol></pre></li>
+<li><p>自定义管理页面</p>
+
+<ul><li>简单 <br>
+<ol><li>应用名称</li>
+<li>模型名称</li>
+<li>字段名称</li></ol></li></ul></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="yxzw" id="04自定义admin管理器">04_自定义Admin管理器</h2><p data-anchor-id="b2vt">高级自定义管理页面</p><ul data-anchor-id="1a4n">
+<li>控制页面 <br>
+<ol><li>列表页</li>
+<li>编辑页</li></ol></li>
+<li><p>手段 <br>
+定义类继承于django.contrib.admin，并使用这个类</p></li>
+<li><p>两种方式</p>
+
+<ol><li><p>装饰器添加</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="lit">@admin</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="typ">BookInfo</span><span class="pun">)</span></code></li><li class="L1"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoAdmin</span><span class="pun">(</span><span class="pln">admin</span><span class="pun">.</span><span class="typ">ModelAdmin</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">pass</span></code></li></ol></pre></li>
+<li><p>注册添加 <br>
+<code>admin.site.register(BookInfo,BookInfoAdmin)</code></p></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="8sbk" id="05admin站点列表页控制">05_Admin站点列表页控制</h2><div class="md-section-divider"></div><pre class="prettyprint linenums prettyprinted" data-anchor-id="nyfl"><ol class="linenums"><li class="L0"><code><span class="pln">admin</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">contrib </span><span class="kwd">import</span><span class="pln"> admin</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">HeroInfoAdmin</span><span class="pun">(</span><span class="pln">admin</span><span class="pun">.</span><span class="typ">ModelAdmin</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">    </span><span class="com"># 控制每页显示记录数</span></code></li><li class="L6"><code><span class="pln">    list_per_page</span><span class="pun">=</span><span class="lit">5</span></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="pln">    </span><span class="com"># 控制动作按钮的位置</span></code></li><li class="L9"><code><span class="pln">    actions_on_top</span><span class="pun">=</span><span class="kwd">True</span></code></li><li class="L0"><code><span class="pln">    actions_on_bottom</span><span class="pun">=</span><span class="kwd">False</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># 控制显示的列数</span></code></li><li class="L3"><code><span class="pln">    </span><span class="com"># 不光可以字段，还可以指定方法</span></code></li><li class="L4"><code><span class="pln">    list_display </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="str">"id"</span><span class="pun">,</span><span class="str">"btitle"</span><span class="pun">,</span><span class="str">"hcomment"</span><span class="pun">,</span><span class="str">'pub_date'</span><span class="pun">]</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">    </span><span class="com"># 显示过滤字段</span></code></li><li class="L7"><code><span class="pln">    list_filter </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="str">'hbook'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'hgender'</span><span class="pun">]</span></code></li><li class="L8"><code></code></li><li class="L9"><code><span class="pln">    </span><span class="com"># 定义搜索字段</span></code></li><li class="L0"><code><span class="pln">    search_fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="str">'hname'</span><span class="pun">]</span></code></li></ol></pre><div class="md-section-divider"></div><pre class="prettyprint linenums prettyprinted" data-anchor-id="pviq"><ol class="linenums"><li class="L0"><code><span class="pln">models</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">db </span><span class="kwd">import</span><span class="pln"> models</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">(</span><span class="pln">models</span><span class="pun">.</span><span class="typ">Model</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">    </span><span class="com"># 自定义的方法的返回值，也可以被显示在列表中</span></code></li><li class="L8"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> pub_date</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L9"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">bpub_date</span><span class="pun">.</span><span class="pln">strftime</span><span class="pun">(</span><span class="str">'%Y年%m月%d日'</span><span class="pun">)</span></code></li><li class="L0"><code><span class="pln">    </span><span class="com"># 指定列表上方的显示的列名</span></code></li><li class="L1"><code><span class="pln">    pub_date</span><span class="pun">.</span><span class="pln">short_description </span><span class="pun">=</span><span class="pln"> </span><span class="str">'发行日期'</span></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># 指定排序依据属性</span></code></li><li class="L3"><code><span class="pln">    pub_date</span><span class="pun">.</span><span class="pln">admin_order_field </span><span class="pun">=</span><span class="pln"> </span><span class="str">'bpub_date'</span></code></li><li class="L4"><code></code></li></ol></pre><div class="md-section-divider"></div><h2 data-anchor-id="9e0v" id="06admin站点编辑页面控制">06_Admin站点编辑页面控制</h2><ol data-anchor-id="xyi1">
+<li>指定显示字段 <br>
+fields</li>
+<li>指定字段分组 <br>
+不能与上面一个同时使用 <br>
+fieldset</li>
+<li>关联信息 <br>
+<ol><li>表格方式</li>
+<li>块方式</li></ol></li>
+</ol><div class="md-section-divider"></div><pre class="prettyprint linenums prettyprinted" data-anchor-id="bg15"><ol class="linenums"><li class="L0"><code><span class="com"># 块方式</span></code></li><li class="L1"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">HeroInfoStackInline</span><span class="pun">(</span><span class="pln">admin</span><span class="pun">.</span><span class="typ">StackedInline</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">    model </span><span class="pun">=</span><span class="pln"> </span><span class="typ">HeroInfo</span><span class="pln">  </span><span class="com"># 要编辑的对象</span></code></li><li class="L3"><code><span class="pln">    extra </span><span class="pun">=</span><span class="pln"> </span><span class="lit">1</span><span class="pln">  </span><span class="com"># 附加编辑的数量</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="com"># 表格方式</span></code></li><li class="L6"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">HeroInfoTabularInline</span><span class="pun">(</span><span class="pln">admin</span><span class="pun">.</span><span class="typ">TabularInline</span><span class="pun">):</span></code></li><li class="L7"><code><span class="pln">    model </span><span class="pun">=</span><span class="pln"> </span><span class="typ">HeroInfo</span></code></li><li class="L8"><code><span class="pln">    extra </span><span class="pun">=</span><span class="pln"> </span><span class="lit">1</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoAdmin</span><span class="pun">(</span><span class="pln">admin</span><span class="pun">.</span><span class="typ">ModelAdmin</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 需要在编辑页面展示的字段</span></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># fields = ['btitle', 'bpub_date']</span></code></li><li class="L3"><code><span class="pln">    </span><span class="com"># 进行分组展示，这里有两组，基本组 和高级组</span></code></li><li class="L4"><code><span class="pln">    </span><span class="com"># 基本组展示'btitle', 'bpub_date'</span></code></li><li class="L5"><code><span class="pln">    </span><span class="com"># 高级组 展示'bread', 'bcomment', 'logo' ，并且默认是折叠的</span></code></li><li class="L6"><code><span class="pln">    fieldsets </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span></code></li><li class="L7"><code><span class="pln">        </span><span class="pun">(</span><span class="str">'基本'</span><span class="pun">,</span><span class="pln"> </span><span class="pun">{</span><span class="str">'fields'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">[</span><span class="str">'btitle'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'bpub_date'</span><span class="pun">]}),</span></code></li><li class="L8"><code><span class="pln">        </span><span class="pun">(</span><span class="str">'高级'</span><span class="pun">,</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L9"><code><span class="pln">            </span><span class="str">'fields'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">[</span><span class="str">'bread'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'bcomment'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'logo'</span><span class="pun">],</span></code></li><li class="L0"><code><span class="pln">            </span><span class="str">'classes'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">(</span><span class="str">'collapse'</span><span class="pun">,)</span><span class="pln">  </span><span class="com"># 是否折叠显示</span></code></li><li class="L1"><code><span class="pln">        </span><span class="pun">})</span></code></li><li class="L2"><code><span class="pln">    </span><span class="pun">)</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="pln">    </span><span class="com"># inlines = [HeroInfoStackInline]</span></code></li><li class="L5"><code><span class="pln">    inlines </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="typ">HeroInfoTabularInline</span><span class="pun">]</span></code></li></ol></pre><div class="md-section-divider"></div><h2 data-anchor-id="uzje" id="07控制admin站点的整体标题信息">07_控制Admin站点的整体标题信息</h2><ol data-anchor-id="u8go">
+<li>网页标题</li>
+<li>网页内容标题</li>
+<li>首页标语</li>
+</ol><p data-anchor-id="8vfh"><img src="http://static.zybuluo.com/jsutqb/i9bo130fnqe5w531xqchozp7/image_1cgrs7bno1gurje1p6ghm46vk9.png" alt="image_1cgrs7bno1gurje1p6ghm46vk9.png-124.7kB" title=""></p><div class="md-section-divider"></div><h2 data-anchor-id="ckbt" id="08上传图片使用">08_上传图片使用</h2><ol data-anchor-id="8gkv">
+<li><p>环境准备 <br>
+安装Pillow <br>
+<code>pip install Pillow</code></p></li>
+<li><p>项目准备 <br>
+配置media目录</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">settings</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">MEDIA_ROOT </span><span class="pun">=</span><span class="pln"> os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">join</span><span class="pun">(</span><span class="pln">BASE_DIR</span><span class="pun">,</span><span class="pln"> </span><span class="str">'static_files/media'</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>模型准备 <br>
+ImageField</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">(</span><span class="pln">models</span><span class="pun">.</span><span class="typ">Model</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L2"><code><span class="pln">    logo </span><span class="pun">=</span><span class="pln"> models</span><span class="pun">.</span><span class="typ">ImageField</span><span class="pun">(</span><span class="pln">verbose_name</span><span class="pun">=</span><span class="str">'主图片'</span><span class="pun">,</span><span class="pln"> upload_to</span><span class="pun">=</span><span class="str">'booktest'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">null</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>迁移数据 <br>
+<code>python manage.py makemigrations</code> <br>
+<code>python manage.py migrate</code></p></li>
+<li><p>在后台上传图片 <br>
+因为使用了ImageField，所以只能上传图片，不能上传其他文件，Pillow的作用是检测上传的文件是否是一个图片</p></li>
+<li><p>查看上传效果</p>
+
+<ol><li><p>数据库保存记录 <br>
+<code>booktest/1.png</code></p></li>
+<li><p>使用图片</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="tag">&lt;img</span><span class="pln"> </span><span class="atn">src</span><span class="pun">=</span><span class="atv">"/static/media/booktest/1.png"</span><span class="pln"> </span><span class="tag">&gt;</span></code></li></ol></pre></li></ol></li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="mhoq" id="09向djangorestframework过渡说明">09_向DjangoRESTframework过渡说明</h2><p data-anchor-id="sj0s">前后端分离</p><ol data-anchor-id="9l44">
+<li>会使用django-rest-framework，它基于django，所以要学习django</li>
+<li>搭建工程、类视图、模型 是重点</li>
+<li>django框架中关于模板和表单的内容用不到</li>
+<li>后面要使用vue框架</li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="7gso" id="10前后端分离介绍">10_前后端分离介绍</h2><ul data-anchor-id="9v8c">
+<li><p>前后端不分离 <br>
+<img src="http://static.zybuluo.com/jsutqb/0w7rnzz08sdc69scv5ahesj8/image_1cgtedjnlg981ua89aa11j0jfg16.png" alt="image_1cgtedjnlg981ua89aa11j0jfg16.png-138.3kB"></p></li>
+<li><p>前后端分离 <br>
+<img src="http://static.zybuluo.com/jsutqb/3zmvsuqalgnm82pw013u3y8r/image_1cgtedcjp10f3nva175md4n3fup.png" alt="image_1cgtedcjp10f3nva175md4n3fup.png-236.2kB" title=""></p></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="dwlm" id="11什么是restful风格">11_什么是RESTful风格</h2><p data-anchor-id="ueb3">REST = Representational State Transfer = 表现层状态转化</p><p data-anchor-id="63uc">一个声音、视频、信息 都是<strong>资源</strong> <br>
+而 mp3\wma mp4\avi\mkv\rmvb json\xml 都是资源的<strong>表现</strong>形式 <br>
+<strong>状态转化</strong>理解为对资源的增删改查操作</p><p data-anchor-id="sf4d">具体来说 <br>
+我们通过 url来暴露资源 <br>
+通过Accept 和Content-Type 来标识资源的格式 <br>
+通过GET\POST\DELTE\PUT请求方式来进行增删改查操作</p><div class="md-section-divider"></div><h2 data-anchor-id="c8uc" id="12restful设计方法">12_RESTful设计方法</h2><ol data-anchor-id="p4o5">
+<li>域名 <br>
+建议建立专有的域名 api.example.com <br>
+也可以放在主域名下 example.org/api/</li>
+<li>版本 <br>
+可以放在 url中    www.example.com/app/1.0/foo <br>
+也可以放在请求头中 Accept: vnd.example-com.foo+json; version=1.0</li>
+<li><strong>路径</strong> <br>
+因为url路径表示的是资源，所以应该使用名词，而非动词 <br>
+并且名词条件使用复数形式</li>
+<li><p><strong>HTTP动词</strong></p>
+
+<table class="table table-striped-white table-bordered">
+<thead>
+<tr>
+ <th>请求方式(对应SQL操作)</th>
+ <th>处理方式</th>
+</tr>
+</thead>
+<tbody><tr>
+ <td>GET（SELECT）</td>
+ <td>从服务器取出资源（一项或多项）。</td>
+</tr>
+<tr>
+ <td>POST（CREATE）</td>
+ <td>在服务器新建一个资源。</td>
+</tr>
+<tr>
+ <td>PUT（UPDATE）</td>
+ <td>在服务器更新资源（客户端提供改变后的完整资源）。</td>
+</tr>
+<tr>
+ <td>DELETE（DELETE）</td>
+ <td>从服务器删除资源。</td>
+</tr>
+<tr>
+ <td>PATCH（UPDATE）</td>
+ <td>在服务器更新(更新)资源（客户端提供改变的属性）。</td>
+</tr>
+<tr>
+ <td>HEAD</td>
+ <td>获取资源的元数据。</td>
+</tr>
+<tr>
+ <td>OPTIONS</td>
+ <td>获取信息，关于资源的哪些属性是客户端可以改变的。</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>过滤信息 <br>
+应该添加到url的?后面 <br>
+比如</p>
+
+<blockquote class="white-blockquote">
+  <p>?limit=10：指定返回记录的数量 <br>
+  ?offset=10：指定返回记录的开始位置。 <br>
+  ?page=2&amp;per_page=100：指定第几页，以及每页的记录数。 <br>
+  ?sortby=name&amp;order=asc：指定返回结果按照哪个属性排序，以及排序顺序。 <br>
+  ?animal_type_id=1：指定筛选条件</p>
+</blockquote></li>
+<li><p><strong>状态码</strong></p>
+
+<table class="table table-striped-white table-bordered">
+<thead>
+<tr>
+ <th>状态码</th>
+ <th>发生的请求类型</th>
+ <th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+ <td>200 OK</td>
+ <td>[GET]</td>
+ <td>服务器成功返回用户请求的数据</td>
+</tr>
+<tr>
+ <td>201 CREATED</td>
+ <td>[POST/PUT/PATCH]</td>
+ <td>用户新建或修改数据成功。</td>
+</tr>
+<tr>
+ <td>202 Accepted</td>
+ <td>[*]</td>
+ <td>表示一个请求已经进入后台排队（异步任务）</td>
+</tr>
+<tr>
+ <td>204 NO CONTENT</td>
+ <td>[DELETE]</td>
+ <td>用户删除数据成功。</td>
+</tr>
+<tr>
+ <td>400 INVALID REQUEST</td>
+ <td>[POST/PUT/PATCH]</td>
+ <td>用户发出的请求有错误，服务器没有进行新建或修改数据的操作</td>
+</tr>
+<tr>
+ <td>401 Unauthorized</td>
+ <td>[*]</td>
+ <td>表示用户没有权限（令牌、用户名、密码错误）。</td>
+</tr>
+<tr>
+ <td>403 Forbidden</td>
+ <td>[*]</td>
+ <td>表示用户得到授权（与401错误相对），但是访问是被禁止的。</td>
+</tr>
+<tr>
+ <td>404 NOT FOUND</td>
+ <td>[*]</td>
+ <td>用户发出的请求针对的是不存在的记录，服务器没有进行操作，该操作是幂等的。</td>
+</tr>
+<tr>
+ <td>406 Not Acceptable</td>
+ <td>[GET]</td>
+ <td>用户请求的格式不可得（比如用户请求JSON格式，但是只有XML格式）。</td>
+</tr>
+<tr>
+ <td>410 Gone</td>
+ <td>[GET]</td>
+ <td>用户请求的资源被永久删除，且不会再得到的。</td>
+</tr>
+<tr>
+ <td>422 Unprocesable entity</td>
+ <td>[POST/PUT/PATCH]</td>
+ <td>当创建一个对象时，发生一个验证错误。</td>
+</tr>
+<tr>
+ <td>500 INTERNAL SERVER ERROR</td>
+ <td>[*]</td>
+ <td>服务器发生错误，用户将无法判断发出的请求是否成功。</td>
+</tr>
+<tr>
+ <td>404 NOT FOUND</td>
+ <td>[*]</td>
+ <td>用户发出的请求针对的是不存在的记录，服务器没有进行操作，该操作是幂等的。</td>
+</tr>
+<tr>
+ <td>406 Not Acceptable</td>
+ <td>[GET]</td>
+ <td>用户请求的格式不可得（比如用户请求JSON格式，但是只有XML格式）。</td>
+</tr>
+<tr>
+ <td>410 Gone</td>
+ <td>[GET]</td>
+ <td>用户请求的资源被永久删除，且不会再得到的。</td>
+</tr>
+<tr>
+ <td>422 Unprocesable entity</td>
+ <td>[POST/PUT/PATCH]</td>
+ <td>当创建一个对象时，发生一个验证错误。</td>
+</tr>
+<tr>
+ <td>500 INTERNAL SERVER ERROR</td>
+ <td>[*]</td>
+ <td>服务器发生错误，用户将无法判断发出的请求是否成功。</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>返回值</p></li>
+</ol><blockquote data-anchor-id="wh6w" class="white-blockquote">
+  <p>GET /collection：返回资源对象的列表（数组） <br>
+  GET /collection/resource：返回单个资源对象 <br>
+  POST /collection：返回新生成的资源对象 <br>
+  PUT /collection/resource：返回完整的资源对象 <br>
+  PATCH /collection/resource：返回完整的资源对象 <br>
+  DELETE /collection/resource：返回一个空文档</p>
+</blockquote><ol data-anchor-id="n680">
+<li>错误(4xx) <br>
+应该在响应体中返回具体的错误原因</li>
+<li>超媒体 <br>
+首页应该返回一个所有资源的列表</li>
+<li>格式选取 <br>
+尽量使用体积小的格式，比如json，而不使用体积大的，比如xml</li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="4vl2" id="13xml格式说明">13_xml格式说明</h2><p data-anchor-id="9izt">xml =EXtensible Markup Language =可扩展标记语言 <br>
+标记语言，与html类似，用<code>&lt;&gt;</code>表示一些标签，具有开始标签和结束标签；可扩展表示标签是可以自定义的；注意标签区分大小写</p><ul data-anchor-id="3c3x">
+<li>xml格式信息</li>
+</ul><div class="md-section-divider"></div><pre class="prettyprint linenums prettyprinted" data-anchor-id="v4uh"><ol class="linenums"><li class="L0"><code><span class="pun">&lt;?</span><span class="pln">xml version</span><span class="pun">=</span><span class="str">"1.0"</span><span class="pln"> encoding</span><span class="pun">=</span><span class="str">"ISO-8859-1"</span><span class="pun">?&gt;</span></code></li><li class="L1"><code><span class="tag">&lt;note&gt;</span></code></li><li class="L2"><code><span class="pln">    </span><span class="tag">&lt;to&gt;</span><span class="pln">George</span><span class="tag">&lt;/to&gt;</span></code></li><li class="L3"><code><span class="pln">    </span><span class="tag">&lt;from&gt;</span><span class="pln">John</span><span class="tag">&lt;/from&gt;</span></code></li><li class="L4"><code><span class="pln">    </span><span class="tag">&lt;heading&gt;</span><span class="pln">Reminder</span><span class="tag">&lt;/heading&gt;</span></code></li><li class="L5"><code><span class="pln">    </span><span class="tag">&lt;body&gt;</span><span class="pln">Don't forget the meeting!</span><span class="tag">&lt;/body&gt;</span></code></li><li class="L6"><code><span class="tag">&lt;/note&gt;</span></code></li></ol></pre><ul data-anchor-id="97vg">
+<li>表示相同信息的json</li>
+</ul><div class="md-section-divider"></div><pre class="prettyprint linenums prettyprinted" data-anchor-id="ug5k"><ol class="linenums"><li class="L0"><code><span class="pun">{</span><span class="str">"to"</span><span class="pun">:</span><span class="str">"George"</span><span class="pun">,</span></code></li><li class="L1"><code><span class="str">"from"</span><span class="pun">:</span><span class="str">"John"</span><span class="pun">,</span></code></li><li class="L2"><code><span class="str">"heading"</span><span class="pun">:</span><span class="str">"Reminder"</span><span class="pun">,</span></code></li><li class="L3"><code><span class="str">"body"</span><span class="pun">:</span><span class="str">"Don't forget the meeting!"</span></code></li><li class="L4"><code><span class="pun">}</span></code></li></ol></pre><div class="md-section-divider"></div><h2 data-anchor-id="m81e" id="14使用django定义rest-api">14_使用Django定义REST API</h2><ul data-anchor-id="yevv">
+<li>实现</li>
+</ul><div class="md-section-divider"></div><pre class="prettyprint linenums prettyprinted" data-anchor-id="lcai"><ol class="linenums"><li class="L0"><code><span class="pln">urls</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln"> </span><span class="kwd">import</span><span class="pln"> views</span></code></li><li class="L3"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L4"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'books/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">BooksAPIView</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">()),</span></code></li><li class="L5"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'books/(?P&lt;pk&gt;\d+)/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">BookAPIView</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">()),</span></code></li><li class="L6"><code><span class="pun">]</span></code></li></ol></pre><div class="md-section-divider"></div><pre class="prettyprint linenums prettyprinted" data-anchor-id="xkma"><ol class="linenums"><li class="L0"><code><span class="pln">views</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">views</span><span class="pun">.</span><span class="kwd">generic</span><span class="pln"> </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">View</span></code></li><li class="L3"><code><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">http </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">HttpResponse</span><span class="pun">,</span><span class="pln"> </span><span class="typ">JsonResponse</span></code></li><li class="L4"><code><span class="kwd">from</span><span class="pln"> datetime </span><span class="kwd">import</span><span class="pln"> datetime</span></code></li><li class="L5"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">,</span><span class="pln"> </span><span class="typ">HeroInfo</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="com"># REST API  JSON</span></code></li><li class="L8"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BooksAPIView</span><span class="pun">(</span><span class="typ">View</span><span class="pun">):</span></code></li><li class="L9"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L0"><code><span class="pln">        </span><span class="com"># GET   /books/   获取所有图书信息</span></code></li><li class="L1"><code><span class="pln">        books </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">()</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">        </span><span class="com"># 转换</span></code></li><li class="L4"><code><span class="pln">        books_list </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[]</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">for</span><span class="pln"> book </span><span class="kwd">in</span><span class="pln"> books</span><span class="pun">:</span></code></li><li class="L6"><code><span class="pln">            books_list</span><span class="pun">.</span><span class="pln">append</span><span class="pun">({</span></code></li><li class="L7"><code><span class="pln">                </span><span class="str">'id'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">id</span><span class="pun">,</span></code></li><li class="L8"><code><span class="pln">                </span><span class="str">'btitle'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">btitle</span><span class="pun">,</span></code></li><li class="L9"><code><span class="pln">                </span><span class="str">'bpub_date'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">bpub_date</span><span class="pun">.</span><span class="pln">strftime</span><span class="pun">(</span><span class="str">'%Y-%m-%d'</span><span class="pun">),</span></code></li><li class="L0"><code><span class="pln">                </span><span class="str">'bread'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">bread</span><span class="pun">,</span></code></li><li class="L1"><code><span class="pln">                </span><span class="str">'bcomment'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">bcomment</span><span class="pun">,</span></code></li><li class="L2"><code><span class="pln">                </span><span class="str">'logo'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">logo</span><span class="pun">.</span><span class="pln">url </span><span class="kwd">if</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">logo </span><span class="kwd">else</span><span class="pln"> </span><span class="str">''</span></code></li><li class="L3"><code><span class="pln">            </span><span class="pun">})</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">JsonResponse</span><span class="pun">(</span><span class="pln">books_list</span><span class="pun">,</span><span class="pln"> safe</span><span class="pun">=</span><span class="kwd">False</span><span class="pun">)</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> post</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">        </span><span class="com"># POST  /books/   新增图书</span></code></li><li class="L9"><code><span class="pln">        json_bytes </span><span class="pun">=</span><span class="pln"> request</span><span class="pun">.</span><span class="pln">body</span></code></li><li class="L0"><code><span class="pln">        json_str </span><span class="pun">=</span><span class="pln"> json_bytes</span><span class="pun">.</span><span class="pln">decode</span><span class="pun">()</span></code></li><li class="L1"><code><span class="pln">        req_data </span><span class="pun">=</span><span class="pln"> json</span><span class="pun">.</span><span class="pln">loads</span><span class="pun">(</span><span class="pln">json_str</span><span class="pun">)</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">        </span><span class="com"># 省略校验参数</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="pln">        book </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">create</span><span class="pun">(</span></code></li><li class="L6"><code><span class="pln">            btitle</span><span class="pun">=</span><span class="pln">req_data</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'btitle'</span><span class="pun">),</span></code></li><li class="L7"><code><span class="pln">            bpub_date</span><span class="pun">=</span><span class="pln">datetime</span><span class="pun">.</span><span class="pln">strptime</span><span class="pun">(</span><span class="pln">req_data</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'bpub_date'</span><span class="pun">),</span><span class="pln"> </span><span class="str">'%Y-%m-%d'</span><span class="pun">).</span><span class="pln">date</span><span class="pun">()</span></code></li><li class="L8"><code><span class="pln">        </span><span class="pun">)</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">        </span><span class="com"># 转换</span></code></li><li class="L1"><code><span class="pln">        book_dict </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L2"><code><span class="pln">            </span><span class="str">'id'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">id</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">            </span><span class="str">'btitle'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">btitle</span><span class="pun">,</span></code></li><li class="L4"><code><span class="pln">            </span><span class="str">'bpub_date'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">bpub_date</span><span class="pun">.</span><span class="pln">strftime</span><span class="pun">(</span><span class="str">'%Y-%m-%d'</span><span class="pun">),</span></code></li><li class="L5"><code><span class="pln">            </span><span class="str">'bread'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">bread</span><span class="pun">,</span></code></li><li class="L6"><code><span class="pln">            </span><span class="str">'bcomment'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">bcomment</span><span class="pun">,</span></code></li><li class="L7"><code><span class="pln">            </span><span class="str">'logo'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">logo</span><span class="pun">.</span><span class="pln">url </span><span class="kwd">if</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">logo </span><span class="kwd">else</span><span class="pln"> </span><span class="str">''</span></code></li><li class="L8"><code><span class="pln">        </span><span class="pun">}</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">JsonResponse</span><span class="pun">(</span><span class="pln">book_dict</span><span class="pun">,</span><span class="pln"> status</span><span class="pun">=</span><span class="lit">201</span><span class="pun">)</span></code></li><li class="L1"><code></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookAPIView</span><span class="pun">(</span><span class="typ">View</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> pk</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">        </span><span class="com"># GET   /books/&lt;pk&gt;/   获取单一图书</span></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">try</span><span class="pun">:</span></code></li><li class="L7"><code><span class="pln">            book </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="pln">pk</span><span class="pun">=</span><span class="pln">pk</span><span class="pun">)</span></code></li><li class="L8"><code><span class="pln">        </span><span class="kwd">except</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="typ">DoesNotExist</span><span class="pun">:</span></code></li><li class="L9"><code><span class="pln">            </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">HttpResponse</span><span class="pun">(</span><span class="pln">status</span><span class="pun">=</span><span class="lit">404</span><span class="pun">)</span></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># 转换</span></code></li><li class="L2"><code><span class="pln">        book_dict </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L3"><code><span class="pln">            </span><span class="str">'id'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">id</span><span class="pun">,</span></code></li><li class="L4"><code><span class="pln">            </span><span class="str">'btitle'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">btitle</span><span class="pun">,</span></code></li><li class="L5"><code><span class="pln">            </span><span class="str">'bpub_date'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">bpub_date</span><span class="pun">.</span><span class="pln">strftime</span><span class="pun">(</span><span class="str">'%Y-%m-%d'</span><span class="pun">),</span></code></li><li class="L6"><code><span class="pln">            </span><span class="str">'bread'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">bread</span><span class="pun">,</span></code></li><li class="L7"><code><span class="pln">            </span><span class="str">'bcomment'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">bcomment</span><span class="pun">,</span></code></li><li class="L8"><code><span class="pln">            </span><span class="str">'logo'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">logo</span><span class="pun">.</span><span class="pln">url </span><span class="kwd">if</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">logo </span><span class="kwd">else</span><span class="pln"> </span><span class="str">''</span></code></li><li class="L9"><code><span class="pln">        </span><span class="pun">}</span></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">JsonResponse</span><span class="pun">(</span><span class="pln">book_dict</span><span class="pun">)</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> put</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> pk</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># PUT   /books/&lt;pk&gt;/   更新图书</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">try</span><span class="pun">:</span></code></li><li class="L6"><code><span class="pln">            book </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="pln">pk</span><span class="pun">=</span><span class="pln">pk</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pln">        </span><span class="kwd">except</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="typ">DoesNotExist</span><span class="pun">:</span></code></li><li class="L8"><code><span class="pln">            </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">HttpResponse</span><span class="pun">(</span><span class="pln">status</span><span class="pun">=</span><span class="lit">404</span><span class="pun">)</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">        json_bytes </span><span class="pun">=</span><span class="pln"> request</span><span class="pun">.</span><span class="pln">body</span></code></li><li class="L1"><code><span class="pln">        json_str </span><span class="pun">=</span><span class="pln"> json_bytes</span><span class="pun">.</span><span class="pln">decode</span><span class="pun">()</span></code></li><li class="L2"><code><span class="pln">        req_data </span><span class="pun">=</span><span class="pln"> json</span><span class="pun">.</span><span class="pln">loads</span><span class="pun">(</span><span class="pln">json_str</span><span class="pun">)</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># 省略校验参数</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">        </span><span class="com"># 业务处理，保存数据</span></code></li><li class="L7"><code><span class="pln">        book</span><span class="pun">.</span><span class="pln">btitle </span><span class="pun">=</span><span class="pln"> req_data</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'btitle'</span><span class="pun">)</span></code></li><li class="L8"><code><span class="pln">        book</span><span class="pun">.</span><span class="pln">bpub_date </span><span class="pun">=</span><span class="pln"> datetime</span><span class="pun">.</span><span class="pln">strptime</span><span class="pun">(</span><span class="pln">req_data</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'bpub_date'</span><span class="pun">),</span><span class="pln"> </span><span class="str">'%Y-%m-%d'</span><span class="pun">).</span><span class="pln">date</span><span class="pun">()</span></code></li><li class="L9"><code><span class="pln">        book</span><span class="pun">.</span><span class="pln">save</span><span class="pun">()</span></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># 转换</span></code></li><li class="L2"><code><span class="pln">        book_dict </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L3"><code><span class="pln">            </span><span class="str">'id'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">id</span><span class="pun">,</span></code></li><li class="L4"><code><span class="pln">            </span><span class="str">'btitle'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">btitle</span><span class="pun">,</span></code></li><li class="L5"><code><span class="pln">            </span><span class="str">'bpub_date'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">bpub_date</span><span class="pun">.</span><span class="pln">strftime</span><span class="pun">(</span><span class="str">'%Y-%m-%d'</span><span class="pun">),</span></code></li><li class="L6"><code><span class="pln">            </span><span class="str">'bread'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">bread</span><span class="pun">,</span></code></li><li class="L7"><code><span class="pln">            </span><span class="str">'bcomment'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">bcomment</span><span class="pun">,</span></code></li><li class="L8"><code><span class="pln">            </span><span class="str">'logo'</span><span class="pun">:</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">logo</span><span class="pun">.</span><span class="pln">url </span><span class="kwd">if</span><span class="pln"> book</span><span class="pun">.</span><span class="pln">logo </span><span class="kwd">else</span><span class="pln"> </span><span class="str">''</span></code></li><li class="L9"><code><span class="pln">        </span><span class="pun">}</span></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">JsonResponse</span><span class="pun">(</span><span class="pln">book_dict</span><span class="pun">,</span><span class="pln"> status</span><span class="pun">=</span><span class="lit">201</span><span class="pun">)</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">delete</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> pk</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># DELETE  /books/&lt;pk&gt;/   删除图书</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">try</span><span class="pun">:</span></code></li><li class="L6"><code><span class="pln">            book </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="pln">pk</span><span class="pun">=</span><span class="pln">pk</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pln">        </span><span class="kwd">except</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="typ">DoesNotExist</span><span class="pun">:</span></code></li><li class="L8"><code><span class="pln">            </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">HttpResponse</span><span class="pun">(</span><span class="pln">status</span><span class="pun">=</span><span class="lit">404</span><span class="pun">)</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">        book</span><span class="pun">.</span><span class="kwd">delete</span><span class="pun">()</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">HttpResponse</span><span class="pun">(</span><span class="pln">status</span><span class="pun">=</span><span class="lit">204</span><span class="pun">)</span></code></li></ol></pre><ul data-anchor-id="bbh2">
+<li><p>测试 <br>
+使用postman测试</p>
+
+<ol><li>查询列表</li>
+<li>查询单个</li>
+<li>新增资源</li>
+<li>修改资源</li>
+<li>删除资源</li></ol></li>
+<li><p>总结</p>
+
+<ol><li>我们在写代码的过程中，有复制粘贴，存在大量重复代码</li>
+<li>django-rest-framework 就是帮我们简化这些重复的代码</li>
+<li>重复的代码主要是： <br>
+<ol><li>将请求的数据（如JSON格式）转换为模型类对象</li>
+<li>操作数据库</li>
+<li>将模型类对象转换为响应的数据（如JSON格式）</li></ol></li></ol></li>
+</ul></div>
+<a href="3.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="5.html">下一页</a>
+</body>
+</html>

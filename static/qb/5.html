@@ -1,0 +1,484 @@
+﻿<!DOCTYPE html>
+<html class="theme theme-white">
+<head>
+<meta charset="utf-8">
+ <a href="4.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="6.html">下一页</a>
+<title>Django-4.0-Day5</title>
+<link href="https://www.zybuluo.com/static/assets/template-theme-white.css" rel="stylesheet" media="screen">
+<style type="text/css">
+
+#wmd-preview h1  {
+    color: #0077bb; /* 将标题改为蓝色 */
+}</style>
+</head>
+<body class="theme theme-white">
+<div id="wmd-preview" class="wmd-preview wmd-preview-full-reader"><div class="md-section-divider"></div><div class="md-section-divider"></div><h1 data-anchor-id="av23" id="django-40-day5">Django-4.0-Day5</h1><p data-anchor-id="ghc4"><code>django</code></p><hr><div class="md-section-divider"></div><h2 data-anchor-id="vcfw" id="知识点复习">知识点复习</h2><ul data-anchor-id="ce7c">
+<li>django <br>
+<ul><li>表单</li>
+<li>admin <br>
+<ul><li>配置</li>
+<li>修改列表和编辑页面</li>
+<li>上传图片文件</li></ul></li></ul></li>
+<li>rest <br>
+<ul><li>什么是 rest</li>
+<li>什么是前后端分离</li>
+<li>rest，api的写法</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="tru9" id="01对于序列化的理解说明">01_对于序列化的理解说明</h2><ul data-anchor-id="lpok">
+<li><p>在rest中 <br>
+需要去除掉格式转化的步骤，这个称为序列化</p></li>
+<li><p>序列化(Serialization) <br>
+简单说：一个信息从A程序到B程序进行传递，或者保存的时候，需要传递完整信息(在同一个程序中可以传递引用地址)的某种格式(双方都可以识别的)。 这个原始信息，可以是模型或者字段，转换后可以是json或者xml。这个转化过程，称为序列化</p></li>
+<li><p>两个部分 <br>
+严格的说，序列化，可以分为两种</p>
+
+<ul><li>序列化 <br>
+(模型转json)</li>
+<li>反序列化 <br>
+(json转模型)</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="kuzu" id="02了解djangorestframework">02_了解DjangoRESTframework</h2><ul data-anchor-id="y6w0">
+<li>DRF <br>
+基于django的。 <br>
+用于构建Web API 的强大而又灵活的工具。 <br>
+极大地简化代码编写，大大提高REST API的开发速度。 <br>
+<ul><li>全称 <br>
+Django REST framework</li>
+<li>官网 <br>
+<a href="http://www.django-rest-framework.org/" target="_blank">http://www.django-rest-framework.org/</a></li>
+<li>github <br>
+<a href="https://github.com/encode/django-rest-framework/tree/master" target="_blank">https://github.com/encode/django-rest-framework/tree/master</a></li>
+<li>历史 <br>
+建立在Django框架基础之上，由Tom Christie大牛二次开发的开源项目。</li>
+<li>特点 <br>
+<ul><li><strong>提供了定义序列化器Serializer的方法</strong>，可以快速根据 Django ORM 或者其它库自动序列化/反序列化；</li>
+<li><strong>提供了丰富的类视图、Mixin扩展类，简化视图的编写</strong>；</li>
+<li>丰富的定制层级：函数视图、类视图、视图集合到自动生成 API，满足各种需要；</li>
+<li>多种身份认证和权限认证方式的支持；</li>
+<li>内置了限流系统；</li>
+<li>直观的 API web 界面；</li>
+<li><strong>可扩展性，插件丰富</strong></li></ul></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="bub1" id="03drf开发配置">03_DRF开发配置</h2><ul data-anchor-id="p6fo">
+<li><p>工程搭建</p>
+
+<ul><li>依赖 <br>
+<ul><li>python <br>
+2.7  <br>
+3.2 ~3.6</li>
+<li>django <br>
+1.10 1.11 2.0</li></ul></li>
+<li><p>安装drf <br>
+<code>pip install djangorestframework</code></p></li>
+<li><p>添加应用</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">settings</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">INSTALLED_APPS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L3"><code><span class="pln">    </span><span class="com"># djang自带的...</span></code></li><li class="L4"><code><span class="pln">    </span><span class="str">'rest_framework'</span><span class="pun">,</span></code></li><li class="L5"><code><span class="pln">    </span><span class="com"># 我们自己项目的 ...</span></code></li><li class="L6"><code><span class="pun">]</span></code></li></ol></pre></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="xfam" id="04见识drf开发的流程与魅力">04_见识DRF开发的流程与魅力</h2><p data-anchor-id="4epe">看看就好，后面会详细介绍</p><ol data-anchor-id="0ofp">
+<li><p>定义序列化器</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">serializers</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> rest_framework </span><span class="kwd">import</span><span class="pln"> serializers</span></code></li><li class="L3"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">BookInfo</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">ModelSerializer</span><span class="pun">):</span></code></li><li class="L6"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L7"><code><span class="pln">        model </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span></code></li><li class="L8"><code><span class="pln">        fields </span><span class="pun">=</span><span class="pln"> </span><span class="str">'__all__'</span></code></li></ol></pre></li>
+<li><p>定义视图类</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">views</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">viewsets </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">ModelViewSet</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln">serializers </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span></code></li><li class="L5"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">BookInfo</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoViewSet</span><span class="pun">(</span><span class="typ">ModelViewSet</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">    queryset </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">()</span></code></li><li class="L9"><code><span class="pln">    serializer_class </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span></code></li></ol></pre></li>
+<li><p>配制url路由</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">urls</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">routers </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">DefaultRouter</span></code></li><li class="L3"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln"> </span><span class="kwd">import</span><span class="pln"> views</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="com"># 省略urlpatterns</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">router </span><span class="pun">=</span><span class="pln"> </span><span class="typ">DefaultRouter</span><span class="pun">()</span></code></li><li class="L8"><code><span class="pln">router</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="pln">r</span><span class="str">'books'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">BookInfoViewSet</span><span class="pun">)</span></code></li><li class="L9"><code><span class="pln">urlpatterns </span><span class="pun">+=</span><span class="pln"> router</span><span class="pun">.</span><span class="pln">urls</span></code></li></ol></pre></li>
+<li>测试 <br>
+<ul><li>主页</li>
+<li>增删改查</li></ul></li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="mj1p" id="05序列化器的定义">05_序列化器的定义</h2><ul data-anchor-id="xnvf">
+<li>概念 <br>
+序列化 <br>
+    模型类对象 —&gt; python字典 (把字段转为json等格式的操作由其他类完成) 用于输出 返回给前端时使用 <br>
+反序列化 <br>
+    (把前端的数据转为字典由其他类完成) python字典 —&gt; 经过验证 —&gt;  save -&gt; 模型类对象 用于输入 接收前端数据时使用</li>
+</ul><p data-anchor-id="5dr7">一个图书序列化类的原始写法</p><ul data-anchor-id="wu6c">
+<li><p>代码示例</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">Serializer</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""图书数据序列化器"""</span></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># 各种字段都有类型，这个类型与models中的一致</span></code></li><li class="L3"><code><span class="pln">    </span><span class="com"># label 用于显示在表单左侧的信息</span></code></li><li class="L4"><code><span class="pln">    </span><span class="com"># read_only 表示只读(序列化有用，反序列化没用)</span></code></li><li class="L5"><code><span class="pln">    </span><span class="com"># write_only 反之亦然</span></code></li><li class="L6"><code><span class="pln">    id </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">IntegerField</span><span class="pun">(</span><span class="pln">label</span><span class="pun">=</span><span class="str">'ID'</span><span class="pun">,</span><span class="pln"> read_only</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pln">    </span><span class="com"># max_length 限制长度</span></code></li><li class="L8"><code><span class="pln">    btitle </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">CharField</span><span class="pun">(</span><span class="pln">label</span><span class="pun">=</span><span class="str">'名称'</span><span class="pun">,</span><span class="pln"> max_length</span><span class="pun">=</span><span class="lit">20</span><span class="pun">)</span></code></li><li class="L9"><code><span class="pln">    </span><span class="com"># required 默认是True，False表示可以不提交，因为在模型中有默认值</span></code></li><li class="L0"><code><span class="pln">    bpub_date </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">DateField</span><span class="pun">(</span><span class="pln">label</span><span class="pun">=</span><span class="str">'发布日期'</span><span class="pun">,</span><span class="pln"> required</span><span class="pun">=</span><span class="kwd">False</span><span class="pun">)</span></code></li><li class="L1"><code><span class="pln">    bread </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">IntegerField</span><span class="pun">(</span><span class="pln">label</span><span class="pun">=</span><span class="str">'阅读量'</span><span class="pun">,</span><span class="pln"> required</span><span class="pun">=</span><span class="kwd">False</span><span class="pun">)</span></code></li><li class="L2"><code><span class="pln">    bcomment </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">IntegerField</span><span class="pun">(</span><span class="pln">label</span><span class="pun">=</span><span class="str">'评论量'</span><span class="pun">,</span><span class="pln"> required</span><span class="pun">=</span><span class="kwd">False</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">    logo </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">ImageField</span><span class="pun">(</span><span class="pln">label</span><span class="pun">=</span><span class="str">'图片'</span><span class="pun">,</span><span class="pln"> required</span><span class="pun">=</span><span class="kwd">False</span><span class="pun">)</span></code></li></ol></pre></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="k42o" id="06定义序列化器的字段与选项参数">06_定义序列化器的字段与选项参数</h2><ul data-anchor-id="tg24">
+<li><p>字段类型</p>
+
+<table class="table table-striped-white table-bordered">
+<thead>
+<tr>
+ <th>字段</th>
+ <th>字段构造方式</th>
+</tr>
+</thead>
+<tbody><tr>
+ <td>BooleanField</td>
+ <td>BooleanField()</td>
+</tr>
+<tr>
+ <td>NullBooleanField</td>
+ <td>NullBooleanField()</td>
+</tr>
+<tr>
+ <td>CharField</td>
+ <td>CharField(max_length=None, min_length=None, allow_blank=False, trim_whitespace=True)</td>
+</tr>
+<tr>
+ <td>EmailField</td>
+ <td>EmailField(max_length=None, min_length=None, allow_blank=False)</td>
+</tr>
+<tr>
+ <td>RegexField</td>
+ <td>RegexField(regex, max_length=None, min_length=None, allow_blank=False)</td>
+</tr>
+<tr>
+ <td>SlugField</td>
+ <td>SlugField(maxlength=50, min_length=None, allow_blank=False) 正则字段，验证正则模式 [a-zA-Z0-9-]+</td>
+</tr>
+<tr>
+ <td>URLField</td>
+ <td>URLField(max_length=200, min_length=None, allow_blank=False)</td>
+</tr>
+<tr>
+ <td>UUIDField</td>
+ <td>UUIDField(format='hex_verbose') format: 1) 'hex_verbose' 如"5ce0e9a5-5ffa-654b-cee0-1238041fb31a" 2） 'hex' 如 "5ce0e9a55ffa654bcee01238041fb31a" 3）'int' - 如: "123456789012312313134124512351145145114" 4）'urn' 如: "urn:uuid:5ce0e9a5-5ffa-654b-cee0-1238041fb31a"</td>
+</tr>
+<tr>
+ <td>IPAddressField</td>
+ <td>IPAddressField(protocol='both', unpack_ipv4=False, **options)</td>
+</tr>
+<tr>
+ <td>IntegerField</td>
+ <td>IntegerField(max_value=None, min_value=None)</td>
+</tr>
+<tr>
+ <td>FloatField</td>
+ <td>FloatField(max_value=None, min_value=None)</td>
+</tr>
+<tr>
+ <td>DecimalField</td>
+ <td>DecimalField(max_digits, decimal_places, coerce_to_string=None, max_value=None, min_value=None)max_digits: 最多位数decimal_palces: 小数点位置</td>
+</tr>
+<tr>
+ <td>DateTimeField</td>
+ <td>DateTimeField(format=api_settings.DATETIME_FORMAT, input_formats=None)</td>
+</tr>
+<tr>
+ <td>DateField</td>
+ <td>DateField(format=api_settings.DATE_FORMAT, input_formats=None)</td>
+</tr>
+<tr>
+ <td>TimeField</td>
+ <td>TimeField(format=api_settings.TIME_FORMAT, input_formats=None)</td>
+</tr>
+<tr>
+ <td>DurationField</td>
+ <td>DurationField()</td>
+</tr>
+<tr>
+ <td>ChoiceField</td>
+ <td>ChoiceField(choices)choices与Django的用法相同</td>
+</tr>
+<tr>
+ <td>MultipleChoiceField</td>
+ <td>MultipleChoiceField(choices)</td>
+</tr>
+<tr>
+ <td>FileField</td>
+ <td>FileField(max_length=None, allow_empty_file=False, use_url=UPLOADED_FILES_USE_URL)</td>
+</tr>
+<tr>
+ <td>ImageField</td>
+ <td>ImageField(max_length=None, allow_empty_file=False, use_url=UPLOADED_FILES_USE_URL)</td>
+</tr>
+<tr>
+ <td>ListField</td>
+ <td>ListField(child=, min_length=None, max_length=None)</td>
+</tr>
+<tr>
+ <td>DictField</td>
+ <td>DictField(child=)</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>参数</p>
+
+<ul><li><p>通用参数</p>
+
+<table class="table table-striped-white table-bordered">
+<thead>
+<tr>
+ <th>参数名称</th>
+ <th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+ <td><strong>read_only</strong></td>
+ <td>表明该字段<strong>仅</strong>用于序列化<strong>输出</strong>，默认False</td>
+</tr>
+<tr>
+ <td><strong>write_only</strong></td>
+ <td>表明该字段<strong>仅</strong>用于反序列化<strong>输入</strong>，默认False</td>
+</tr>
+<tr>
+ <td><strong>required</strong></td>
+ <td>表明该字段在反序列化时必须输入，默认True</td>
+</tr>
+<tr>
+ <td><strong>default</strong></td>
+ <td>反序列化时使用的默认值</td>
+</tr>
+<tr>
+ <td><strong>allow_null</strong></td>
+ <td>表明该字段是否允许传入None，默认False</td>
+</tr>
+<tr>
+ <td>validators</td>
+ <td>该字段使用的验证器</td>
+</tr>
+<tr>
+ <td>error_messages</td>
+ <td>包含错误编号与错误信息的字典</td>
+</tr>
+<tr>
+ <td><strong>label</strong></td>
+ <td>用于HTML展示API页面时，显示的字段名称</td>
+</tr>
+<tr>
+ <td>help_text</td>
+ <td>用于HTML展示API页面时，显示的字段帮助提示信息</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>专有参数</p>
+
+<table class="table table-striped-white table-bordered">
+<thead>
+<tr>
+ <th>参数名称</th>
+ <th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+ <td><strong>max_length</strong></td>
+ <td>最大长度</td>
+</tr>
+<tr>
+ <td><strong>min_lenght</strong></td>
+ <td>最小长度</td>
+</tr>
+<tr>
+ <td><strong>allow_blank</strong></td>
+ <td>是否允许为空</td>
+</tr>
+<tr>
+ <td><strong>trim_whitespace</strong></td>
+ <td>是否截断空白字符</td>
+</tr>
+<tr>
+ <td><strong>max_value</strong></td>
+ <td>最小值</td>
+</tr>
+<tr>
+ <td><strong>min_value</strong></td>
+ <td>最大值</td>
+</tr>
+</tbody></table>
+</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="x103" id="07创建序列化对象">07_创建序列化对象</h2><ul data-anchor-id="q7pl">
+<li>创建序列化对象 <br>
+<ul><li>Serializer的构造方法为： <br>
+Serializer(instance=None, data=empty, **kwarg)</li>
+<li>说明： <br>
+<ol><li>用于序列化时，将模型类对象传入instance参数</li>
+<li>用于反序列化时，将要被反序列化的数据传入data参数</li>
+<li>除了instance和data参数外，在构造Serializer对象时，还可通过context、many、partial传递额外参数</li></ol></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="5okp" id="08序列化使用">08_序列化使用</h2><ul data-anchor-id="3mrt">
+<li>步骤 <br>
+<ol><li>创建Serializer的时候使用模型对象</li>
+<li>获得序列化后的字典</li></ol></li>
+<li><p>序列化单一对象</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> booktest</span><span class="pun">.</span><span class="pln">serializers </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span><span class="pun">,</span><span class="pln"> </span><span class="typ">HeroInfoSerializer</span></code></li><li class="L1"><code><span class="kwd">from</span><span class="pln"> booktest</span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">,</span><span class="pln"> </span><span class="typ">HeroInfo</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">b </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="pln">id</span><span class="pun">=</span><span class="lit">35</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">s </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span><span class="pun">(</span><span class="pln">b</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">s</span><span class="pun">.</span><span class="pln">data</span></code></li></ol></pre></li>
+<li><p>序列化多个对象(QuerySet)</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> booktest</span><span class="pun">.</span><span class="pln">serializers </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span><span class="pun">,</span><span class="pln"> </span><span class="typ">HeroInfoSerializer</span></code></li><li class="L1"><code><span class="kwd">from</span><span class="pln"> booktest</span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">,</span><span class="pln"> </span><span class="typ">HeroInfo</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">bs </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">()</span></code></li><li class="L4"><code><span class="pln">s </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span><span class="pun">(</span><span class="pln">bs</span><span class="pun">,</span><span class="pln">many</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">s</span><span class="pun">.</span><span class="pln">data</span></code></li></ol></pre></li>
+<li><p>关联属性序列化</p>
+
+<ul><li><p>多对一</p>
+
+<ol><li><p>只显示主键值</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">HeroInfoSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">Serializer</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 其他值字段略</span></code></li><li class="L2"><code><span class="pln">    hbook </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">PrimaryKeyRelatedField</span><span class="pun">(</span><span class="pln">read_only</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p><strong>显示具体信息</strong></p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">HeroInfoSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">Serializer</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 其他值字段略</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">    hbook </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span><span class="pun">()</span></code></li></ol></pre></li>
+<li><p>自定义</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookRelateField</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">RelatedField</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""自定义用于处理图书的字段"""</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> to_representation</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> value</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="str">'Book: %d %s'</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> </span><span class="pun">(</span><span class="pln">value</span><span class="pun">.</span><span class="pln">id</span><span class="pun">,</span><span class="pln"> value</span><span class="pun">.</span><span class="pln">btitle</span><span class="pun">)</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">HeroInfoSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">Serializer</span><span class="pun">):</span></code></li><li class="L6"><code><span class="pln">    </span><span class="com"># 其他值字段略</span></code></li><li class="L7"><code><span class="pln">    hbook </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookRelateField</span><span class="pun">(</span><span class="pln">read_only</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>其他</p>
+
+<ol><li>字符串 <br>
+StringRelatedField</li>
+<li>链接 <br>
+HyperlinkedRelatedField (需要指定视图类)</li>
+<li>slug <br>
+SlugRelatedField</li></ol></li></ol></li>
+<li><p>一对多</p>
+
+<ol><li><p>只显示主键值</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">Serializer</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 其他值字段略</span></code></li><li class="L2"><code><span class="pln">    heroinfo_set </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">PrimaryKeyRelatedField</span><span class="pun">(</span><span class="pln">read_only</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">,</span><span class="pln"> many</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span><span class="pln">  </span><span class="com"># 新增</span></code></li></ol></pre></li>
+<li><p>显示具体信息</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">Serializer</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 其他值字段略</span></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># 注意 </span></code></li><li class="L3"><code><span class="pln">    heroinfo_set </span><span class="pun">=</span><span class="pln"> </span><span class="typ">HeroInfoSerializer</span><span class="pun">(</span><span class="pln">read_only</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">,</span><span class="pln"> many</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span><span class="pln"> </span></code></li></ol></pre></li></ol></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="66v8" id="09序列化的补充使用">09_序列化的补充使用</h2><p data-anchor-id="snzf">参见上节笔记中的一对多</p><div class="md-section-divider"></div><h2 data-anchor-id="7txw" id="10调用序列化器进行验证">10_调用序列化器进行验证</h2><ol data-anchor-id="xp9r">
+<li><p>创建Serializer对象  data=字典</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">data </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span><span class="str">'bpub_date'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">123</span><span class="pun">}</span></code></li><li class="L1"><code><span class="pln">serializer </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span><span class="pun">(</span><span class="pln">data</span><span class="pun">=</span><span class="pln">data</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>校验数据 is_valid <br>
+<code>serializer.is_valid()</code></p>
+
+<ol><li>正确返回True</li>
+<li>错误返回False</li>
+<li>错误可以抛出异常 <br>
+<code>serializer.is_valid(raise_exception=True)</code></li>
+<li>可以查看错误原因 <br>
+<code>serializer.errors</code></li></ol></li>
+<li>使用校验后的数据 validated_data <br>
+<code>serializer.validated_data</code></li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="n3c3" id="11定义序列化器的验证行为">11_定义序列化器的验证行为</h2><ul data-anchor-id="1trd">
+<li>(自定义)验证单个字段 <br>
+在序列化类上定义方法 <code>def validate_&lt;field_name&gt;(self ,value)</code> 其中value代表原值 <br>
+如果验证通过返回值(可修改原值) <br>
+如果验证不通过，抛出rest_framework.exceptions.ValidationError /  django.core.exceptions.ValidationError <br>
+在serializer.errors 对应的字典中，可以看到键为 <code>&lt;field_name&gt;</code></li>
+<li>(自定义)验证多个字段(组合) <br>
+在序列化类上定义方法 <code>def validate(self, attrs):</code>  注意 attrs 是个字典 <br>
+如果验证通过返回值(可修改原值) <br>
+如果验证不通过，抛出rest_framework.exceptions.ValidationError /  django.core.exceptions.ValidationError <br>
+在serializer.errors 对应的字典中，可以看到键为 <code>non_field_errors</code></li>
+<li><p>定义验证函数(目的是重用验证) <br>
+在定义serializer字段的时候可以指定一个或者多个验证器 <br>
+如果验证不通过，抛出rest_framework.exceptions.ValidationError /  django.core.exceptions.ValidationError <br>
+如果验证通过不抛出异常，返回None(或者不写return) ， 返回值没有用 <br>
+在serializer.errors 对应的字典中，可以看到键为 <code>&lt;field_name&gt;</code></p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">def</span><span class="pln"> about_django</span><span class="pun">(</span><span class="pln">value</span><span class="pun">):</span></code></li><li class="L1"><code><span class="kwd">if</span><span class="pln"> </span><span class="str">'django'</span><span class="pln"> </span><span class="kwd">not</span><span class="pln"> </span><span class="kwd">in</span><span class="pln"> value</span><span class="pun">.</span><span class="pln">lower</span><span class="pun">():</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">raise</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">ValidationError</span><span class="pun">(</span><span class="str">"图书不是关于Django的"</span><span class="pun">)</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">Serializer</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">    </span><span class="com"># 其余属性略</span></code></li><li class="L6"><code><span class="pln">    </span><span class="com"># 注意选项validators 指定的是一个函数</span></code></li><li class="L7"><code><span class="pln">    btitle </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">CharField</span><span class="pun">(</span><span class="pln">label</span><span class="pun">=</span><span class="str">'名称'</span><span class="pun">,</span><span class="pln"> max_length</span><span class="pun">=</span><span class="lit">20</span><span class="pun">,</span><span class="pln"> validators</span><span class="pun">=[</span><span class="pln">about_django</span><span class="pun">])</span></code></li></ol></pre>
+
+<ul><li><p>rest中自带的验证器</p>
+
+<ol><li><p>单字段唯一 UniqueValidator，如</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">validators </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">UniqueValidator</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">ExampleSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">Serializer</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">    slug </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">SlugField</span><span class="pun">(</span></code></li><li class="L4"><code><span class="pln">        max_length</span><span class="pun">=</span><span class="lit">100</span><span class="pun">,</span></code></li><li class="L5"><code><span class="pln">        validators</span><span class="pun">=[</span><span class="typ">UniqueValidator</span><span class="pun">(</span><span class="pln">queryset</span><span class="pun">=</span><span class="typ">BlogPost</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">())]</span></code></li><li class="L6"><code><span class="pln">    </span><span class="pun">)</span></code></li><li class="L7"><code><span class="pln">    </span><span class="com"># ...</span></code></li></ol></pre></li>
+<li><p>联合唯一 UniqueTogetherValidation，如</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">validators </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">UniqueTogetherValidator</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">ExampleSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">Serializer</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">    </span><span class="com"># ...</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L5"><code><span class="pln">        validators </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L6"><code><span class="pln">            </span><span class="typ">UniqueTogetherValidator</span><span class="pun">(</span></code></li><li class="L7"><code><span class="pln">                queryset</span><span class="pun">=</span><span class="typ">ToDoItem</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">(),</span></code></li><li class="L8"><code><span class="pln">                fields</span><span class="pun">=(</span><span class="str">'list'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'position'</span><span class="pun">)</span></code></li><li class="L9"><code><span class="pln">            </span><span class="pun">)</span></code></li><li class="L0"><code><span class="pln">        </span><span class="pun">]</span></code></li></ol></pre></li></ol></li></ul></li>
+<li><p>[补充]验证器顺序</p>
+
+<ol><li>验证每个字段(按照定义顺序) <br>
+<ol><li>进行类型验证和转化</li>
+<li>使用字段上定义的validators</li>
+<li>使用验证单个字段的方法</li></ol></li>
+<li>使用验证整体的方法</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="xqf1" id="12保存序列化器的数据">12_保存序列化器的数据</h2><ul data-anchor-id="5eek">
+<li><p>serializer.save()</p>
+
+<ol><li>新增 <br>
+<code>def create(self, validated_data)</code> <br>
+如果创建serializers对象的时候，<strong>没有给定模型实例，只给定了data</strong>，就会调用 create方法 <br>
+我们需要实现create方法，去返回一个模型对象(可根据实际需求调用模型的save方法)</li>
+<li>更新 <br>
+<code>def update(self, instance, validated_data)</code> <br>
+如果创建serializers对象的时候，<strong>给定模型实例，并给定了data</strong>，就会调用 update方法 <br>
+我们需要实现update方法，去返回一个模型对象(可根据实际需求调用模型的save方法)</li></ol></li>
+<li><p>例子</p></li>
+</ul><div class="md-section-divider"></div><pre class="prettyprint linenums prettyprinted" data-anchor-id="0ni4"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">Serializer</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""图书数据序列化器"""</span></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># ...</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> create</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> validated_data</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">        </span><span class="str">"""新建 validated_data 为验证后的数据"""</span></code></li><li class="L6"><code><span class="pln">        </span><span class="com"># 根据情况创建实例对象，或者使用模型管理器新增并创建实例对象</span></code></li><li class="L7"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">create</span><span class="pun">(**</span><span class="pln">validated_data</span><span class="pun">)</span></code></li><li class="L8"><code></code></li><li class="L9"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> update</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> instance</span><span class="pun">,</span><span class="pln"> validated_data</span><span class="pun">):</span></code></li><li class="L0"><code><span class="pln">        </span><span class="str">"""更新，instance为要更新的对象实例  validated_data 为验证后的数据"""</span></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># 通过字典的get方法，指定默认值</span></code></li><li class="L2"><code><span class="pln">        instance</span><span class="pun">.</span><span class="pln">btitle </span><span class="pun">=</span><span class="pln"> validated_data</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'btitle'</span><span class="pun">,</span><span class="pln"> instance</span><span class="pun">.</span><span class="pln">btitle</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">        instance</span><span class="pun">.</span><span class="pln">bpub_date </span><span class="pun">=</span><span class="pln"> validated_data</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'bpub_date'</span><span class="pun">,</span><span class="pln"> instance</span><span class="pun">.</span><span class="pln">bpub_date</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">        instance</span><span class="pun">.</span><span class="pln">bread </span><span class="pun">=</span><span class="pln"> validated_data</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'bread'</span><span class="pun">,</span><span class="pln"> instance</span><span class="pun">.</span><span class="pln">bread</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">        instance</span><span class="pun">.</span><span class="pln">bcomment </span><span class="pun">=</span><span class="pln"> validated_data</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'bcomment'</span><span class="pun">,</span><span class="pln"> instance</span><span class="pun">.</span><span class="pln">bcomment</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">        </span><span class="com"># 根据实际情况调用save方法</span></code></li><li class="L7"><code><span class="pln">        instance</span><span class="pun">.</span><span class="pln">save</span><span class="pun">()</span></code></li><li class="L8"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> instance</span></code></li></ol></pre><div class="md-section-divider"></div><h2 data-anchor-id="kezd" id="13保存序列化的补充说明">13_保存序列化的补充说明</h2><ul data-anchor-id="ubf6">
+<li>部分更新 <br>
+创建序列化对象的时候指定 ，对于那些必填的字段可以跳过验证 <br>
+比如 <code>serializer = CommentSerializer(comment, data={'content': u'foo bar'}, partial=True)</code></li>
+<li>保存时附加额外内容 <br>
+在save的时候通过关键字传参，可以在添加数据到validated_data中(如果没有，则添加，如果有责) <br>
+比如 <code>serializer.save(owner=request.user)</code></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="paur" id="14模型类序列化器的定义">14_模型类序列化器的定义</h2><ul data-anchor-id="jmyo">
+<li><p>模型类序列化器 <br>
+ModelSerializer 是 Serializer的子类，但提供了很多简化：</p>
+
+<ol><li>基于模型类自动生成一系列字段</li>
+<li>基于模型类自动为Serializer生成validators，比如unique_together</li>
+<li>包含默认的create()和update()的实现</li></ol></li>
+<li><p>代码示例</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">ModelSerializer</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""图书数据序列化器"""</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L3"><code><span class="pln">        model </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span></code></li><li class="L4"><code><span class="pln">        fields </span><span class="pun">=</span><span class="pln"> </span><span class="str">'__all__'</span></code></li></ol></pre></li>
+<li><p>字段选项</p>
+
+<ol><li>所有字段 <br>
+<code>fields = '__all__'</code></li>
+<li>部分字段 <br>
+<code>fields = ['id','bpub_date','btitle','bread']</code></li>
+<li>部分字段除外的其他字段 <br>
+<code>exclude = ['id','is_delete']</code></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="jfxn" id="15模型类序列化器的扩展参数">15_模型类序列化器的扩展参数</h2><ul data-anchor-id="elb1">
+<li><p>没有特殊指定</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">serializers</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> rest_framework </span><span class="kwd">import</span><span class="pln"> serializers</span></code></li><li class="L3"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">,</span><span class="pln"> </span><span class="typ">HeroInfo</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">HeroModelSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">ModelSerializer</span><span class="pun">):</span></code></li><li class="L6"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L7"><code><span class="pln">        model </span><span class="pun">=</span><span class="pln"> </span><span class="typ">HeroInfo</span></code></li><li class="L8"><code><span class="pln">        fields </span><span class="pun">=</span><span class="pln"> </span><span class="str">"__all__"</span></code></li></ol></pre>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">shell</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span><span class="kwd">from</span><span class="pln"> booktest</span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln">  </span><span class="typ">HeroInfo</span></code></li><li class="L3"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span><span class="kwd">from</span><span class="pln"> booktest</span><span class="pun">.</span><span class="pln">serializers </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">HeroModelSerializer</span></code></li><li class="L4"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span></code></li><li class="L5"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> h </span><span class="pun">=</span><span class="pln"> </span><span class="typ">HeroInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="pln">id</span><span class="pun">=</span><span class="lit">1</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> s </span><span class="pun">=</span><span class="pln"> </span><span class="typ">HeroModelSerializer</span><span class="pun">(</span><span class="pln">h</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> s</span><span class="pun">.</span><span class="pln">data</span></code></li><li class="L8"><code><span class="pun">{</span><span class="str">'hname'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'郭靖'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'hcomment'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'降龙十八掌'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'hgender'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="str">'is_delete'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">False</span><span class="pun">,</span><span class="pln"> </span><span class="str">'hbook'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="str">'id'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">1</span><span class="pun">}</span></code></li></ol></pre></li>
+<li><p>depth</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">serializers</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> rest_framework </span><span class="kwd">import</span><span class="pln"> serializers</span></code></li><li class="L3"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">,</span><span class="pln"> </span><span class="typ">HeroInfo</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">HeroModelSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">ModelSerializer</span><span class="pun">):</span></code></li><li class="L6"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L7"><code><span class="pln">        model </span><span class="pun">=</span><span class="pln"> </span><span class="typ">HeroInfo</span></code></li><li class="L8"><code><span class="pln">        fields </span><span class="pun">=</span><span class="pln"> </span><span class="str">"__all__"</span></code></li><li class="L9"><code><span class="pln">        depth </span><span class="pun">=</span><span class="pln"> </span><span class="lit">1</span></code></li></ol></pre>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">shell</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span><span class="kwd">from</span><span class="pln"> booktest</span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln">  </span><span class="typ">HeroInfo</span></code></li><li class="L3"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span><span class="kwd">from</span><span class="pln"> booktest</span><span class="pun">.</span><span class="pln">serializers </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">HeroModelSerializer</span></code></li><li class="L4"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span></code></li><li class="L5"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> h </span><span class="pun">=</span><span class="pln"> </span><span class="typ">HeroInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="pln">id</span><span class="pun">=</span><span class="lit">1</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> s </span><span class="pun">=</span><span class="pln"> </span><span class="typ">HeroModelSerializer</span><span class="pun">(</span><span class="pln">h</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> s</span><span class="pun">.</span><span class="pln">data</span></code></li><li class="L8"><code><span class="pun">{</span><span class="str">'hcomment'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'降龙十八掌'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'id'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="str">'is_delete'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">False</span><span class="pun">,</span><span class="pln"> </span><span class="str">'hname'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'郭靖'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'hbook'</span><span class="pun">:</span><span class="pln"> </span><span class="typ">OrderedDict</span><span class="pun">([(</span><span class="str">'id'</span><span class="pun">,</span><span class="pln"> </span><span class="lit">1</span><span class="pun">),</span><span class="pln"> </span><span class="pun">(</span><span class="str">'btitle'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'射雕英雄传'</span><span class="pun">),</span><span class="pln"> </span><span class="pun">(</span><span class="str">'bpub_date'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'1980-05-01'</span><span class="pun">),</span><span class="pln"> </span><span class="pun">(</span><span class="str">'bread'</span><span class="pun">,</span><span class="pln"> </span><span class="lit">12</span><span class="pun">),</span><span class="pln"> </span><span class="pun">(</span><span class="str">'bcomment'</span><span class="pun">,</span><span class="pln"> </span><span class="lit">34</span><span class="pun">),</span><span class="pln"> </span><span class="pun">(</span><span class="str">'is_delete'</span><span class="pun">,</span><span class="pln"> go</span><span class="str">', None)]), '</span><span class="pln">hgender</span><span class="str">': 1}</span></code></li></ol></pre></li>
+<li><p>自定义序列化</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">serializers</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> rest_framework </span><span class="kwd">import</span><span class="pln"> serializers</span></code></li><li class="L3"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">,</span><span class="pln"> </span><span class="typ">HeroInfo</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookModelSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">ModelSerializer</span><span class="pun">):</span></code></li><li class="L6"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L7"><code><span class="pln">        model </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span></code></li><li class="L8"><code><span class="pln">        </span><span class="com"># 如果是all ，则和 depth = 1 相同</span></code></li><li class="L9"><code><span class="pln">        </span><span class="com">#fields = "__all__"</span></code></li><li class="L0"><code><span class="pln">        fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="str">'id'</span><span class="pun">,</span><span class="str">'btitle'</span><span class="pun">,</span><span class="str">'bread'</span><span class="pun">]</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">HeroModelSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">ModelSerializer</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">    hbook </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookModelSerializer</span><span class="pun">()</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L5"><code><span class="pln">        model </span><span class="pun">=</span><span class="pln"> </span><span class="typ">HeroInfo</span></code></li><li class="L6"><code><span class="pln">        fields </span><span class="pun">=</span><span class="pln"> </span><span class="str">"__all__"</span></code></li></ol></pre>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">shell</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span><span class="kwd">from</span><span class="pln"> booktest</span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln">  </span><span class="typ">HeroInfo</span></code></li><li class="L3"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span><span class="kwd">from</span><span class="pln"> booktest</span><span class="pun">.</span><span class="pln">serializers </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">HeroModelSerializer</span></code></li><li class="L4"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span></code></li><li class="L5"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> h </span><span class="pun">=</span><span class="pln"> </span><span class="typ">HeroInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="pln">id</span><span class="pun">=</span><span class="lit">1</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> s </span><span class="pun">=</span><span class="pln"> </span><span class="typ">HeroModelSerializer</span><span class="pun">(</span><span class="pln">h</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> s</span><span class="pun">.</span><span class="pln">data</span></code></li><li class="L8"><code><span class="pun">{</span><span class="str">'is_delete'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">False</span><span class="pun">,</span><span class="pln"> </span><span class="str">'hbook'</span><span class="pun">:</span><span class="pln"> </span><span class="typ">OrderedDict</span><span class="pun">([(</span><span class="str">'id'</span><span class="pun">,</span><span class="pln"> </span><span class="lit">1</span><span class="pun">),</span><span class="pln"> </span><span class="pun">(</span><span class="str">'btitle'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'射雕英雄传'</span><span class="pun">),</span><span class="pln"> </span><span class="pun">(</span><span class="str">'bread'</span><span class="pun">,</span><span class="pln"> </span><span class="lit">12</span><span class="pun">)]),</span><span class="pln"> </span><span class="str">'id'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="str">'hcomment'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'降龙十八掌'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'hgender'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="str">'hname'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'郭靖'</span><span class="pun">}</span></code></li></ol></pre></li>
+<li><p>只读 <br>
+只读属性，只用在序列化，不用在反序列化 <br>
+需要通过 <code>read_only_fields</code> 指定</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">ModelSerializer</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""图书数据序列化器"""</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L3"><code><span class="pln">        model </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span></code></li><li class="L4"><code><span class="pln">        fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'id'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'btitle'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'bpub_date'</span><span class="pun">，</span><span class="pln"> </span><span class="str">'bread'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'bcomment'</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">        read_only_fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'id'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'bread'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'bcomment'</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>额外参数 <br>
+默认的选项从模型类中引入，我们可以通过 元选项的extra_kwargs进行指定 <br>
+整体是字典，key是字段；value也是字典，k，v分别代表选项名称和值</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">ModelSerializer</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""图书数据序列化器"""</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L3"><code><span class="pln">        model </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span></code></li><li class="L4"><code><span class="pln">        fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'id'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'btitle'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'bpub_date'</span><span class="pun">，</span><span class="pln"> </span><span class="str">'bread'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'bcomment'</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">        extra_kwargs </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L6"><code><span class="pln">            </span><span class="str">'bread'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span><span class="str">'min_value'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">0</span><span class="pun">,</span><span class="pln"> </span><span class="str">'required'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">True</span><span class="pun">}},</span></code></li><li class="L7"><code><span class="pln">            </span><span class="str">'bcomment'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span><span class="str">'max_value'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">0</span><span class="pun">,</span><span class="pln"> </span><span class="str">'required'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">True</span><span class="pun">}},</span></code></li><li class="L8"><code><span class="pln">        </span><span class="pun">}</span></code></li></ol></pre></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="od0j" id="16request与response和类图查看">16_Request与Response和类图查看</h2><ul data-anchor-id="ujs1">
+<li><p>概述 <br>
+DRF 为了简化开发，提供了大量的视图类 和 视图集类，它们只需要简单的通过类属性配置一下就可以完成工作。 <br>
+同时，也提供了细节方面的控制，我们可以实现个性的具体步骤</p></li>
+<li><p>Request与Response <br>
+提供了与django自带的请求响应对象不同的对象</p>
+
+<ul><li>使用方式 <br>
+<ul><li>如果是视图函数，需要 rest_framework.decorators.api_view 进行装饰</li>
+<li>如果是视图类，需要直接或者间接的继承于 rest_framework.views.APIView</li></ul></li>
+<li>Request <br>
+<ul><li>继承自django.http.HttpRequest ,但进行了扩展，更符合rest</li>
+<li>.query_params 代替了 .GET</li>
+<li>.data 代替了 .POST / .PUT / .PATCH / .FILES ，而且是解析(parse)后的数据</li></ul></li>
+<li>Response <br>
+<ul><li>继承自django.http.HttpResponse ,但进行了扩展，更符合rest</li>
+<li>请求中需要什么类型的数据(Accept头)，就返回什么类型的数据(如果配置中支持的话)(Content-Type头)</li>
+<li>Response(data, status=None, template_name=None, headers=None, content_type=None) <br>
+<ul><li>data 是serializer的data，是未渲染(render)的数据</li>
+<li>status 状态码</li>
+<li>template_name 模板名称 没有用</li>
+<li>headers 响应头，字典</li>
+<li>content_type 类型，没用(框架指定)</li></ul></li></ul></li></ul></li>
+<li><p>配置rest_framework</p>
+
+<ul><li><p>整体</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">settings</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">REST_FRAMEWORK </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L3"><code><span class="pln">    </span><span class="com"># 所有跟 rest_framework 有关的都配置在这里</span></code></li><li class="L4"><code><span class="pun">}</span></code></li></ol></pre></li>
+<li><p>配置 请求解析类</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln"> REST_FRAMEWORK </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'DEFAULT_PARSER_CLASSES'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">(</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">'rest_framework.parsers.JSONParser'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">        </span><span class="str">'rest_framework.parsers.FormParser'</span><span class="pun">,</span></code></li><li class="L4"><code><span class="pln">        </span><span class="str">'rest_framework.parsers.MultiPartParser'</span><span class="pun">,</span></code></li><li class="L5"><code><span class="pln">    </span><span class="pun">),</span></code></li><li class="L6"><code><span class="pun">}</span></code></li></ol></pre></li>
+<li><p>配置 响应渲染类</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln"> REST_FRAMEWORK </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'DEFAULT_RENDERER_CLASSES'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">(</span><span class="pln">  </span><span class="com"># 默认响应渲染类</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">'rest_framework.renderers.JSONRenderer'</span><span class="pun">,</span><span class="pln">  </span><span class="com"># json渲染器</span></code></li><li class="L3"><code><span class="pln">        </span><span class="str">'rest_framework.renderers.BrowsableAPIRenderer'</span><span class="pun">,</span><span class="pln">  </span><span class="com"># 浏览API渲染器</span></code></li><li class="L4"><code><span class="pln">    </span><span class="pun">)</span></code></li><li class="L5"><code><span class="pun">}</span></code></li></ol></pre></li>
+<li><p>如不配置 则使用默认的 <br>
+<code>rest_framework.settings</code></p></li></ul></li>
+<li><p>视图类关系</p>
+
+<ul><li>视图类 <br>
+<img src="http://static.zybuluo.com/jsutqb/rctswmkrv5z6m0b5gx66euv9/django.views.generic.base.View.png" alt="django.views.generic.base.View.png-132.4kB"></li>
+<li>视图集 <br>
+<img src="http://static.zybuluo.com/jsutqb/fpdnl235cxu5gmlkeiba57cp/django.views.generic.base.View.png" alt="django.views.generic.base.View.png-88.4kB"></li></ul></li>
+</ul></div>
+<a href="4.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="6.html">下一页</a>
+</body>
+</html>

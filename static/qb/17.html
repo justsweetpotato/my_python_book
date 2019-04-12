@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html class="theme theme-white">
+<head>
+<meta charset="utf-8">
+    <a href="16.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="18.html">下一页</a>
+<title>Django-4.0-Day17</title>
+<link href="https://www.zybuluo.com/static/assets/template-theme-white.css" rel="stylesheet" media="screen">
+<style type="text/css">
+
+#wmd-preview h1  {
+    color: #0077bb; /* 将标题改为蓝色 */
+}</style>
+</head>
+<body class="theme theme-white">
+<div id="wmd-preview" class="wmd-preview wmd-preview-full-reader"><div class="md-section-divider"></div><div class="md-section-divider"></div><h1 data-anchor-id="ur8x" id="django-40-day17">Django-4.0-Day17</h1><div class="md-section-divider"></div><h2 data-anchor-id="fukm" id="django"><code>django</code></h2><div class="md-section-divider"></div><h2 data-anchor-id="29pm" id="01下单成功页面">01_下单成功页面</h2><ol data-anchor-id="frb5">
+<li>从url中获取订单编号、付款方式、订单金额</li>
+<li>显示订单金额和订单id</li>
+<li>判断订单付款方式，更改按钮文字</li>
+<li>准备支付链接</li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="7bfk" id="02支付宝支付流程演示与支付数据库构建">02_支付宝支付流程演示与支付数据库构建</h2><ul data-anchor-id="s1jl">
+<li><p>支付流程 <br>
+与平时网购一样 <br>
+只是使用了支付宝开发环境(商家和买家账号)</p></li>
+<li><p>需求 <br>
+需要记录 支付时间 和第三方支付的交易流水号</p></li>
+<li><p>代码</p>
+
+<ol><li>创建payment应用 <br>
+<code>django-admin startapp payment</code></li>
+<li><p>添加模型代码</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">db </span><span class="kwd">import</span><span class="pln"> models</span></code></li><li class="L1"><code><span class="kwd">from</span><span class="pln"> meiduo_mall</span><span class="pun">.</span><span class="pln">utils</span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">BaseModel</span></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> orders</span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">OrderInfo</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">Payment</span><span class="pun">(</span><span class="typ">BaseModel</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">    </span><span class="str">"""</span></code></li><li class="L6"><code><span class="str">    支付信息</span></code></li><li class="L7"><code><span class="str">    """</span></code></li><li class="L8"><code><span class="pln">    order </span><span class="pun">=</span><span class="pln"> models</span><span class="pun">.</span><span class="typ">ForeignKey</span><span class="pun">(</span><span class="typ">OrderInfo</span><span class="pun">,</span><span class="pln"> on_delete</span><span class="pun">=</span><span class="pln">models</span><span class="pun">.</span><span class="pln">CASCADE</span><span class="pun">,</span><span class="pln"> verbose_name</span><span class="pun">=</span><span class="str">'订单'</span><span class="pun">)</span></code></li><li class="L9"><code><span class="pln">    trade_id </span><span class="pun">=</span><span class="pln"> models</span><span class="pun">.</span><span class="typ">CharField</span><span class="pun">(</span><span class="pln">max_length</span><span class="pun">=</span><span class="lit">100</span><span class="pun">,</span><span class="pln"> unique</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">null</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">,</span><span class="pln"> blank</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">,</span><span class="pln"> verbose_name</span><span class="pun">=</span><span class="str">"支付编号"</span><span class="pun">)</span></code></li><li class="L0"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L1"><code><span class="pln">        db_table </span><span class="pun">=</span><span class="pln"> </span><span class="str">'tb_payment'</span></code></li></ol></pre></li>
+<li><p>进行数据库迁移 <br>
+<code>python manage.py makemigrations</code> <br>
+<code>python manage.py migrate</code></p></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="pwla" id="03创建支付宝应用流程与沙箱环境介绍">03_创建支付宝应用流程与沙箱环境介绍</h2><ul data-anchor-id="nhzu">
+<li><p>流程</p>
+
+<ol><li>注册</li>
+<li>创建应用</li>
+<li>添加功能</li>
+<li>签约(正式环境需要，开发环境不需要)</li>
+<li>按照文档开发</li></ol></li>
+<li><p>沙箱环境</p>
+
+<ol><li>与正式环境的代码、流程相同</li>
+<li>与正式环境的数据隔离</li>
+<li>不需要签约就可以使用</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="eari" id="04支付宝支付流程">04_支付宝支付流程</h2><p data-anchor-id="rarr"><img src="http://static.zybuluo.com/jsutqb/lpeo732x9f82z3n23ic8v1pg/image_1cimuvjcf17j91idna5411fn9ag9.png" alt="image_1cimuvjcf17j91idna5411fn9ag9.png-64.5kB"></p><ul data-anchor-id="xm5g">
+<li>需要万盟实现的功能 <br>
+<ol><li>根据订单 得到付款地址</li>
+<li>向支付宝，发起请求查询订单支付状态</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="sr1k" id="05rsa对数据进行加密签名处理">05_rsa对数据进行加密签名处理</h2><div class="md-section-divider"></div><h2 data-anchor-id="dyvj" id="06密钥对加密解密纠正说明">06_密钥对加密解密纠正说明</h2><ul data-anchor-id="kw1j">
+<li>加密知识 <br>
+<ul><li>分类 <br>
+<ul><li>对称加密</li>
+<li>非对称加密(公私钥)</li>
+<li>摘要(严格说不是加密算法)</li></ul></li>
+<li>用途 <br>
+<ul><li>对称加密 <br>
+加密解密信息</li>
+<li>非对称加密(公私钥) <br>
+密钥交换 (公钥加密、私钥解密) <br>
+身份认证(私钥加密、公钥解密)</li>
+<li>摘要(严格说不是加密算法) <br>
+信息完整性校验</li></ul></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="ec27" id="07创建秘钥对与秘钥配置">07_创建秘钥对与秘钥配置</h2><ol data-anchor-id="uz2q">
+<li><p>生成公私钥</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">openssl</span></code></li><li class="L1"><code><span class="typ">OpenSSL</span><span class="pun">&gt;</span><span class="pln"> genrsa </span><span class="pun">-</span><span class="kwd">out</span><span class="pln"> app_private_key</span><span class="pun">.</span><span class="pln">pem </span><span class="lit">2048</span><span class="pln">  </span><span class="com"># 私钥RSA2</span></code></li><li class="L2"><code><span class="typ">OpenSSL</span><span class="pun">&gt;</span><span class="pln"> rsa </span><span class="pun">-</span><span class="kwd">in</span><span class="pln"> app_private_key</span><span class="pun">.</span><span class="pln">pem </span><span class="pun">-</span><span class="pln">pubout </span><span class="pun">-</span><span class="kwd">out</span><span class="pln"> app_public_key</span><span class="pun">.</span><span class="pln">pem </span><span class="com"># 导出公钥</span></code></li><li class="L3"><code><span class="typ">OpenSSL</span><span class="pun">&gt;</span><span class="pln"> </span><span class="kwd">exit</span></code></li></ol></pre>
+
+<p>以上命令适用于mac和linux，不适用于windows</p></li>
+<li><p>上传我方公钥 <br>
+<a href="https://openhome.alipay.com/platform/appDaily.htm?tab=info" target="_blank">https://openhome.alipay.com/platform/appDaily.htm?tab=info</a> <br>
+<img src="http://static.zybuluo.com/jsutqb/spoyojargm5heqad1xik6yty/1.png" alt="1.png-14.8kB"></p></li>
+<li><p>下载支付宝私钥 <br>
+<img src="http://static.zybuluo.com/jsutqb/4pt4rfxgjppsp3resbghgy4o/2.png" alt="2.png-14kB"></p></li>
+<li><p>在项目中添加公私钥文件 <br>
+路径: apps/payment/keys <br>
+注意: 需要在支付宝公钥中前后添加内容</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pun">-----</span><span class="kwd">BEGIN</span><span class="pln"> PUBLIC KEY</span><span class="pun">-----</span></code></li><li class="L1"><code><span class="pun">此处是公钥内容</span></code></li><li class="L2"><code><span class="pun">-----</span><span class="kwd">END</span><span class="pln"> PUBLIC KEY</span><span class="pun">-----</span></code></li></ol></pre></li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="o52z" id="08支付宝接口说明与sdk使用">08_支付宝接口说明与SDK使用</h2><ul data-anchor-id="oqv4">
+<li><p>支付宝接口 <br>
+本身就是通过url提供出来的API <br>
+<a href="https://docs.open.alipay.com/270/105900/" target="_blank">https://docs.open.alipay.com/270/105900/</a></p></li>
+<li><p>SDK = Software Develop Kit <br>
+软件开发套件 <br>
+提供类似调方法的形式去发起请求得到响应</p></li>
+<li><p>支付宝sdk的使用 <br>
+官方没有提供python的 <br>
+第三方开源出sdk <br>
+使用方式(主要是参考<a href="https://github.com/fzlee/alipay/blob/master/README.zh-hans.md" target="_blank">文档</a>)</p>
+
+<ol><li>安装包 <br>
+<code>pip install python-alipay-sdk</code></li>
+<li>创建AliPay对象</li>
+<li>调用Alipay对象上的方法</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="c8ws" id="09请求支付宝支付链接接口实现">09_请求支付宝支付链接接口实现</h2><ul data-anchor-id="qfzu">
+<li>设计 <br>
+<ul><li>请求  GET /orders//payment/</li>
+<li>响应 {"alipay_url":alipay_url}</li></ul></li>
+<li><p>实现</p>
+
+<ul><li><p>payment.views.py</p>
+
+<ol><li>校验数据 <br>
+<ol><li>订单id是否存在</li>
+<li>订单状态是非为待支付</li>
+<li>订单</li></ol></li>
+<li>业务处理 <br>
+<ol><li>根据sdk中要求的参数 拿到对应的值</li>
+<li>创建Alipay对象</li>
+<li>调用Alipay对象的api_alipay_trade_page_pay方法获得支付链接</li></ol></li>
+<li>返回结果</li></ol>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> rest_framework </span><span class="kwd">import</span><span class="pln"> status</span></code></li><li class="L1"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">response </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">Response</span></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">views </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">APIView</span></code></li><li class="L3"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">permissions </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">IsAuthenticated</span></code></li><li class="L4"><code><span class="kwd">from</span><span class="pln"> alipay </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">AliPay</span></code></li><li class="L5"><code><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">conf </span><span class="kwd">import</span><span class="pln"> settings</span></code></li><li class="L6"><code><span class="kwd">import</span><span class="pln"> os</span></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="kwd">from</span><span class="pln"> orders</span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">OrderInfo</span></code></li><li class="L9"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">Payment</span></code></li><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">PaymentView</span><span class="pun">(</span><span class="typ">APIView</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""</span></code></li><li class="L2"><code><span class="str">    支付宝支付</span></code></li><li class="L3"><code><span class="str">    /orders/(?P&lt;order_id&gt;\d+)/payment/</span></code></li><li class="L4"><code><span class="str">    """</span></code></li><li class="L5"><code><span class="pln">    permission_classes </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="typ">IsAuthenticated</span><span class="pun">]</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> order_id</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">        user </span><span class="pun">=</span><span class="pln"> request</span><span class="pun">.</span><span class="pln">user</span></code></li><li class="L9"><code><span class="pln">        </span><span class="com"># 校验订单order_id</span></code></li><li class="L0"><code><span class="pln">        </span><span class="kwd">try</span><span class="pun">:</span></code></li><li class="L1"><code><span class="pln">            order </span><span class="pun">=</span><span class="pln"> </span><span class="typ">OrderInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="pln">order_id</span><span class="pun">=</span><span class="pln">order_id</span><span class="pun">,</span><span class="pln"> user</span><span class="pun">=</span><span class="pln">user</span><span class="pun">,</span><span class="pln"> status</span><span class="pun">=</span><span class="typ">OrderInfo</span><span class="pun">.</span><span class="pln">ORDER_STATUS_ENUM</span><span class="pun">[</span><span class="str">'UNPAID'</span><span class="pun">])</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">except</span><span class="pln"> </span><span class="typ">OrderInfo</span><span class="pun">.</span><span class="typ">DoesNotExist</span><span class="pun">:</span></code></li><li class="L3"><code><span class="pln">            </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">Response</span><span class="pun">({</span><span class="str">'message'</span><span class="pun">:</span><span class="pln"> </span><span class="str">"订单信息有误"</span><span class="pun">},</span><span class="pln"> status</span><span class="pun">=</span><span class="pln">status</span><span class="pun">.</span><span class="pln">HTTP_400_BAD_REQUEST</span><span class="pun">)</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="pln">        </span><span class="com"># 根据订单的数据，向支付宝发起请求，获取支付链接参数</span></code></li><li class="L6"><code><span class="pln">        alipay_client </span><span class="pun">=</span><span class="pln"> </span><span class="typ">AliPay</span><span class="pun">(</span></code></li><li class="L7"><code><span class="pln">            appid</span><span class="pun">=</span><span class="pln">settings</span><span class="pun">.</span><span class="pln">ALIPAY_APPID</span><span class="pun">,</span></code></li><li class="L8"><code><span class="pln">            app_notify_url</span><span class="pun">=</span><span class="kwd">None</span><span class="pun">,</span><span class="pln">  </span><span class="com"># 默认回调url</span></code></li><li class="L9"><code><span class="pln">            app_private_key_path</span><span class="pun">=</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">join</span><span class="pun">(</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">dirname</span><span class="pun">(</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">abspath</span><span class="pun">(</span><span class="pln">__file__</span><span class="pun">)),</span><span class="pln"> </span><span class="str">"keys/app_private_key.pem"</span><span class="pun">),</span></code></li><li class="L0"><code><span class="pln">            alipay_public_key_path</span><span class="pun">=</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">join</span><span class="pun">(</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">dirname</span><span class="pun">(</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">abspath</span><span class="pun">(</span><span class="pln">__file__</span><span class="pun">)),</span></code></li><li class="L1"><code><span class="pln">                                                </span><span class="str">"keys/alipay_public_key.pem"</span><span class="pun">),</span><span class="pln">  </span><span class="com"># 支付宝的公钥，验证支付宝回传消息使用，不是你自己的公钥,</span></code></li><li class="L2"><code><span class="pln">            sign_type</span><span class="pun">=</span><span class="str">"RSA2"</span><span class="pun">,</span><span class="pln">  </span><span class="com"># RSA 或者 RSA2</span></code></li><li class="L3"><code><span class="pln">            debug</span><span class="pun">=</span><span class="pln">settings</span><span class="pun">.</span><span class="pln">ALIPAY_DEBUG  </span><span class="com"># 默认False</span></code></li><li class="L4"><code><span class="pln">        </span><span class="pun">)</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">        order_string </span><span class="pun">=</span><span class="pln"> alipay_client</span><span class="pun">.</span><span class="pln">api_alipay_trade_page_pay</span><span class="pun">(</span></code></li><li class="L7"><code><span class="pln">            out_trade_no</span><span class="pun">=</span><span class="pln">order_id</span><span class="pun">,</span></code></li><li class="L8"><code><span class="pln">            total_amount</span><span class="pun">=</span><span class="pln">str</span><span class="pun">(</span><span class="pln">order</span><span class="pun">.</span><span class="pln">total_amount</span><span class="pun">),</span></code></li><li class="L9"><code><span class="pln">            subject</span><span class="pun">=</span><span class="str">"美多商城%s"</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> order_id</span><span class="pun">,</span></code></li><li class="L0"><code><span class="pln">            return_url</span><span class="pun">=</span><span class="str">"http://www.meiduo.site:8080/pay_success.html"</span><span class="pun">,</span></code></li><li class="L1"><code><span class="pln">        </span><span class="pun">)</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">        </span><span class="com"># 需要跳转到https://openapi.alipay.com/gateway.do? + order_string</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># 拼接链接返回前端</span></code></li><li class="L5"><code><span class="pln">        alipay_url </span><span class="pun">=</span><span class="pln"> settings</span><span class="pun">.</span><span class="pln">ALIPAY_GATEWAY_URL </span><span class="pun">+</span><span class="pln"> </span><span class="str">'?'</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> order_string</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">Response</span><span class="pun">({</span><span class="str">'alipay_url'</span><span class="pun">:</span><span class="pln"> alipay_url</span><span class="pun">})</span></code></li></ol></pre></li>
+<li><p>payment.urls.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'^orders/(?P&lt;order_id&gt;\d+)/payment/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">PaymentView</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">()),</span></code></li></ol></pre></li></ul></li>
+<li><p>注意</p>
+
+<ol><li>文档中是key_string,我们传的是 key_path</li>
+<li>为了后期上线，我们把 appid 和 是否为调试模式添加到配置文件(dev.py)中 </li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="utpt" id="10发起支付宝支付请求测试">10_发起支付宝支付请求测试</h2><ul data-anchor-id="teug">
+<li><p>前端代码</p>
+
+<ol><li>点击去支付</li>
+<li>向后端发起请求 获得 支付链接</li>
+<li>重定向到后端返回的地址</li></ol></li>
+<li><p>手续费 <br>
+千6</p></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="b3yv" id="11支付宝重定向返回接口实现">11_支付宝重定向返回接口实现</h2><p data-anchor-id="q2lm">当支付完成之后，支付宝会引导用户到 return_url <br>
+我们要在这个页面中显示支付结果和支付宝交易流水号</p><ul data-anchor-id="xpu4">
+<li><p>后端</p>
+
+<ul><li>设计 <br>
+<ul><li>请求 PUT /payment/status/?&lt;支付宝参数&gt;</li>
+<li>响应 {"trade_id":trade_id}</li></ul></li>
+<li><p>实现</p>
+
+<ul><li><p>payment.views.py</p>
+
+<ol><li>取出请求参数 <br>
+<ol><li>QueryDict转为dict</li>
+<li>需要排除掉sign字段</li></ol></li>
+<li>创建Alipay对象</li>
+<li>调用Alipay对象的verify方法校验信息完整性</li>
+<li>进行业务处理 <br>
+<ol><li>添加支付记录</li>
+<li>修改订单状态为待发货</li></ol></li></ol>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">PaymentStatusView</span><span class="pun">(</span><span class="typ">APIView</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""</span></code></li><li class="L2"><code><span class="str">    修改支付结果状态</span></code></li><li class="L3"><code><span class="str">    """</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> put</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">        </span><span class="com"># 取出请求的参数</span></code></li><li class="L6"><code><span class="pln">        query_dict </span><span class="pun">=</span><span class="pln"> request</span><span class="pun">.</span><span class="pln">query_params</span></code></li><li class="L7"><code><span class="pln">        </span><span class="com"># 将django中的QueryDict 转换python的字典</span></code></li><li class="L8"><code><span class="pln">        alipay_data_dict </span><span class="pun">=</span><span class="pln"> query_dict</span><span class="pun">.</span><span class="pln">dict</span><span class="pun">()</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">        sign </span><span class="pun">=</span><span class="pln"> alipay_data_dict</span><span class="pun">.</span><span class="pln">pop</span><span class="pun">(</span><span class="str">'sign'</span><span class="pun">)</span></code></li><li class="L1"><code></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">        </span><span class="com"># 校验请求参数是否是支付宝的</span></code></li><li class="L4"><code><span class="pln">        alipay_client </span><span class="pun">=</span><span class="pln"> </span><span class="typ">AliPay</span><span class="pun">(</span></code></li><li class="L5"><code><span class="pln">            appid</span><span class="pun">=</span><span class="pln">settings</span><span class="pun">.</span><span class="pln">ALIPAY_APPID</span><span class="pun">,</span></code></li><li class="L6"><code><span class="pln">            app_notify_url</span><span class="pun">=</span><span class="kwd">None</span><span class="pun">,</span><span class="pln">  </span><span class="com"># 默认回调url</span></code></li><li class="L7"><code><span class="pln">            app_private_key_path</span><span class="pun">=</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">join</span><span class="pun">(</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">dirname</span><span class="pun">(</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">abspath</span><span class="pun">(</span><span class="pln">__file__</span><span class="pun">)),</span><span class="pln"> </span><span class="str">"keys/app_private_key.pem"</span><span class="pun">),</span></code></li><li class="L8"><code><span class="pln">            alipay_public_key_path</span><span class="pun">=</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">join</span><span class="pun">(</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">dirname</span><span class="pun">(</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">abspath</span><span class="pun">(</span><span class="pln">__file__</span><span class="pun">)),</span></code></li><li class="L9"><code><span class="pln">                                                </span><span class="str">"keys/alipay_public_key.pem"</span><span class="pun">),</span><span class="pln">  </span><span class="com"># 支付宝的公钥，验证支付宝回传消息使用，不是你自己的公钥,</span></code></li><li class="L0"><code><span class="pln">            sign_type</span><span class="pun">=</span><span class="str">"RSA2"</span><span class="pun">,</span><span class="pln">  </span><span class="com"># RSA 或者 RSA2</span></code></li><li class="L1"><code><span class="pln">            debug</span><span class="pun">=</span><span class="pln">settings</span><span class="pun">.</span><span class="pln">ALIPAY_DEBUG  </span><span class="com"># 默认False</span></code></li><li class="L2"><code><span class="pln">        </span><span class="pun">)</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="pln">        success </span><span class="pun">=</span><span class="pln"> alipay_client</span><span class="pun">.</span><span class="pln">verify</span><span class="pun">(</span><span class="pln">alipay_data_dict</span><span class="pun">,</span><span class="pln"> sign</span><span class="pun">)</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> success</span><span class="pun">:</span></code></li><li class="L7"><code><span class="pln">            order_id </span><span class="pun">=</span><span class="pln"> alipay_data_dict</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'out_trade_no'</span><span class="pun">)</span></code></li><li class="L8"><code><span class="pln">            trade_id </span><span class="pun">=</span><span class="pln"> alipay_data_dict</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'trade_no'</span><span class="pun">)</span><span class="pln">  </span><span class="com"># 支付宝交易流水号</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">            </span><span class="com"># 保存支付数据</span></code></li><li class="L1"><code><span class="pln">            </span><span class="com"># 修改订单数据</span></code></li><li class="L2"><code><span class="pln">            </span><span class="typ">Payment</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">create</span><span class="pun">(</span><span class="pln"> order_id</span><span class="pun">=</span><span class="pln">order_id</span><span class="pun">,</span><span class="pln"> trade_id</span><span class="pun">=</span><span class="pln">trade_id </span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">            </span><span class="typ">OrderInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">filter</span><span class="pun">(</span><span class="pln">order_id</span><span class="pun">=</span><span class="pln">order_id</span><span class="pun">,</span><span class="pln"> status</span><span class="pun">=</span><span class="typ">OrderInfo</span><span class="pun">.</span><span class="pln">ORDER_STATUS_ENUM</span><span class="pun">[</span><span class="str">'UNPAID'</span><span class="pun">]).</span><span class="pln">update</span><span class="pun">(</span><span class="pln">status</span><span class="pun">=</span><span class="typ">OrderInfo</span><span class="pun">.</span><span class="pln">ORDER_STATUS_ENUM</span><span class="pun">[</span><span class="str">'UNSEND'</span><span class="pun">])</span></code></li><li class="L4"><code><span class="pln">            </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">Response</span><span class="pun">({</span><span class="str">'trade_id'</span><span class="pun">:</span><span class="pln"> trade_id</span><span class="pun">})</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">else</span><span class="pun">:</span></code></li><li class="L6"><code><span class="pln">            </span><span class="com"># 参数据不是支付宝的，是非法请求</span></code></li><li class="L7"><code><span class="pln">            </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">Response</span><span class="pun">({</span><span class="str">'message'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'非法请求'</span><span class="pun">},</span><span class="pln"> status</span><span class="pun">=</span><span class="pln">status</span><span class="pun">.</span><span class="pln">HTTP_403_FORBIDDEN</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>payment.urls.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'^payment/status/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">PaymentStatusView</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">())</span></code></li></ol></pre></li></ul></li></ul></li>
+<li><p>前端 </p>
+
+<ol><li>拿着?后面的内容发送请求到后端</li>
+<li>获得响应后改变界面显示</li></ol></li>
+</ul></div>
+<a href="16.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="18.html">下一页</a>
+</body>
+</html>

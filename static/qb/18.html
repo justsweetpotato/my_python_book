@@ -1,0 +1,289 @@
+﻿<!DOCTYPE html>
+<html class="theme theme-white">
+<head>
+<meta charset="utf-8">
+ <a href="17.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="index.html">回首页</a>
+<title>Django-4.0-Day18</title>
+<link href="https://www.zybuluo.com/static/assets/template-theme-white.css" rel="stylesheet" media="screen">
+<style type="text/css">
+
+#wmd-preview h1  {
+    color: #0077bb; /* 将标题改为蓝色 */
+}</style>
+</head>
+<body class="theme theme-white">
+<div id="wmd-preview" class="wmd-preview wmd-preview-full-reader"><div class="md-section-divider"></div><div class="md-section-divider"></div><h1 data-anchor-id="bd87" id="django-40-day18">Django-4.0-Day18</h1><p data-anchor-id="bihy"><code>django</code></p><hr><div class="md-section-divider"></div><h2 data-anchor-id="ban5" id="01xadmin介绍与安装">01_xadmin介绍与安装</h2><ul data-anchor-id="sso3">
+<li><p>提供运营功能</p>
+
+<ol><li>自己开发</li>
+<li>使用现成的 <br>
+<ul><li>django自带的admin</li>
+<li>第三方的xadmin</li></ul></li></ol></li>
+<li><p>xadmin的特点</p>
+
+<ul><li>支持数据导出</li>
+<li>支持小组件(图表、表单、图标等)</li>
+<li>非代码修改页面</li></ul></li>
+<li><p>xadmin的基本使用</p>
+
+<ol><li>安装 <br>
+<code>pip install https://github.com/sshwsfc/xadmin/tarball/master</code></li>
+<li><p>添加应用</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">INSTALLED_APPS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">'xadmin'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">    </span><span class="str">'crispy_forms'</span><span class="pun">,</span></code></li><li class="L4"><code><span class="pln">    </span><span class="str">'reversion'</span><span class="pun">,</span></code></li><li class="L5"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L6"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>数据迁移 <br>
+<code>python manage.py migrate</code></p></li>
+<li><p>添加路由</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">import</span><span class="pln"> xadmin</span></code></li><li class="L1"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># url(r'^admin/', admin.site.urls),</span></code></li><li class="L3"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'xadmin/'</span><span class="pun">,</span><span class="pln"> include</span><span class="pun">(</span><span class="pln">xadmin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="pln">urls</span><span class="pun">)),</span></code></li><li class="L4"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L5"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li>配置站点管理 <br>
+<ul><li>xadmin不再使用Django的admin.py，而是需要编写代码在adminx.py文件中。</li>
+<li>xadmin的站点管理类不用继承admin.ModelAdmin，而是直接继承object即可。</li></ul></li></ol>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">goods</span><span class="pun">.</span><span class="pln">adminx</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">import</span><span class="pln"> xadmin</span></code></li><li class="L3"><code><span class="pln">xadmin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="pln">models</span><span class="pun">.</span><span class="pln">SKU</span><span class="pun">)</span></code></li></ol></pre></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="2ay9" id="02xadmin基本页面样式控制">02_xadmin基本页面样式控制</h2><ul data-anchor-id="v0fg">
+<li>主页配置</li>
+</ul><div class="md-section-divider"></div><pre class="prettyprint linenums prettyprinted" data-anchor-id="v9t8"><ol class="linenums"><li class="L0"><code><span class="pln"> </span><span class="com"># 任意应用的xadmin.py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">import</span><span class="pln"> xadmin</span></code></li><li class="L3"><code><span class="kwd">from</span><span class="pln"> xadmin </span><span class="kwd">import</span><span class="pln"> views</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln"> </span><span class="kwd">import</span><span class="pln"> models</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BaseSetting</span><span class="pun">(</span><span class="kwd">object</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">    </span><span class="str">"""xadmin的基本配置"""</span></code></li><li class="L9"><code><span class="pln">    </span><span class="com"># 开启主题切换功能</span></code></li><li class="L0"><code><span class="pln">    enable_themes </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">True</span><span class="pln">  </span></code></li><li class="L1"><code><span class="pln">    use_bootswatch </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">True</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">xadmin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="pln">views</span><span class="pun">.</span><span class="typ">BaseAdminView</span><span class="pun">,</span><span class="pln"> </span><span class="typ">BaseSetting</span><span class="pun">)</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">GlobalSettings</span><span class="pun">(</span><span class="kwd">object</span><span class="pun">):</span></code></li><li class="L6"><code><span class="pln">    </span><span class="str">"""xadmin的全局配置"""</span></code></li><li class="L7"><code><span class="pln">    site_title </span><span class="pun">=</span><span class="pln"> </span><span class="str">"美多商城运营管理系统"</span><span class="pln">  </span><span class="com"># 设置站点标题</span></code></li><li class="L8"><code><span class="pln">    site_footer </span><span class="pun">=</span><span class="pln"> </span><span class="str">"美多商城集团有限公司"</span><span class="pln">  </span><span class="com"># 设置站点的页脚</span></code></li><li class="L9"><code><span class="pln">    menu_style </span><span class="pun">=</span><span class="pln"> </span><span class="str">"accordion"</span><span class="pln">  </span><span class="com"># 设置菜单折叠</span></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="pln">xadmin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="pln">views</span><span class="pun">.</span><span class="typ">CommAdminView</span><span class="pun">,</span><span class="pln"> </span><span class="typ">GlobalSettings</span><span class="pun">)</span></code></li></ol></pre><ul data-anchor-id="hz50">
+<li><p>列表页面</p>
+
+<ul><li>model_icon 控制菜单的图标</li>
+<li>list_display 控制列表展示的字段</li>
+<li>search_fields 控制可以通过搜索框搜索的字段名称，xadmin使用的是模糊查询</li>
+<li>list_filter 可以进行过滤操作的列</li>
+<li>ordering 默认排序的字段</li>
+<li>exclude 在编辑页面隐藏的字段</li>
+<li>show_detail_fileds 在列表页提供快速显示详情信息</li>
+<li>list_editable 在列表页可以快速直接编辑的字段</li>
+<li>list_export 控制列表页导出数据的可选格式</li>
+<li>refresh_times 指定列表页的定时刷新</li>
+<li>show_bookmarks 控制是否显示书签功能</li>
+<li>data_charts 控制显示图标的样式</li></ul></li>
+<li><p>详情页</p>
+
+<ul><li>readonly_fields 在编辑页面的只读字段</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="nzs2" id="03xadmin保存删除数据补充自定义逻辑实现与用户管理定制">03_xadmin保存删除数据补充自定义逻辑实现与用户管理定制</h2><ul data-anchor-id="9qru">
+<li><p>模型变化 <br>
+支持当后台修改记录后，进行额外操作 <br>
+注意写法与django的ModelAdmin不一样</p>
+
+<table class="table table-striped-white table-bordered">
+<thead>
+<tr>
+ <th>操作</th>
+ <th>admin</th>
+ <th>xadmin</th>
+</tr>
+</thead>
+<tbody><tr>
+ <td>新增或修改</td>
+ <td>save_model(self, request, obj, form, change)</td>
+ <td>save_models(self)</td>
+</tr>
+<tr>
+ <td>删除</td>
+ <td>delete_model(self, request, obj)</td>
+ <td>delete_model(self)</td>
+</tr>
+</tbody></table>
+
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">SKUSpecificationAdmin</span><span class="pun">(</span><span class="kwd">object</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> save_models</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">        </span><span class="com"># 保存数据对象</span></code></li><li class="L3"><code><span class="pln">        obj </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">new_obj</span></code></li><li class="L4"><code><span class="pln">        obj</span><span class="pun">.</span><span class="pln">save</span><span class="pun">()</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">        </span><span class="com"># 补充自定义行为</span></code></li><li class="L7"><code><span class="pln">        </span><span class="kwd">from</span><span class="pln"> celery_tasks</span><span class="pun">.</span><span class="pln">html</span><span class="pun">.</span><span class="pln">tasks </span><span class="kwd">import</span><span class="pln"> generate_static_sku_detail_html</span></code></li><li class="L8"><code><span class="pln">        generate_static_sku_detail_html</span><span class="pun">.</span><span class="pln">delay</span><span class="pun">(</span><span class="pln">obj</span><span class="pun">.</span><span class="pln">sku</span><span class="pun">.</span><span class="pln">id</span><span class="pun">)</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> delete_model</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># 删除数据对象</span></code></li><li class="L2"><code><span class="pln">        obj </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">obj</span></code></li><li class="L3"><code><span class="pln">        sku_id </span><span class="pun">=</span><span class="pln"> obj</span><span class="pun">.</span><span class="pln">sku</span><span class="pun">.</span><span class="pln">id</span></code></li><li class="L4"><code><span class="pln">        obj</span><span class="pun">.</span><span class="kwd">delete</span><span class="pun">()</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">        </span><span class="com"># 补充自定义行为</span></code></li><li class="L7"><code><span class="pln">        </span><span class="kwd">from</span><span class="pln"> celery_tasks</span><span class="pun">.</span><span class="pln">html</span><span class="pun">.</span><span class="pln">tasks </span><span class="kwd">import</span><span class="pln"> generate_static_sku_detail_html</span></code></li><li class="L8"><code><span class="pln">        generate_static_sku_detail_html</span><span class="pun">.</span><span class="pln">delay</span><span class="pun">(</span><span class="pln">sku_id</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>用户模型界面控制</p>
+
+<ul><li>默认是自动添加用户相关模型 <br>
+所以需要先取消注册，再注册(目的是添加一些需要的配置) <br>
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">import</span><span class="pln"> xadmin</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">User</span></code></li><li class="L3"><code><span class="kwd">from</span><span class="pln"> xadmin</span><span class="pun">.</span><span class="pln">plugins </span><span class="kwd">import</span><span class="pln"> auth</span></code></li><li class="L4"><code></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">UserAdmin</span><span class="pun">(</span><span class="pln">auth</span><span class="pun">.</span><span class="typ">UserAdmin</span><span class="pun">):</span></code></li><li class="L7"><code><span class="pln">    </span><span class="com"># 列表界面显示字段</span></code></li><li class="L8"><code><span class="pln">    list_display </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="str">'id'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'username'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'mobile'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'email'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'date_joined'</span><span class="pun">]</span></code></li><li class="L9"><code><span class="pln">    </span><span class="com"># 不可修改字段</span></code></li><li class="L0"><code><span class="pln">    readonly_fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="str">'last_login'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'date_joined'</span><span class="pun">]</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 搜索字段</span></code></li><li class="L2"><code><span class="pln">    search_fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'username'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'first_name'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'last_name'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'email'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'mobile'</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">    </span><span class="com"># 对于外键关联(多对多的显示格式)</span></code></li><li class="L4"><code><span class="pln">    style_fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span><span class="str">'user_permissions'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'m2m_transfer'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'groups'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'m2m_transfer'</span><span class="pun">}</span></code></li><li class="L5"><code><span class="pln">    </span><span class="com"># 获得模型对应的表单</span></code></li><li class="L6"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> get_model_form</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L7"><code><span class="pln">        </span><span class="com"># org_obj为空说明，是新增</span></code></li><li class="L8"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">org_obj </span><span class="kwd">is</span><span class="pln"> </span><span class="kwd">None</span><span class="pun">:</span></code></li><li class="L9"><code><span class="pln">            </span><span class="com"># 指定新增时的字段</span></code></li><li class="L0"><code><span class="pln">            </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="str">'username'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'mobile'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'is_staff'</span><span class="pun">]</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">super</span><span class="pun">().</span><span class="pln">get_model_form</span><span class="pun">(**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L3"><code></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="pln">xadmin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="pln">unregister</span><span class="pun">(</span><span class="typ">User</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">xadmin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="typ">User</span><span class="pun">,</span><span class="pln"> </span><span class="typ">UserAdmin</span><span class="pun">)</span></code></li></ol></pre></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="2p4v" id="04权限使用说明">04_权限使用说明</h2><ul data-anchor-id="akp5">
+<li><p>概念 <br>
+我们可能给用户、组分配一定的权限，来进行系统的使用控制</p>
+
+<ul><li>用户(user) <br>
+一个账号，系统中用于识别不同操作人的</li>
+<li>组(group) <br>
+在系统角度中具有相似特点的用户，可以称为一个组</li>
+<li>权限(permision) <br>
+对某个资源进行某种操作的可能</li></ul></li>
+<li><p>django中的权限</p>
+
+<ol><li>模型</li>
+<li>增删改查</li>
+<li>用户的权限 =  所在组的权限 +  此用户的独有权限</li>
+<li>用户、组、权限 之间的关系是多对多</li></ol></li>
+</ul><p data-anchor-id="bepq"><img src="http://static.zybuluo.com/jsutqb/yngn4vgd73gbdxb5mny5zgwa/image_1cje4gqla1gbc58a1us21qgi2qr9.png" alt="image_1cje4gqla1gbc58a1us21qgi2qr9.png-372kB" title=""></p><div class="md-section-divider"></div><h2 data-anchor-id="inb4" id="05主从同步与读写分离">05_主从同步与读写分离</h2><ul data-anchor-id="3ok2">
+<li>读写分离 <br>
+显示网站中，读操作比写操作频繁 (10:1) <br>
+<ul><li>写 <br>
+增删改</li>
+<li>读 <br>
+查</li></ul></li>
+<li><p>主从同步</p>
+
+<ul><li>主(master) <br>
+提供写功能，允许多个从</li>
+<li>从(slave) <br>
+同步主，不支持写操作</li></ul></li>
+<li><p>主从同步 + 读写分离</p>
+
+<ol><li>写操作在主</li>
+<li>读操作在从</li>
+<li>一主可对多从</li></ol></li>
+<li>好处 <br>
+<ol><li>提升性能</li>
+<li>提升安全</li>
+<li>可以扩容</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="5eyc" id="06mysq主从同步配置">06_mysq主从同步配置</h2><ul data-anchor-id="a7kh">
+<li><p>同步机制</p>
+
+<ol><li>二进制日志</li>
+<li>数据库唯一id</li></ol></li>
+<li><p>基本步骤</p>
+
+<ul><li>1主：配置<code>二进制日志</code></li>
+<li>2主：配置<code>唯一id</code></li>
+<li>3主：准备提供给从用来复制数据的<code>账号</code></li>
+<li>4主：备份当前数据</li>
+<li>5主：记录开始同步的二进制日志的位置</li>
+<li>6从：配置<code>唯一id</code></li>
+<li>7从：导入主的数据</li>
+<li>8从：配置主的ip端口、主提供的账号</li>
+<li>9从: 二进制日志的位置</li>
+<li>10从: 开始同步</li></ul></li>
+<li><p>具体步骤</p>
+
+<ul><li><p>准备从mysql <br>
+这里使用了docker</p>
+
+<ol><li>获取mysql的docker <br>
+<code>docker image pull mysql:5.7.22</code> <br>
+或 <br>
+<code>docker load -i mysql_docker_5722.tar</code></li>
+<li>准备数据文件夹 <br>
+<code>cd ~ <br>
+mkdir mysql_slave <br>
+cd mysql_slave <br>
+mkdir data <br>
+</code></li>
+<li>准备配置文件夹 <br>
+<code>cd ~/mysql_slave <br>
+cp /etc/mysql/mysql.conf.d ./ <br>
+</code></li>
+<li><p>修改配置文件</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">port  </span><span class="pun">=</span><span class="pln">  </span><span class="lit">8306</span><span class="pln"> </span><span class="com">#mysql服务监听端口</span></code></li><li class="L1"><code><span class="pln">general_log  </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="com"># 不记录日志</span></code></li><li class="L2"><code><span class="pln">server</span><span class="pun">-</span><span class="pln">id  </span><span class="pun">=</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="com"># 配置id</span></code></li></ol></pre></li>
+<li><p>启动从 <br>
+<code>docker run --name mysql-slave -e MYSQL_ROOT_PASSWORD=mysql -d --network=host -v /home/python/mysql_slave/data:/var/lib/mysql -v /home/python/mysql_slave/mysql.conf.d:/etc/mysql/mysql.conf.d  mysql:5.7.22</code></p></li></ol></li>
+<li><p>主</p>
+
+<ol><li>备份当前数据 <br>
+<code>mysqldump -uroot -pmysql --all-databases --lock-all-tables &gt; ~/master_db.sql</code></li>
+<li><p>配置开启二进制日志 <br>
+<code>sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf <br>
+</code></p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">log_bin </span><span class="pun">=</span><span class="pln"> </span><span class="str">/var/</span><span class="pln">log</span><span class="pun">/</span><span class="pln">mysql</span><span class="pun">/</span><span class="pln">mysql</span><span class="pun">-</span><span class="pln">bin</span><span class="pun">.</span><span class="pln">log</span></code></li></ol></pre></li>
+<li><p>添加用户</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">mysql </span><span class="pun">–</span><span class="pln">uroot </span><span class="pun">–</span><span class="pln">pmysql</span></code></li><li class="L1"><code><span class="pln">mysql</span><span class="pun">&gt;</span><span class="pln"> GRANT REPLICATION SLAVE ON </span><span class="pun">*.*</span><span class="pln"> TO </span><span class="str">'slave'</span><span class="pun">@</span><span class="str">'%'</span><span class="pln"> identified </span><span class="kwd">by</span><span class="pln"> </span><span class="str">'slave'</span><span class="pun">;</span></code></li><li class="L2"><code><span class="pln">mysql</span><span class="pun">&gt;</span><span class="pln"> FLUSH PRIVILEGES</span><span class="pun">;</span></code></li></ol></pre></li>
+<li><p>重启mysql服务 <br>
+<code>sudo service mysql restart</code></p></li>
+<li>查看主服务的二进制日志信息 <br>
+<code>mysql&gt; SHOW MASTER STATUS;</code> <br>
+File为使用的日志文件名字，Position为使用的文件位置</li></ol></li>
+<li><p>从</p>
+
+<ol><li>导入数据 <br>
+<code>mysqldump -uroot -pmysql --all-databases --lock-all-tables &gt; ~/master_db.sql</code></li>
+<li><p>开启同步</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">mysql </span><span class="pun">-</span><span class="pln">uroot </span><span class="pun">-</span><span class="pln">pmysql </span><span class="pun">-</span><span class="pln">h127</span><span class="pun">.</span><span class="lit">0.0</span><span class="pun">.</span><span class="lit">1</span><span class="pln"> </span><span class="pun">--</span><span class="pln">port</span><span class="pun">=</span><span class="lit">8306</span></code></li><li class="L1"><code><span class="pln">mysql</span><span class="pun">&gt;</span><span class="pln"> change master to master_host</span><span class="pun">=</span><span class="str">'127.0.0.1'</span><span class="pun">,</span><span class="pln"> master_user</span><span class="pun">=</span><span class="str">'slave'</span><span class="pun">,</span><span class="pln"> master_password</span><span class="pun">=</span><span class="str">'slave'</span><span class="pun">,</span><span class="pln">master_log_file</span><span class="pun">=</span><span class="str">'mysql-bin.000006'</span><span class="pun">,</span><span class="pln"> master_log_pos</span><span class="pun">=</span><span class="lit">590</span><span class="pun">;</span></code></li></ol></pre>
+
+<p>注意修改master_log_file 和 master_log_pos</p></li>
+<li><p>启动slave服务器</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">mysql</span><span class="pun">&gt;</span><span class="pln"> start slave</span><span class="pun">;</span></code></li></ol></pre></li>
+<li><p>查看同步状态</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">mysql</span><span class="pun">&gt;</span><span class="pln"> show slave status \G</span></code></li></ol></pre></li></ol></li>
+<li><p>测试</p>
+
+<ol><li>在主中做数据库操作</li>
+<li>查看从中是否有对应数据</li></ol></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="0qdq" id="07django数据库读写分离路由器实现">07_django数据库读写分离路由器实现</h2><ol data-anchor-id="4u7a">
+<li><p>在配置文件中增加slave数据库的配置</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">DATABASES </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'default'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L2"><code><span class="pln">        </span><span class="pun">...</span></code></li><li class="L3"><code><span class="pln">    </span><span class="pun">},</span></code></li><li class="L4"><code><span class="pln">    </span><span class="str">'slave'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L5"><code><span class="pln">        </span><span class="str">'ENGINE'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'django.db.backends.mysql'</span><span class="pun">,</span></code></li><li class="L6"><code><span class="pln">        </span><span class="str">'HOST'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'10.211.55.5'</span><span class="pun">,</span></code></li><li class="L7"><code><span class="pln">        </span><span class="str">'PORT'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">8306</span><span class="pun">,</span></code></li><li class="L8"><code><span class="pln">        </span><span class="str">'USER'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'root'</span><span class="pun">,</span></code></li><li class="L9"><code><span class="pln">        </span><span class="str">'PASSWORD'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'mysql'</span><span class="pun">,</span></code></li><li class="L0"><code><span class="pln">        </span><span class="str">'NAME'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'meiduo_mall'</span></code></li><li class="L1"><code><span class="pln">    </span><span class="pun">}</span></code></li><li class="L2"><code><span class="pun">}</span></code></li></ol></pre></li>
+<li><p>创建数据库操作的路由分发类</p>
+
+<p>在meiduo_mall/utils中创建db_router.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">MasterSlaveDBRouter</span><span class="pun">(</span><span class="kwd">object</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""数据库主从读写分离路由"""</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> db_for_read</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> model</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">hints</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="str">"""读数据库"""</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="str">"slave"</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> db_for_write</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> model</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">hints</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">        </span><span class="str">"""写数据库"""</span></code></li><li class="L9"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="str">"default"</span></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> allow_relation</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> obj1</span><span class="pun">,</span><span class="pln"> obj2</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">hints</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">"""是否运行关联操作"""</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">True</span></code></li></ol></pre></li>
+<li><p>配置读写分离路由 <br>
+在配置文件中增加</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln"> </span><span class="com"># 配置读写分离</span></code></li><li class="L1"><code><span class="pln">DATABASE_ROUTERS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="str">'meiduo_mall.utils.db_router.MasterSlaveDBRouter'</span><span class="pun">]</span></code></li></ol></pre></li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="mdp1" id="08django数据库路由的补充说明">08_django数据库路由的补充说明</h2><ul data-anchor-id="rd6b">
+<li>多个从 <br>
+<ol><li>随机</li>
+<li>轮询</li></ol></li>
+<li>根据模型  <br>
+判断模型，使用对应的数据库</li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="5bqi" id="09网站服务器架构说明">09_网站服务器架构说明</h2><p data-anchor-id="r7sy"><img src="http://static.zybuluo.com/jsutqb/xvrqyati0ixl20lxtvj78rbi/image_1cje9g5jg1fct1agf19o91c8lnqm.png" alt="image_1cje9g5jg1fct1agf19o91c8lnqm.png-255.7kB"></p><ul data-anchor-id="m7rr">
+<li>nginx <br>
+反向代理 <br>
+epoll</li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="fcp2" id="10静态文件部署">10_静态文件部署</h2><ul data-anchor-id="d1dg">
+<li><p>django静态文件</p>
+
+<ol><li><p>配置静态文件存放目录</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">STATIC_ROOT </span><span class="pun">=</span><span class="pln"> os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">join</span><span class="pun">(</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">dirname</span><span class="pun">(</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">dirname</span><span class="pun">(</span><span class="pln">BASE_DIR</span><span class="pun">)),</span><span class="pln"> </span><span class="str">'front_end_pc/static'</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>收集静态文件 <br>
+<code>python manage.py collectstatic</code></p></li>
+<li><p>nginx 指向静态文件</p>
+
+<p><code>sudo vim /usr/local/nginx/conf/nginx.conf</code></p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">server </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">         listen       </span><span class="lit">80</span><span class="pun">;</span></code></li><li class="L2"><code><span class="pln">         server_name  www</span><span class="pun">.</span><span class="pln">meiduo</span><span class="pun">.</span><span class="pln">site</span><span class="pun">;</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="pln">        location </span><span class="pun">/</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L5"><code><span class="pln">             root   </span><span class="pun">/</span><span class="pln">home</span><span class="pun">/</span><span class="pln">python</span><span class="pun">/</span><span class="typ">Desktop</span><span class="pun">/</span><span class="pln">front_end_pc</span><span class="pun">;</span></code></li><li class="L6"><code><span class="pln">             index  index</span><span class="pun">.</span><span class="pln">html index</span><span class="pun">.</span><span class="pln">htm</span><span class="pun">;</span></code></li><li class="L7"><code><span class="pln">         </span><span class="pun">}</span></code></li><li class="L8"><code></code></li><li class="L9"><code><span class="pln">        </span><span class="com"># 余下省略</span></code></li><li class="L0"><code><span class="pun">}</span></code></li></ol></pre></li>
+<li>重启nginx <br>
+<code>sudo /usr/local/nginx/sbin/nginx -s reload</code></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="il0a" id="11动态服务部署配置">11_动态服务部署配置</h2><ol data-anchor-id="bwx2">
+<li><p>准备上线配置 <br>
+复制开发配置文件dev.py 到生产配置prod.py <br>
+修改配置文件prod.py中</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">DEBUG </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">False</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">ALLOWED_HOSTS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="str">'api.meiduo.site'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'www.meiduo.site'</span><span class="pun">]</span><span class="pln">  </span><span class="com"># 添加www.meiduo.site</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="pln">CORS_ORIGIN_WHITELIST </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span></code></li><li class="L5"><code><span class="pln">    </span><span class="str">'api.meiduo.site'</span><span class="pun">,</span></code></li><li class="L6"><code><span class="pln">    </span><span class="str">'www.meiduo.site'</span><span class="pun">,</span><span class="pln">  </span><span class="com"># 添加</span></code></li><li class="L7"><code><span class="pun">)</span></code></li></ol></pre>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">wsgi</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln"> </span><span class="com"># os.environ.setdefault("DJANGO_SETTINGS_MODULE", "meiduo_mall.settings.dev")</span></code></li><li class="L3"><code><span class="pln">os</span><span class="pun">.</span><span class="pln">environ</span><span class="pun">.</span><span class="pln">setdefault</span><span class="pun">(</span><span class="str">"DJANGO_SETTINGS_MODULE"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"meiduo_mall.settings.prod"</span><span class="pun">)</span></code></li></ol></pre>
+
+<p>修改front_end_pc/js/host.js <br>
+把host修改为api.meiduo.site</p></li>
+<li><p>使用uwsgi</p>
+
+<ol><li>安装 <br>
+<code>pip install uwsgi</code></li>
+<li><p>准备配置文件 <br>
+meiduo_mall/uwsgi.ini (与manage.py同级)</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pun">[</span><span class="pln">uwsgi</span><span class="pun">]</span></code></li><li class="L1"><code><span class="pln"> </span><span class="com">#使用nginx连接时使用，Django程序所在服务器地址</span></code></li><li class="L2"><code><span class="pln">socket</span><span class="pun">=</span><span class="lit">10.211</span><span class="pun">.</span><span class="lit">55.2</span><span class="pun">:</span><span class="lit">8001</span></code></li><li class="L3"><code><span class="pln"> </span><span class="com">#直接做web服务器使用，Django程序所在服务器地址</span></code></li><li class="L4"><code><span class="pln"> </span><span class="com">#http=10.211.55.2:8001</span></code></li><li class="L5"><code><span class="pln"> </span><span class="com">#项目目录</span></code></li><li class="L6"><code><span class="pln">chdir</span><span class="pun">=</span><span class="str">/Users/</span><span class="pln">delron</span><span class="pun">/</span><span class="typ">Desktop</span><span class="pun">/</span><span class="pln">meiduo</span><span class="pun">/</span><span class="pln">meiduo_mall</span></code></li><li class="L7"><code><span class="pln"> </span><span class="com">#项目中wsgi.py文件的目录，相对于项目目录</span></code></li><li class="L8"><code><span class="pln">wsgi</span><span class="pun">-</span><span class="pln">file</span><span class="pun">=</span><span class="pln">meiduo_mall</span><span class="pun">/</span><span class="pln">wsgi</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L9"><code><span class="pln"> </span><span class="com"># 进程数</span></code></li><li class="L0"><code><span class="pln">processes</span><span class="pun">=</span><span class="lit">4</span></code></li><li class="L1"><code><span class="pln"> </span><span class="com"># 线程数</span></code></li><li class="L2"><code><span class="pln">threads</span><span class="pun">=</span><span class="lit">2</span></code></li><li class="L3"><code><span class="pln"> </span><span class="com"># uwsgi服务器的角色</span></code></li><li class="L4"><code><span class="pln">master</span><span class="pun">=</span><span class="kwd">True</span></code></li><li class="L5"><code><span class="pln"> </span><span class="com"># 存放进程编号的文件</span></code></li><li class="L6"><code><span class="pln">pidfile</span><span class="pun">=</span><span class="pln">uwsgi</span><span class="pun">.</span><span class="pln">pid</span></code></li><li class="L7"><code><span class="pln"> </span><span class="com"># 日志文件，因为uwsgi可以脱离终端在后台运行，日志看不见。我们以前的runserver是依赖终端的</span></code></li><li class="L8"><code><span class="pln">daemonize</span><span class="pun">=</span><span class="pln">uwsgi</span><span class="pun">.</span><span class="pln">log</span></code></li><li class="L9"><code><span class="pln"> </span><span class="com"># 指定依赖的虚拟环境</span></code></li><li class="L0"><code><span class="pln">virtualenv</span><span class="pun">=</span><span class="str">/Users/</span><span class="pln">delron</span><span class="pun">/.</span><span class="pln">virtualenv</span><span class="pun">/</span><span class="pln">meiduo</span></code></li></ol></pre></li>
+<li><p>开启 <br>
+<code>uwsgi --ini uwsgi.ini</code></p>
+
+<blockquote class="white-blockquote">
+  <p>其他命令 <br>
+  停止 uwsgi --stop uwsgi.pid</p>
+</blockquote></li></ol></li>
+<li><p>nginx配置</p>
+
+<ol><li><p>可以配置集群</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">upstream meiduo </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">     server </span><span class="lit">10.211</span><span class="pun">.</span><span class="lit">55.2</span><span class="pun">:</span><span class="lit">8001</span><span class="pun">;</span><span class="pln">  </span><span class="com"># 此处为uwsgi运行的ip地址和端口号</span></code></li><li class="L2"><code><span class="pln">     </span><span class="com"># 如果有多台服务器，可以在此处继续添加服务器地址</span></code></li><li class="L3"><code><span class="pun">}</span></code></li></ol></pre></li>
+<li><p>配置nginx转发至uwsgi</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code></code></li><li class="L1"><code><span class="com">#gzip  on;</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">server </span><span class="pun">{</span></code></li><li class="L4"><code><span class="pln">    listen  </span><span class="lit">80</span><span class="pun">;</span></code></li><li class="L5"><code><span class="pln">    server_name api</span><span class="pun">.</span><span class="pln">meiduo</span><span class="pun">.</span><span class="pln">site</span><span class="pun">;</span></code></li><li class="L6"><code><span class="pln">    location </span><span class="pun">/</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L7"><code><span class="pln">        include uwsgi_params</span><span class="pun">;</span></code></li><li class="L8"><code><span class="pln">        uwsgi_pass meiduo</span><span class="pun">;</span></code></li><li class="L9"><code><span class="pln">    </span><span class="pun">}</span></code></li><li class="L0"><code><span class="pun">}</span></code></li></ol></pre></li>
+<li><p>配置后台</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">server </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    listen       </span><span class="lit">80</span><span class="pun">;</span></code></li><li class="L2"><code><span class="pln">    server_name  www</span><span class="pun">.</span><span class="pln">meiduo</span><span class="pun">.</span><span class="pln">site</span><span class="pun">;</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="pln">    </span><span class="com"># 静态略</span></code></li><li class="L5"><code><span class="pln">    location </span><span class="pun">/</span><span class="pln">xadmin </span><span class="pun">{</span></code></li><li class="L6"><code><span class="pln">        include uwsgi_params</span><span class="pun">;</span></code></li><li class="L7"><code><span class="pln">        uwsgi_pass meiduo</span><span class="pun">;</span></code></li><li class="L8"><code><span class="pln">    </span><span class="pun">}</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">    location </span><span class="pun">/</span><span class="pln">ckeditor </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">        include uwsgi_params</span><span class="pun">;</span></code></li><li class="L2"><code><span class="pln">        uwsgi_pass meiduo</span><span class="pun">;</span></code></li><li class="L3"><code><span class="pln">    </span><span class="pun">}</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="pln">    error_page   </span><span class="lit">500</span><span class="pln"> </span><span class="lit">502</span><span class="pln"> </span><span class="lit">503</span><span class="pln"> </span><span class="lit">504</span><span class="pln">  </span><span class="pun">/</span><span class="lit">50x</span><span class="pun">.</span><span class="pln">html</span><span class="pun">;</span></code></li><li class="L6"><code><span class="pln">    location </span><span class="pun">=</span><span class="pln"> </span><span class="pun">/</span><span class="lit">50x</span><span class="pun">.</span><span class="pln">html </span><span class="pun">{</span></code></li><li class="L7"><code><span class="pln">        root   html</span><span class="pun">;</span></code></li><li class="L8"><code><span class="pln">    </span><span class="pun">}</span></code></li><li class="L9"><code><span class="pun">}</span><span class="pln">    </span></code></li></ol></pre></li></ol></li>
+</ol></div>
+ <a href="17.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="index.html">回首页</a>
+</body>
+</html>

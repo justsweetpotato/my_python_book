@@ -1,0 +1,316 @@
+﻿<!DOCTYPE html>
+<html class="theme theme-white">
+<head>
+<meta charset="utf-8">
+    <a href="13.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="15.html">下一页</a>
+<title>Django-4.0-Day14</title>
+<link href="https://www.zybuluo.com/static/assets/template-theme-white.css" rel="stylesheet" media="screen">
+<style type="text/css">
+
+#wmd-preview h1  {
+    color: #0077bb; /* 将标题改为蓝色 */
+}</style>
+</head>
+<body class="theme theme-white">
+<div id="wmd-preview" class="wmd-preview wmd-preview-full-reader"><div class="md-section-divider"></div><div class="md-section-divider"></div><h1 data-anchor-id="opij" id="django-40-day14">Django-4.0-Day14</h1><p data-anchor-id="uy68"><code>django</code></p><hr><div class="md-section-divider"></div><h2 data-anchor-id="csvn" id="复习">复习</h2><div class="md-section-divider"></div><h2 data-anchor-id="0rvd" id="今日内容">今日内容</h2><ul data-anchor-id="a9u2">
+<li>业务 <br>
+<ul><li>商品列表页 <br>
+<ul><li>分页</li>
+<li>排序</li>
+<li>过滤</li></ul></li>
+<li>商品搜索</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="q37f" id="01商品列表商品分类部分静态化处理">01_商品列表商品分类部分静态化处理</h2><p data-anchor-id="v6h3">商品列表中关于商品分类数据是基本不变的 <br>
+所以把商品列表页关于这些数据进行静态化</p><ul data-anchor-id="apzc">
+<li><p>步骤</p>
+
+<ol><li><p>定义函数 <br>
+celery_tasks.html.tasks.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">def</span><span class="pln"> generate_static_list_search_html</span><span class="pun">():</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""</span></code></li><li class="L2"><code><span class="str">    生成静态的商品列表页html文件</span></code></li><li class="L3"><code><span class="str">    """</span></code></li><li class="L4"><code><span class="pln">    </span><span class="com"># 商品分类菜单</span></code></li><li class="L5"><code><span class="pln">    categories </span><span class="pun">=</span><span class="pln"> get_categories</span><span class="pun">()</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">    </span><span class="com"># 渲染模板，生成静态html文件</span></code></li><li class="L8"><code><span class="pln">    context </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L9"><code><span class="pln">        </span><span class="str">'categories'</span><span class="pun">:</span><span class="pln"> categories</span><span class="pun">,</span></code></li><li class="L0"><code><span class="pln">    </span><span class="pun">}</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">template</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> loader</span><span class="pun">.</span><span class="pln">get_template</span><span class="pun">(</span><span class="str">'list.html'</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">    html_text </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">template</span><span class="pun">.</span><span class="pln">render</span><span class="pun">(</span><span class="pln">context</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">    file_path </span><span class="pun">=</span><span class="pln"> os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">join</span><span class="pun">(</span><span class="pln">settings</span><span class="pun">.</span><span class="pln">GENERATED_STATIC_HTML_FILES_DIR</span><span class="pun">,</span><span class="pln"> </span><span class="str">'list.html'</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">    </span><span class="kwd">with</span><span class="pln"> open</span><span class="pun">(</span><span class="pln">file_path</span><span class="pun">,</span><span class="pln"> </span><span class="str">'w'</span><span class="pun">)</span><span class="pln"> </span><span class="kwd">as</span><span class="pln"> f</span><span class="pun">:</span></code></li><li class="L6"><code><span class="pln">        f</span><span class="pun">.</span><span class="pln">write</span><span class="pun">(</span><span class="pln">html_text</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>变为任务函数</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="lit">@celery_app</span><span class="pun">.</span><span class="pln">task</span><span class="pun">(</span><span class="pln">name</span><span class="pun">=</span><span class="str">'generate_static_list_search_html'</span><span class="pun">)</span></code></li><li class="L1"><code><span class="kwd">def</span><span class="pln"> generate_static_list_search_html</span><span class="pun">():</span></code></li></ol></pre></li>
+<li><p>注册Admin <br>
+goods.admin.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">GoodsCategoryAdmin</span><span class="pun">(</span><span class="pln">admin</span><span class="pun">.</span><span class="typ">ModelAdmin</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> save_model</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> obj</span><span class="pun">,</span><span class="pln"> form</span><span class="pun">,</span><span class="pln"> change</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">        obj</span><span class="pun">.</span><span class="pln">save</span><span class="pun">()</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">from</span><span class="pln"> celery_tasks</span><span class="pun">.</span><span class="pln">html</span><span class="pun">.</span><span class="pln">tasks </span><span class="kwd">import</span><span class="pln"> generate_static_list_search_html</span></code></li><li class="L4"><code><span class="pln">        generate_static_list_search_html</span><span class="pun">.</span><span class="pln">delay</span><span class="pun">()</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> delete_model</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> obj</span><span class="pun">):</span></code></li><li class="L7"><code><span class="pln">        sku_id </span><span class="pun">=</span><span class="pln"> obj</span><span class="pun">.</span><span class="pln">sku</span><span class="pun">.</span><span class="pln">id</span></code></li><li class="L8"><code><span class="pln">        obj</span><span class="pun">.</span><span class="kwd">delete</span><span class="pun">()</span></code></li><li class="L9"><code><span class="pln">        </span><span class="kwd">from</span><span class="pln"> celery_tasks</span><span class="pun">.</span><span class="pln">html</span><span class="pun">.</span><span class="pln">tasks </span><span class="kwd">import</span><span class="pln"> generate_static_list_search_html</span></code></li><li class="L0"><code><span class="pln">        generate_static_list_search_html</span><span class="pun">.</span><span class="pln">delay</span><span class="pun">()</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">admin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="pln">models</span><span class="pun">.</span><span class="typ">GoodsCategory</span><span class="pun">,</span><span class="pln"> </span><span class="typ">GoodsCategoryAdmin</span><span class="pun">)</span></code></li></ol></pre></li>
+<li>测试 <br>
+<ol><li>后台更改类型数据</li>
+<li>检查异步任务执行</li>
+<li>查看网页</li></ol></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="r8e0" id="02商品列表后端接口实现">02_商品列表后端接口实现</h2><ul data-anchor-id="x3xs">
+<li><p>列表业务分析</p>
+
+<ul><li>过滤 分类</li>
+<li>排序 价格/销量/默认</li>
+<li>分页</li>
+<li>每页条目数</li></ul></li>
+<li><p>接口设计</p>
+
+<ul><li>请求  GET /categories/{category_id}/skus?page=xxx&amp;page_size=xxx&amp;ordering=xxx</li>
+<li>响应  {"count":count,"next":next,"previous":previous, "results":[{"id":id,"name":name,"price":price,"default_image_url":default_image_url,"comments":comments}]}</li></ul></li>
+<li><p>实现要点</p>
+
+<ul><li>过滤 <br>
+get_queryset</li>
+<li>排序 <br>
+from rest_framework.filters import OrderingFilter <br>
+filter_backends = [OrderingFilter] <br>
+ordering_fields = ('create_time', 'price', 'sales')</li>
+<li>分页 <br>
+自定义分页类 <br>
+全局设置分页</li>
+<li>每页条目数 <br>
+自定义分页类 </li></ul></li>
+<li><p>代码实现</p>
+
+<ul><li><p>goods.views.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">filters </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">OrderingFilter</span></code></li><li class="L1"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">SKUListView</span><span class="pun">(</span><span class="typ">ListAPIView</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">"""</span></code></li><li class="L3"><code><span class="str">    商品列表数据</span></code></li><li class="L4"><code><span class="str">    /categories/(?P&lt;category_id&gt;\d+)/skus?page=xxx&amp;page_size=xxx&amp;ordering=xxx</span></code></li><li class="L5"><code><span class="str">    """</span></code></li><li class="L6"><code><span class="pln">    serializer_class </span><span class="pun">=</span><span class="pln"> </span><span class="typ">SKUSerializer</span></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="pln">    </span><span class="com"># 通过定义过滤后端 ，来实行排序行为</span></code></li><li class="L9"><code><span class="pln">    filter_backends </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="typ">OrderingFilter</span><span class="pun">]</span></code></li><li class="L0"><code><span class="pln">    ordering_fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'create_time'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'price'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'sales'</span><span class="pun">)</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 指定每次请求的查询集</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> get_queryset</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        categroy_id </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">kwargs</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">"category_id"</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> SKU</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">filter</span><span class="pun">(</span><span class="pln">category_id</span><span class="pun">=</span><span class="pln">categroy_id</span><span class="pun">,</span><span class="pln"> is_launched</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>goods.serializers.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">SKUSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">ModelSerializer</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""</span></code></li><li class="L2"><code><span class="str">    SKU序列化器</span></code></li><li class="L3"><code><span class="str">    """</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L5"><code><span class="pln">        model </span><span class="pun">=</span><span class="pln"> SKU</span></code></li><li class="L6"><code><span class="pln">        fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'id'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'name'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'price'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'default_image_url'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'comments'</span><span class="pun">)</span></code></li></ol></pre>
+
+<ul><li>定义分页类，并配置 <br>
+goods.paginations.py <br>
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">pagination </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">PageNumberPagination</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">StandardPageNumPagination</span><span class="pun">(</span><span class="typ">PageNumberPagination</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">    </span><span class="com"># 前端的请求参数名称</span></code></li><li class="L4"><code><span class="pln">    page_size_query_param </span><span class="pun">=</span><span class="pln"> </span><span class="str">'page_size'</span></code></li><li class="L5"><code><span class="pln">    </span><span class="com"># 前端没有传的话，取这个作为默认值</span></code></li><li class="L6"><code><span class="pln">    page_size </span><span class="pun">=</span><span class="pln"> </span><span class="lit">5</span></code></li><li class="L7"><code><span class="pln">    </span><span class="com"># 前端请求的每页数量上限</span></code></li><li class="L8"><code><span class="pln">    max_page_size </span><span class="pun">=</span><span class="pln"> </span><span class="lit">20</span></code></li></ol></pre></li></ul>
+
+<p>dev.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="str">'DEFAULT_PAGINATION_CLASS'</span><span class="pun">:</span><span class="pln">  </span><span class="str">'meiduo_mall.utils.paginations.StandardPageNumPagination'</span><span class="pun">,</span></code></li></ol></pre></li>
+<li><p>goods.urls.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">rlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'^categories/(?P&lt;category_id&gt;\d+)/skus/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">SKUListView</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">()),</span></code></li><li class="L2"><code><span class="pun">]</span></code></li></ol></pre></li></ul></li>
+<li>前端实现 <br>
+<ol><li>从url中拿到分类，获取默认的页码、页面大小、排序条件</li>
+<li>向后端发送请求</li>
+<li>获取结果并显示</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="mbqk" id="03商品列表页bug解决">03_商品列表页bug解决</h2><ul data-anchor-id="yrje">
+<li>注意 <br>
+配置全局分页设置，会影响之前写的列表api</li>
+<li>两种解决方式 <br>
+<ol><li>哪个需要分页，就在那个视图上 配置类属性 <code>pagination_class = 分页类</code></li>
+<li>如果设置了全局分页 对于不需要视图 分页的配置类属性 <code>pagination_class = None</code></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="hwsq" id="04测试数据sql修改与数据库迁移文件git追踪">04_测试数据sql修改与数据库迁移文件git追踪</h2><ul data-anchor-id="t82b">
+<li><p>测试数据问题</p>
+
+<ul><li>问题 <br>
+商品详情及中的图片无法显示</li>
+<li>原因 <br>
+提供的sql脚本中，图片带了ip地址，当前运行的主机的ip与其不一样</li>
+<li><p>解决 <br>
+批量替换掉数据库中的图片地址</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code class="language-sql"></code></li><li class="L1"><code class="language-sql"><span class="com"># 其中 xxx.xxx.xxx.xxx 应该替换为当前主机地址</span></code></li><li class="L2"><code class="language-sql"></code></li><li class="L3"><code class="language-sql"><span class="pln">update tb_sku </span><span class="kwd">set</span><span class="pln"> default_image_url</span><span class="pun">=</span><span class="pln">replace</span><span class="pun">(</span><span class="pln">default_image_url</span><span class="pun">,</span><span class="pln"> </span><span class="str">'http://10.211.55.5:8888'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'http://xxx.xxx.xxx.xxx:8888'</span><span class="pun">)</span></code></li><li class="L4"><code class="language-sql"><span class="pln">update tb_goods </span><span class="kwd">set</span><span class="pln"> desc_detail</span><span class="pun">=</span><span class="pln">replace</span><span class="pun">(</span><span class="pln">desc_detail</span><span class="pun">,</span><span class="pln"> </span><span class="str">'http://10.211.55.5:8888'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'http://xxx.xxx.xxx.xxx:8888'</span><span class="pun">)</span></code></li></ol></pre></li></ul></li>
+<li><p>migrations包 <br>
+也应该纳入git管理维护</p>
+
+<ul><li>原因 <br>
+<code>python manage.py makemigrations</code> 作用是让应用中的 migrations中的信息和 模型一致 <br>
+<code>python manage.py migrate</code> 作用是让数据库 和 migrations中的信息一致 <br>
+数据库中记录了哪些迁移文件被迁移过</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="ubwt" id="05搜索引擎原理与elasticsearch介绍">05_搜索引擎原理与elasticsearch介绍</h2><ul data-anchor-id="qzg8">
+<li>商品搜索 <br>
+<ul><li>实现方案 <br>
+<ol><li>数据库like查询 <br>
+效率低</li>
+<li>使用全文检索框架 <br>
+要学习</li></ol></li></ul></li>
+<li><p>搜索引擎底层原理</p>
+
+<ol><li>索引</li>
+<li>分词</li></ol></li>
+<li><p>Elasticsearch <br>
+Elasticsearch 是基于 Lucene的，他们都是Java语言写的软件 <br>
+Elasticsearch 在Lucene的基础上提供了 rest风格的api调用 <br>
+Elasticsearch默认分词是英文，需要添加中文分词扩展elasticsearch-ik</p></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="bxtu" id="06docker安装elasticsearch">06_docker安装elasticsearch</h2><p data-anchor-id="4fz2">为了简化和规范，使用docker安装elasticsearch</p><ol data-anchor-id="4jdh">
+<li>准备镜像 <br>
+<ul><li>在线下载 <br>
+<code>docker image pull delron/elasticsearch-ik</code></li>
+<li>使用提供的文件 <br>
+<code>docker load -i elasticsearch-ik-2.4.6_docker.tar</code></li></ul></li>
+<li>准备配置 <br>
+<ul><li>复制配置文件夹 到 /home/python/</li>
+<li>修改配置中的ip</li></ul></li>
+<li>开启容器 <br>
+<code>docker run -dti --network=host --name=elasticsearch -v /home/python/elasticsearch-2.4.6/config:/usr/share/elasticsearch/config delron/elasticsearch-ik:2.4.6-1.0</code> <br>
+成功后会打印一串容器id</li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="n3hm" id="07haystack配置">07_haystack配置</h2><ul data-anchor-id="6aej">
+<li><p>haystack <br>
+为django提供了搜索功能，它是一个框架，支持不同的搜索后端比如 Solr, Elasticsearch, Whoosh, Xapian 等等） <br>
+还有drf-haystack是专用于 drf的。</p></li>
+<li><p>elasticsearch <br>
+这个包可以帮助我们请求 elasticsearch服务，并处理返回结果</p></li>
+<li><p>使用</p>
+
+<ol><li>安装 <br>
+<code>pip install drf-haystack <br>
+pip install elasticsearch==2.4.1</code></li>
+<li><p>注册应用</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">INSTALLED_APPS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">'haystack'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L4"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>配置</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">HAYSTACK_CONNECTIONS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'default'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">'ENGINE'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">        </span><span class="str">'URL'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'http://10.211.55.5:9200/'</span><span class="pun">,</span><span class="pln">  </span><span class="com"># 此处为elasticsearch运行的服务器ip地址，端口号固定为9200</span></code></li><li class="L4"><code><span class="pln">        </span><span class="str">'INDEX_NAME'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'meiduo'</span><span class="pun">,</span><span class="pln">  </span><span class="com"># 指定elasticsearch建立的索引库的名称</span></code></li><li class="L5"><code><span class="pln">    </span><span class="pun">},</span></code></li><li class="L6"><code><span class="pun">}</span></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="com"># 当添加、修改、删除数据时，自动生成索引</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">HAYSTACK_SIGNAL_PROCESSOR </span><span class="pun">=</span><span class="pln"> </span><span class="str">'haystack.signals.RealtimeSignalProcessor'</span></code></li></ol></pre></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="pp9c" id="08创建索引类与生成索引数据">08_创建索引类与生成索引数据</h2><p data-anchor-id="7k71">参考文档 <br>
+<a href="http://django-haystack.readthedocs.io/en/master/tutorial.html" target="_blank">http://django-haystack.readthedocs.io/en/master/tutorial.html</a></p><ul data-anchor-id="5mvo">
+<li><p>准备工作</p>
+
+<ol><li><p>准备索引规则类 <br>
+goods.search_indexes.py  <br>
+文件名不能改(search_indexes.py)，haystack会依据这个规则去找</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> haystack </span><span class="kwd">import</span><span class="pln"> indexes</span></code></li><li class="L1"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln"> SKU</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">SKUIndex</span><span class="pun">(</span><span class="pln">indexes</span><span class="pun">.</span><span class="typ">SearchIndex</span><span class="pun">,</span><span class="pln"> indexes</span><span class="pun">.</span><span class="typ">Indexable</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">    </span><span class="str">"""</span></code></li><li class="L5"><code><span class="str">    SKU索引数据模型类</span></code></li><li class="L6"><code><span class="str">    """</span></code></li><li class="L7"><code><span class="pln">    </span><span class="com"># 复合字段</span></code></li><li class="L8"><code><span class="pln">    text </span><span class="pun">=</span><span class="pln"> indexes</span><span class="pun">.</span><span class="typ">CharField</span><span class="pun">(</span><span class="pln">document</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">,</span><span class="pln"> use_template</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">    </span><span class="com"># 单一字段</span></code></li><li class="L1"><code><span class="pln">    id </span><span class="pun">=</span><span class="pln"> indexes</span><span class="pun">.</span><span class="typ">IntegerField</span><span class="pun">(</span><span class="pln">model_attr</span><span class="pun">=</span><span class="str">'id'</span><span class="pun">)</span></code></li><li class="L2"><code><span class="pln">    name </span><span class="pun">=</span><span class="pln"> indexes</span><span class="pun">.</span><span class="typ">CharField</span><span class="pun">(</span><span class="pln">model_attr</span><span class="pun">=</span><span class="str">'name'</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">    price </span><span class="pun">=</span><span class="pln"> indexes</span><span class="pun">.</span><span class="typ">CharField</span><span class="pun">(</span><span class="pln">model_attr</span><span class="pun">=</span><span class="str">'price'</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">    default_image_url </span><span class="pun">=</span><span class="pln"> indexes</span><span class="pun">.</span><span class="typ">CharField</span><span class="pun">(</span><span class="pln">model_attr</span><span class="pun">=</span><span class="str">'default_image_url'</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">    comments </span><span class="pun">=</span><span class="pln"> indexes</span><span class="pun">.</span><span class="typ">IntegerField</span><span class="pun">(</span><span class="pln">model_attr</span><span class="pun">=</span><span class="str">'comments'</span><span class="pun">)</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> get_model</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">        </span><span class="str">"""返回建立索引的模型类"""</span></code></li><li class="L9"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> SKU</span></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> index_queryset</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">using</span><span class="pun">=</span><span class="kwd">None</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">"""返回要建立索引的数据查询集"""</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_model</span><span class="pun">().</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">filter</span><span class="pun">(</span><span class="pln">is_launched</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>准备复合查找列对应的模板文件 <br>
+templates/search/indexes/goods/sku_text.txt <br>
+注意路径和文件名不能随意指定，goods表示是应用名称，sku是模型名称，可以根据情况改</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pun">{{</span><span class="pln"> </span><span class="kwd">object</span><span class="pun">.</span><span class="pln">name </span><span class="pun">}}</span></code></li><li class="L1"><code><span class="pun">{{</span><span class="pln"> </span><span class="kwd">object</span><span class="pun">.</span><span class="pln">caption </span><span class="pun">}}</span></code></li><li class="L2"><code><span class="pun">{{</span><span class="pln"> </span><span class="kwd">object</span><span class="pun">.</span><span class="pln">id </span><span class="pun">}}</span></code></li></ol></pre></li></ol></li>
+<li><p>生成初始化索引 <br>
+<code>python manage.py rebuild_index</code></p></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="6vyi" id="09创建索引视图与搜索测试">09_创建索引视图与搜索测试</h2><p data-anchor-id="j559"><a href="https://drf-haystack.readthedocs.io/en/latest/01_intro.html#views-py" target="_blank">https://drf-haystack.readthedocs.io/en/latest/01_intro.html#views-py</a></p><ul data-anchor-id="97kd">
+<li><p>实现</p>
+
+<ul><li><p>序列化 <br>
+我们要定义类继承于 HaystackSerializer <br>
+goods.serializers.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> drf_haystack</span><span class="pun">.</span><span class="pln">serializers </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">HaystackSerializer</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">SKUIndexSerializer</span><span class="pun">(</span><span class="typ">HaystackSerializer</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">    </span><span class="str">"""</span></code></li><li class="L4"><code><span class="str">    SKU索引结果数据序列化器</span></code></li><li class="L5"><code><span class="str">    """</span></code></li><li class="L6"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L7"><code><span class="pln">        index_classes </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="typ">SKUIndex</span><span class="pun">]</span></code></li><li class="L8"><code><span class="pln">        fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'text'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'id'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'name'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'price'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'default_image_url'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'comments'</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>视图 <br>
+goods.views.py <br>
+注意继承的是HaystackViewSet</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> drf_haystack</span><span class="pun">.</span><span class="pln">viewsets </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">HaystackViewSet</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">SKUSearchViewSet</span><span class="pun">(</span><span class="typ">HaystackViewSet</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">    </span><span class="str">"""</span></code></li><li class="L4"><code><span class="str">    SKU搜索</span></code></li><li class="L5"><code><span class="str">    """</span></code></li><li class="L6"><code><span class="pln">    index_models </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="pln">SKU</span><span class="pun">]</span></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="pln">    serializer_class </span><span class="pun">=</span><span class="pln"> </span><span class="typ">SKUIndexSerializer</span></code></li></ol></pre></li>
+<li><p>配置url <br>
+goods.urls.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">router </span><span class="pun">=</span><span class="pln"> </span><span class="typ">DefaultRouter</span><span class="pun">()</span></code></li><li class="L1"><code><span class="pln">router</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="str">'skus/search'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">SKUSearchViewSet</span><span class="pun">,</span><span class="pln"> base_name</span><span class="pun">=</span><span class="str">'skus_search'</span><span class="pun">)</span></code></li></ol></pre></li></ul></li>
+<li><p>测试api</p>
+
+<ol><li>访问api</li>
+<li>添加text参数看结果</li>
+<li>添加id参数看结果</li>
+<li>其他略</li></ol></li>
+<li><p>前端</p>
+
+<ol><li>搜索框输入后点击搜索 <br>
+表单 get提交到 search.html</li>
+<li>search.html <br>
+<ol><li>在url上获取关键字参数</li>
+<li>发送请求到后端</li>
+<li>进行界面显示</li></ol></li></ol></li>
+<li><p>注意</p>
+
+<ul><li>问题 <br>
+程序启动出现导包错误</li>
+<li><p>原因 <br>
+先前版本中drf_haystack 中使用了 django_rest_framework 中的 私有方法 <br>
+在django_rest_framework中 删除了 这个方法，导致调不到出错了</p></li>
+<li><p>解决</p>
+
+<ul><li><p>正确版本搭配</p>
+
+<ol><li>drf_haystack 1.8.1 ＋django_rest_framework 3.7.7</li>
+<li>drf_haystack 1.8.2/3 ＋django_rest_framework 3.8.2</li></ol>
+
+<p><a href="https://github.com/encode/django-rest-framework/commit/a7e2a7bfcdf9d10dd3f5c1061245f34a8e5227b6#diff-26cd8820f574d31707b84f15fce48df7" target="_blank">https://github.com/encode/django-rest-framework/commit/a7e2a7bfcdf9d10dd3f5c1061245f34a8e5227b6#diff-26cd8820f574d31707b84f15fce48df7</a> <br>
+<a href="https://github.com/inonit/drf-haystack/commit/b462cea15fa48ed78552d62577fd688407815416" target="_blank">https://github.com/inonit/drf-haystack/commit/b462cea15fa48ed78552d62577fd688407815416</a></p></li>
+<li>修改源码(不建议) <br>
+如果搭配出错，可以修改drf_haystack ，也可以修改 django_rest_framework的 <br>
+不建议修改源码，不然换个环境也需要修改对应源码 <br>
+硬要修改，也建议修改drf_haystack 的，因为django_rest_framework更为底层</li></ul></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="yq3r" id="10购物车需求分析与存储数据结构设计">10_购物车需求分析与存储数据结构设计</h2><ul data-anchor-id="3d0q">
+<li><p>购物车 <br>
+购买多件商品后一起结算。</p>
+
+<ul><li>数据构成 <br>
+商品id  商品数量</li>
+<li>与结算相关 <br>
+是否选中</li></ul></li>
+<li><p>购物车相关业务</p>
+
+<ol><li>用户登录与否，都可以保存用户的购物车数据</li>
+<li>用户可以对购物车数据进行增、删、改、查</li>
+<li>保存购物车数据的勾选状态</li>
+<li>用户登录时，合并cookie中的购物车数据到redis中</li></ol></li>
+<li><p>购物车数据的存储</p>
+
+<ul><li>登录用户 <br>
+<ul><li>redis</li>
+<li>cart_用户id -hash-&gt;  {sku1ID:数量1,sku2ID:数量2}</li>
+<li>cart_selected_用户id -set-&gt;  [sku1ID,sku2ID]</li></ul></li>
+<li>未登录用户 <br>
+<ul><li>cookie</li>
+<li>字符串( 字典/集合 -pickle-&gt; bytes -base64-&gt; str)</li></ul></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="9601" id="11pickle模块与base64的使用">11_pickle模块与base64的使用</h2><ul data-anchor-id="08xe">
+<li><p>pickle <br>
+内置标准模块 <br>
+把对象转为字节，也可把字节转回对象 <br>
+pickle.dumps() 对象作为参数， 返回值为字节 <br>
+pickle.loads() 字节作为参数， 返回值为对象</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span><span class="kwd">import</span><span class="pln"> pickle</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> d </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span><span class="str">'1'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span><span class="str">'count'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">10</span><span class="pun">,</span><span class="pln"> </span><span class="str">'selected'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">True</span><span class="pun">},</span><span class="pln"> </span><span class="str">'2'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span><span class="str">'count'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">20</span><span class="pun">,</span><span class="pln"> </span><span class="str">'selected'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">False</span><span class="pun">}}</span></code></li><li class="L3"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> s </span><span class="pun">=</span><span class="pln"> pickle</span><span class="pun">.</span><span class="pln">dumps</span><span class="pun">(</span><span class="pln">d</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> s</span></code></li><li class="L5"><code><span class="pln">b</span><span class="str">'\x80\x03}q\x00(X\x01\x00\x00\x001q\x01}q\x02(X\x05\x00\x00\x00countq\x03K\nX\x08\x00\x00\x00selectedq\x04\x88uX\x01\x00\x00\x002q\x05}q\x06(h\x03K\x14h\x04\x89uu.'</span></code></li><li class="L6"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> pickle</span><span class="pun">.</span><span class="pln">loads</span><span class="pun">(</span><span class="pln">s</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pun">{</span><span class="str">'1'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span><span class="str">'count'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">10</span><span class="pun">,</span><span class="pln"> </span><span class="str">'selected'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">True</span><span class="pun">},</span><span class="pln"> </span><span class="str">'2'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span><span class="str">'count'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">20</span><span class="pun">,</span><span class="pln"> </span><span class="str">'selected'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">False</span><span class="pun">}}</span></code></li></ol></pre></li>
+<li><p>base64 <br>
+内置标准库 <br>
+把字节和字符串互相转化的</p>
+
+<p>base64.b64encode()  字节 转 字符串(返回还是字节) <br>
+base64.b64deocde()  字符串(字节格式) 转字节</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span><span class="kwd">import</span><span class="pln"> base64</span></code></li><li class="L1"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> s</span></code></li><li class="L2"><code><span class="pln">b</span><span class="str">'\x80\x03}q\x00(X\x01\x00\x00\x001q\x01}q\x02(X\x05\x00\x00\x00countq\x03K\nX\x08\x00\x00\x00selectedq\x04\x88uX\x01\x00\x00\x002q\x05}q\x06(h\x03K\x14h\x04\x89uu.'</span></code></li><li class="L3"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> b </span><span class="pun">=</span><span class="pln"> base64</span><span class="pun">.</span><span class="pln">b64encode</span><span class="pun">(</span><span class="pln">s</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> b</span></code></li><li class="L5"><code><span class="pln">b</span><span class="str">'gAN9cQAoWAEAAAAxcQF9cQIoWAUAAABjb3VudHEDSwpYCAAAAHNlbGVjdGVkcQSIdVgBAAAAMnEFfXEGKGgDSxRoBIl1dS4='</span></code></li><li class="L6"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> base64</span><span class="pun">.</span><span class="pln">b64decode</span><span class="pun">(</span><span class="pln">b</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pln">b</span><span class="str">'\x80\x03}q\x00(X\x01\x00\x00\x001q\x01}q\x02(X\x05\x00\x00\x00countq\x03K\nX\x08\x00\x00\x00selectedq\x04\x88uX\x01\x00\x00\x002q\x05}q\x06(h\x03K\x14h\x04\x89uu.'</span></code></li></ol></pre></li>
+<li><p>扩展 <br>
+这里 pickle的 base64 都相当于编码，对于数据伪造不能进行校验 <br>
+有兴趣的同学后面可以使用jwt实现</p></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="rf1t" id="12保存到购物车接口设计与取消视图用户认证说明">12_保存到购物车接口设计与取消视图用户认证说明</h2><ul data-anchor-id="rg83">
+<li><p>购物车后端整体 <br>
+具有增删改查4种操作</p></li>
+<li><p>步骤</p>
+
+<ol><li>建立应用</li>
+<li>注册应用</li>
+<li>编写视图 <br>
+这里没有完成，主要是讲解了认证相关逻辑</li></ol></li>
+<li><p>添加到购物车</p>
+
+<ul><li>设计 <br>
+<ul><li>请求 POST /cart/    请求体中包含 sku_id 、 count 、selected</li>
+<li>响应 {"sku_id":sku_id,"count":count,"selected":selected}</li></ul></li></ul></li>
+<li><p>代码</p>
+
+<ul><li>前端 <br>
+不管有没有登录，在头中都携带Authorization头信息 <br>
+<code>'Authorization': 'JWT ' + this.token</code></li>
+<li><p>cart.views.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">CartView</span><span class="pun">(</span><span class="typ">APIView</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""</span></code></li><li class="L2"><code><span class="str">    购物车</span></code></li><li class="L3"><code><span class="str">    """</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> perform_authentication</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">        </span><span class="str">"""重写检查JWT token是否正确"""</span></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">pass</span></code></li><li class="L7"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> post</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">        </span><span class="str">"""保存购物车数据"""</span></code></li><li class="L9"><code><span class="pln">        </span><span class="com"># 判断用户是否登录</span></code></li><li class="L0"><code><span class="pln">        </span><span class="kwd">try</span><span class="pun">:</span></code></li><li class="L1"><code><span class="pln">            user </span><span class="pun">=</span><span class="pln"> request</span><span class="pun">.</span><span class="pln">user</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">except</span><span class="pln"> </span><span class="typ">Exception</span><span class="pun">:</span></code></li><li class="L3"><code><span class="pln">            </span><span class="com"># 前端携带了错误的 JWT  用户未登录</span></code></li><li class="L4"><code><span class="pln">            user </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">None</span></code></li></ol></pre></li></ul></li>
+<li><p>用户认证相关源码</p>
+
+<ol><li><p>request.user <br>
+是方法属性</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="lit">@property</span></code></li><li class="L1"><code><span class="kwd">def</span><span class="pln"> user</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li></ol></pre></li>
+<li><p>user实现会调用 _authenticate</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="lit">@property</span></code></li><li class="L1"><code><span class="kwd">def</span><span class="pln"> user</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">if</span><span class="pln"> </span><span class="kwd">not</span><span class="pln"> hasattr</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> </span><span class="str">'_user'</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">with</span><span class="pln"> wrap_attributeerrors</span><span class="pun">():</span></code></li><li class="L4"><code><span class="pln">            </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">_authenticate</span><span class="pun">()</span></code></li><li class="L5"><code><span class="pln">    </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">_user</span></code></li></ol></pre></li>
+<li><p>_authenticate 方法会进行多个认证</p>
+
+<ol><li>依次进行登录认证 <br>
+<ol><li>如果出现了APIException异常，抛出异常(后面的就不校验了)</li>
+<li>如果返回了user(登录了)，后面的就不校验了，就认为登录了</li>
+<li>如果返回了None，继续下一个校验</li></ol></li>
+<li>全部认证都走了，还没发现登录，就认为未登录 </li></ol>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">def</span><span class="pln"> _authenticate</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">for</span><span class="pln"> authenticator </span><span class="kwd">in</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">authenticators</span><span class="pun">:</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">try</span><span class="pun">:</span></code></li><li class="L3"><code><span class="pln">            user_auth_tuple </span><span class="pun">=</span><span class="pln"> authenticator</span><span class="pun">.</span><span class="pln">authenticate</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">        </span><span class="kwd">except</span><span class="pln"> exceptions</span><span class="pun">.</span><span class="typ">APIException</span><span class="pun">:</span></code></li><li class="L5"><code><span class="pln">            </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">_not_authenticated</span><span class="pun">()</span></code></li><li class="L6"><code><span class="pln">            </span><span class="kwd">raise</span></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> user_auth_tuple </span><span class="kwd">is</span><span class="pln"> </span><span class="kwd">not</span><span class="pln"> </span><span class="kwd">None</span><span class="pun">:</span></code></li><li class="L9"><code><span class="pln">            </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">_authenticator </span><span class="pun">=</span><span class="pln"> authenticator</span></code></li><li class="L0"><code><span class="pln">            </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">user</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">auth </span><span class="pun">=</span><span class="pln"> user_auth_tuple</span></code></li><li class="L1"><code><span class="pln">            </span><span class="kwd">return</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">_not_authenticated</span><span class="pun">()</span></code></li></ol></pre></li>
+<li><p>JSONWebTokenAuthentication 校验规则</p>
+
+<ol><li>从cookie或者头中获取jwt格式的字符串 <br>
+<ol><li>如果没获取到，就没登录</li>
+<li>如果获取到了 <br>
+<ol><li>但解码出错，抛出AuthenticationFailed (APIException的子异常)</li>
+<li>校验通过，返回user，表示登录了 <br>
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BaseJSONWebTokenAuthentication</span><span class="pun">(</span><span class="typ">BaseAuthentication</span><span class="pun">):</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> authenticate</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        jwt_value </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_jwt_value</span><span class="pun">(</span><span class="pln">request</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> jwt_value </span><span class="kwd">is</span><span class="pln"> </span><span class="kwd">None</span><span class="pun">:</span></code></li><li class="L5"><code><span class="pln">            </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">None</span></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">try</span><span class="pun">:</span></code></li><li class="L7"><code><span class="pln">            payload </span><span class="pun">=</span><span class="pln"> jwt_decode_handler</span><span class="pun">(</span><span class="pln">jwt_value</span><span class="pun">)</span></code></li><li class="L8"><code><span class="pln">        </span><span class="kwd">except</span><span class="pln"> jwt</span><span class="pun">.</span><span class="typ">ExpiredSignature</span><span class="pun">:</span></code></li><li class="L9"><code><span class="pln">            msg </span><span class="pun">=</span><span class="pln"> _</span><span class="pun">(</span><span class="str">'Signature has expired.'</span><span class="pun">)</span></code></li><li class="L0"><code><span class="pln">            </span><span class="kwd">raise</span><span class="pln"> exceptions</span><span class="pun">.</span><span class="typ">AuthenticationFailed</span><span class="pun">(</span><span class="pln">msg</span><span class="pun">)</span></code></li><li class="L1"><code><span class="pln">        </span><span class="kwd">except</span><span class="pln"> jwt</span><span class="pun">.</span><span class="typ">DecodeError</span><span class="pun">:</span></code></li><li class="L2"><code><span class="pln">            msg </span><span class="pun">=</span><span class="pln"> _</span><span class="pun">(</span><span class="str">'Error decoding signature.'</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">            </span><span class="kwd">raise</span><span class="pln"> exceptions</span><span class="pun">.</span><span class="typ">AuthenticationFailed</span><span class="pun">(</span><span class="pln">msg</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">        </span><span class="kwd">except</span><span class="pln"> jwt</span><span class="pun">.</span><span class="typ">InvalidTokenError</span><span class="pun">:</span></code></li><li class="L5"><code><span class="pln">            </span><span class="kwd">raise</span><span class="pln"> exceptions</span><span class="pun">.</span><span class="typ">AuthenticationFailed</span><span class="pun">()</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">        user </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">authenticate_credentials</span><span class="pun">(</span><span class="pln">payload</span><span class="pun">)</span></code></li><li class="L8"><code></code></li><li class="L9"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">(</span><span class="pln">user</span><span class="pun">,</span><span class="pln"> jwt_value</span><span class="pun">)</span></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">JSONWebTokenAuthentication</span><span class="pun">(</span><span class="typ">BaseJSONWebTokenAuthentication</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> get_jwt_value</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">pass</span></code></li></ol></pre></li></ol></li></ol></li></ol></li></ol></li>
+</ul></div>
+<a href="13.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="15.html">下一页</a>
+</body>
+</html>

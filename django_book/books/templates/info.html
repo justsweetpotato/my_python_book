@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<style type="text/css">
+  .divcss5{ border:1px solid #FFF; width:600px }
+</style>
+<script>
+  (function() {
+    var cx = '007606540339251262492:fq_p2g_s5pa';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+  <div class="jumbotron">
+      <h4>The unexamined life is not worth living.</h4>
+  </div>
+{% endblock header %}
+
+{% block content %}
+{#    <div style="text-align:center">#}
+    <ul>
+        <li><a href="https://search-books.herokuapp.com/">土豆书籍搜索</a></li><br>
+        <li><a href="{% url 'books:ai' %}">Lucy(beta)</a></li><br>
+        <li><a href="{% url 'books:crypto_lv2' %}">文本加密</a></li><br>
+        <li><a href="https://note.sweetpotato.xyz/">笔记本</a></li><br>
+        <li><a href='https://www.16personalities.com/ch/%E4%BA%BA%E6%A0%BC%E6%B5%8B%E8%AF%95'>MBTI 16种人格测试</a></li><br>
+{#        <img src="../static/img/2.jpg" height="350" width="600" /><br></li><br>#}
+        <li><a href='{% url "books:live" %}'>国际空间站直播画面(大流量警告, 需翻墙)</a></li><br>
+{#        <img src="../static/img/1.jpg" height="350" width="600" /><br></li>#}
+    </ul>
+    <br>
+    <p>欢迎将您的意见或建议发送至 justsweetpotato@gmail.com 感谢您的来信.</p>
+{#    </div>#}
+ {% endblock content %}

@@ -1,0 +1,493 @@
+﻿<!DOCTYPE html>
+<html class="theme theme-white">
+<head>
+<meta charset="utf-8">
+    <a href="7.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="9.html">下一页</a>
+<title>Django-4.0-Day8</title>
+<link href="https://www.zybuluo.com/static/assets/template-theme-white.css" rel="stylesheet" media="screen">
+<style type="text/css">
+
+#wmd-preview h1  {
+    color: #0077bb; /* 将标题改为蓝色 */
+}</style>
+</head>
+<body class="theme theme-white">
+<div id="wmd-preview" class="wmd-preview wmd-preview-full-reader"><div class="md-section-divider"></div><div class="md-section-divider"></div><h1 data-anchor-id="uu5a" id="django-40-day8">Django-4.0-Day8</h1><p data-anchor-id="x19o"><code>django</code></p><hr><div class="md-section-divider"></div><h2 data-anchor-id="nvps" id="知识点复习及知识点整体梳理">知识点复习及知识点整体梳理</h2><ul data-anchor-id="13ef">
+<li>项目概述 <br>
+<ul><li>B2C电商</li>
+<li>项目需求</li>
+<li>项目架构</li>
+<li>项目版本控制</li>
+<li>项目工程搭建 <br>
+<ul><li>目录</li>
+<li>其他配置 <br>
+<ul><li>日志</li>
+<li>异常</li>
+<li>缓存</li>
+<li>session</li></ul></li></ul></li></ul></li>
+<li><p>用户模块</p>
+
+<ul><li><p>用户认证系统</p>
+
+<ul><li>认证 <br>
+<ul><li>django自带的用户系统 <br>
+<ul><li>主要属性 <br>
+id、用户名、密码(加密存储)、是否激活、是否员工、是否管理员</li>
+<li>函数(django.contrib.auth) <br>
+<ul><li>authenticate(request=None, **credentials) <br>
+常用 authenticate(request=None, username=username ,password=password) <br>
+检查给定的用户名密码是否对应有用户，如果有，则返回用户，如果没有则返回None</li>
+<li>login(request, user, backend=None): <br>
+登录用户，把用户附加到request的session中</li>
+<li>logout(request): <br>
+登出用户，从request的session中删除用户</li></ul></li>
+<li>方法 <br>
+<ul><li>模型方法 <br>
+<ul><li>set_password() <br>
+设置密码</li>
+<li>check_password() <br>
+检查密码</li></ul></li>
+<li>模型属性 <br>
+<ul><li>is_authenticated <br>
+是否登录，匿名用户对象返回False ，登录用户返回True</li></ul></li>
+<li>管理器方法 <br>
+<ul><li>create_user ( username, email=None, password=None, **extra_fields): <br>
+创建用户</li>
+<li>create_superuser( username, email, password, **extra_fields): <br>
+创建超级用户(is_staff 和 is_admin 为True)</li></ul></li></ul></li></ul></li>
+<li>用户模型的定义 <br>
+<ul><li>继承AbstractUser</li>
+<li>添加手机号码字段</li></ul></li>
+<li>用户模型的配置</li></ul></li>
+<li>授权</li></ul></li>
+<li><p>注册</p>
+
+<ul><li>图片验证码 <br>
+<ul><li>设计</li>
+<li>后端实现 <br>
+<ul><li>添加应用</li>
+<li>视图函数 <br>
+<ul><li>使用captcha生成图片</li>
+<li>使用redis缓存存储验证码</li></ul></li>
+<li>url配置</li></ul></li>
+<li>前端实现</li></ul></li>
+<li>其他(今日完成) <br>
+<ul><li>短信验证码</li>
+<li>校验用户名重复</li>
+<li>校验手机号重复</li>
+<li>注册业务</li></ul></li></ul></li></ul></li>
+<li><p>总体思路</p>
+
+<ol><li>看界面</li>
+<li>想流程</li>
+<li>需要哪些接口</li>
+<li>这些接口的请求(url + 请求方式 + 参数)、响应 (内容 + 格式)应该怎么定义</li>
+<li>定义后端接口</li>
+<li>完成前端功能</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="ps77" id="01短信验证码序列化器定义">01_短信验证码序列化器定义</h2><ul data-anchor-id="3ci3">
+<li><p>发送短信验证码的业务流程</p>
+
+<ul><li>前端 <br>
+用户输入手机号 图形验证码 点击获取验证码 <br>
+代码中需要检查手机号格式，再发送</li>
+<li>后端 <br>
+检查手机号格式(冗余)、检查验证码是否正确(需要前端传递验证码图片id) <br>
+再发送验证码</li>
+<li>业务问题 <br>
+<ol><li>能否前端校验图形验证码是否正确后再要求后端给手机号发送验证码 <br>
+不行， 两次请求，可以伪造(绕过验证码校验)</li>
+<li>为什么获取短信验证码要 图形验证码 并且有一定的间隔时间 <br>
+因为 发送手机短信要收费</li></ol></li></ul></li>
+<li><p>后端业务顺序</p>
+
+<ol><li><strong>检查图片验证码</strong></li>
+<li><strong>检查是否在60s内有发送记录</strong></li>
+<li>生成短信验证码</li>
+<li>保存短信验证码与发送记录</li>
+<li>发送短信</li></ol></li>
+<li><p>设计</p>
+
+<ul><li>请求:GET /sms_codes/{mobile}/?image_code_id=xxx&amp;text=xxx</li>
+<li>响应 返回一个成功与否，及失败的原因    </li></ul></li>
+<li><p>定义序列化器 <br>
+在rest中。良好的惯例是，把校验的逻辑交给序列化器，所以前两个步骤由定义序列化器完成</p>
+
+<ul><li><p>代码实现</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> rest_framework </span><span class="kwd">import</span><span class="pln"> serializers</span></code></li><li class="L1"><code><span class="kwd">from</span><span class="pln"> django_redis </span><span class="kwd">import</span><span class="pln"> get_redis_connection</span></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> redis</span><span class="pun">.</span><span class="pln">exceptions </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">RedisError</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">CheckImageCodeSerialzier</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">Serializer</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">    </span><span class="str">"""</span></code></li><li class="L6"><code><span class="str">    图片验证码校验序列化器</span></code></li><li class="L7"><code><span class="str">    GenericAPIView  -&gt;  get_seriliazer()  context</span></code></li><li class="L8"><code><span class="str">    """</span></code></li><li class="L9"><code><span class="pln">    </span><span class="com"># 发送的格式是uuid，而且是类似 5ce0e9a5-5ffa-654b-cee0-1238041fb31a 格式的，</span></code></li><li class="L0"><code><span class="pln">    </span><span class="com"># 定义UUIDField如果不传递选项，默认就是hex_verbose，也就是符合我们指定的格式的</span></code></li><li class="L1"><code><span class="pln">    image_code_id </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">UUIDField</span><span class="pun">()</span></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># 4位随机字符串</span></code></li><li class="L3"><code><span class="pln">    text </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">CharField</span><span class="pun">(</span><span class="pln">min_length</span><span class="pun">=</span><span class="lit">4</span><span class="pun">,</span><span class="pln"> max_length</span><span class="pun">=</span><span class="lit">4</span><span class="pun">)</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> validate</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> attrs</span><span class="pun">):</span></code></li><li class="L6"><code><span class="pln">        </span><span class="str">"""校验图片验证码是否正确"""</span></code></li><li class="L7"><code><span class="pln">        image_code_id </span><span class="pun">=</span><span class="pln"> attrs</span><span class="pun">[</span><span class="str">'image_code_id'</span><span class="pun">]</span></code></li><li class="L8"><code><span class="pln">        text </span><span class="pun">=</span><span class="pln"> attrs</span><span class="pun">[</span><span class="str">'text'</span><span class="pun">]</span></code></li><li class="L9"><code></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># 查询redis数据库，获取真实的验证码</span></code></li><li class="L2"><code><span class="pln">        redis_conn </span><span class="pun">=</span><span class="pln"> get_redis_connection</span><span class="pun">(</span><span class="str">'verify_codes'</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">        </span><span class="com"># 从redis中获取正确的图形验证码对应的字符串</span></code></li><li class="L4"><code><span class="pln">        real_image_code </span><span class="pun">=</span><span class="pln"> redis_conn</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'img_%s'</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> image_code_id</span><span class="pun">)</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> real_image_code </span><span class="kwd">is</span><span class="pln"> </span><span class="kwd">None</span><span class="pun">:</span></code></li><li class="L7"><code><span class="pln">            </span><span class="com"># 过期或者前端胡编乱造的image_code_id</span></code></li><li class="L8"><code><span class="pln">            </span><span class="kwd">raise</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">ValidationError</span><span class="pun">(</span><span class="str">'无效的图片验证码'</span><span class="pun">)</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">        </span><span class="com"># 对比</span></code></li><li class="L1"><code><span class="pln">         </span><span class="com"># 从redis拿到的是 bytes类型，需要转为str类型才能比对</span></code></li><li class="L2"><code><span class="pln">        real_image_code </span><span class="pun">=</span><span class="pln"> real_image_code</span><span class="pun">.</span><span class="pln">decode</span><span class="pun">()</span></code></li><li class="L3"><code><span class="pln">         </span><span class="com"># 不区分大小写</span></code></li><li class="L4"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> real_image_code</span><span class="pun">.</span><span class="pln">lower</span><span class="pun">()</span><span class="pln"> </span><span class="pun">!=</span><span class="pln"> text</span><span class="pun">.</span><span class="pln">lower</span><span class="pun">():</span></code></li><li class="L5"><code><span class="pln">            </span><span class="kwd">raise</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">ValidationError</span><span class="pun">(</span><span class="str">'图片验证码错误'</span><span class="pun">)</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">        </span><span class="com"># redis中发送短信验证码的标志 send_flag_&lt;mobile&gt;  : 1, 由redis维护60s的有效期</span></code></li><li class="L8"><code><span class="pln">         </span><span class="com"># 手机号是关键字参数，会被添加到视图对象的 kwargs字典属性中</span></code></li><li class="L9"><code><span class="pln">        mobile </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">context</span><span class="pun">[</span><span class="str">'view'</span><span class="pun">].</span><span class="pln">kwargs</span><span class="pun">[</span><span class="str">'mobile'</span><span class="pun">]</span></code></li><li class="L0"><code><span class="pln">         </span><span class="com"># 这个地方目前没有对应的保存逻辑</span></code></li><li class="L1"><code><span class="pln">        send_flag </span><span class="pun">=</span><span class="pln"> redis_conn</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'send_flag_%s'</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> mobile</span><span class="pun">)</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> send_flag</span><span class="pun">:</span></code></li><li class="L3"><code><span class="pln">            </span><span class="kwd">raise</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">ValidationError</span><span class="pun">(</span><span class="str">'发送短信次数过于频繁'</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># 校验通过返回原始数据</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> attrs</span></code></li></ol></pre></li></ul></li>
+<li><p>疑点(源码)</p>
+
+<ol><li><p>视图对象的 kwargs是什么 ，从哪来 <br>
+是调用视图函数中的关键字参数(url路径中的捕获的内容)</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">APIView</span><span class="pun">(</span><span class="typ">View</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="lit">@classmethod</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> as_view</span><span class="pun">(</span><span class="pln">cls</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">initkwargs</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        </span><span class="com"># 调用 django中的 View的 as_view 得到函数</span></code></li><li class="L4"><code><span class="pln">        view </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">super</span><span class="pun">(</span><span class="typ">APIView</span><span class="pun">,</span><span class="pln"> cls</span><span class="pun">).</span><span class="pln">as_view</span><span class="pun">(**</span><span class="pln">initkwargs</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> csrf_exempt</span><span class="pun">(</span><span class="pln">view</span><span class="pun">)</span></code></li></ol></pre>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">View</span><span class="pun">(</span><span class="kwd">object</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="lit">@classonlymethod</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> as_view</span><span class="pun">(</span><span class="pln">cls</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">initkwargs</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">def</span><span class="pln"> view</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">            </span><span class="com"># 每次请求 创建出对象 具体的View对象</span></code></li><li class="L5"><code><span class="pln">            </span><span class="kwd">self</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> cls</span><span class="pun">(**</span><span class="pln">initkwargs</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">            </span><span class="com"># 调用具体view对象的 dispatch 方法</span></code></li><li class="L7"><code><span class="pln">            </span><span class="com"># 传递原始的请求，位置参数、关键字参数</span></code></li><li class="L8"><code><span class="pln">            </span><span class="com"># 并返回dispatch的结果</span></code></li><li class="L9"><code><span class="pln">            </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">dispatch</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L0"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> view</span></code></li></ol></pre>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">APIView</span><span class="pun">(</span><span class="typ">View</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># args 接受到的位置参数</span></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># kwargs 接受到的关键字参数</span></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> dispatch</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># 保存到当前视图对象上做属性</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">args </span><span class="pun">=</span><span class="pln"> args</span></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">kwargs </span><span class="pun">=</span><span class="pln"> kwargs</span></code></li><li class="L7"><code><span class="pln">        request </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">initialize_request</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L8"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">request </span><span class="pun">=</span><span class="pln"> request</span></code></li><li class="L9"><code><span class="pln">        </span><span class="pun">...</span></code></li></ol></pre>
+
+<ol><li><p>序列化对象如何创建的/context 是从哪里来的</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">GenericAPIView</span><span class="pun">(</span><span class="pln">views</span><span class="pun">.</span><span class="typ">APIView</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 我们在调用这个方法的时候</span></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># 第一个参数传递 直接传，表示模型实例 (如果是序列化 或者 部分更新)</span></code></li><li class="L3"><code><span class="pln">    </span><span class="com"># 后面的第二个参数要传 data= 字典 (如果是反序列化) ，因为request.query_params 和 request.data 就是字典查形式的，所以可以直接传他们</span></code></li><li class="L4"><code><span class="pln">    </span><span class="com"># 其他的可以放 many= True  partial =True</span></code></li><li class="L5"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> get_serializer</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L6"><code><span class="pln">            </span><span class="com"># 获得序列化器类</span></code></li><li class="L7"><code><span class="pln">            serializer_class </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_serializer_class</span><span class="pun">()</span></code></li><li class="L8"><code><span class="pln">            </span><span class="com"># 获得上下文字典 ，并添加到kwargs中</span></code></li><li class="L9"><code><span class="pln">            kwargs</span><span class="pun">[</span><span class="str">'context'</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_serializer_context</span><span class="pun">()</span></code></li><li class="L0"><code><span class="pln">            </span><span class="com"># 创建序列化器对象</span></code></li><li class="L1"><code><span class="pln">            </span><span class="kwd">return</span><span class="pln"> serializer_class</span><span class="pun">(*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> get_serializer_class</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># 检查是否存在serializer_class属性，没有就抛异常，有就直接返回</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">serializer_class</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> get_serializer_context</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">        </span><span class="com"># 返回字典，这是序列化器可能需要的数据</span></code></li><li class="L9"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L0"><code><span class="pln">            </span><span class="str">'request'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">request</span><span class="pun">,</span></code></li><li class="L1"><code><span class="pln">            </span><span class="str">'format'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">format_kwarg</span><span class="pun">,</span></code></li><li class="L2"><code><span class="pln">            </span><span class="str">'view'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">self</span></code></li><li class="L3"><code><span class="pln">        </span><span class="pun">}</span></code></li></ol></pre>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BaseSerializer</span><span class="pun">(</span><span class="typ">Field</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> __init__</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> instance</span><span class="pun">=</span><span class="kwd">None</span><span class="pun">,</span><span class="pln"> data</span><span class="pun">=</span><span class="pln">empty</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">instance </span><span class="pun">=</span><span class="pln"> instance</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> data </span><span class="kwd">is</span><span class="pln"> </span><span class="kwd">not</span><span class="pln"> empty</span><span class="pun">:</span></code></li><li class="L4"><code><span class="pln">            </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">initial_data </span><span class="pun">=</span><span class="pln"> data</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="kwd">partial</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> kwargs</span><span class="pun">.</span><span class="pln">pop</span><span class="pun">(</span><span class="str">'partial'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">False</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">_context </span><span class="pun">=</span><span class="pln"> kwargs</span><span class="pun">.</span><span class="pln">pop</span><span class="pun">(</span><span class="str">'context'</span><span class="pun">,</span><span class="pln"> </span><span class="pun">{})</span></code></li><li class="L7"><code><span class="pln">        kwargs</span><span class="pun">.</span><span class="pln">pop</span><span class="pun">(</span><span class="str">'many'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">None</span><span class="pun">)</span></code></li><li class="L8"><code><span class="pln">        </span><span class="kwd">super</span><span class="pun">(</span><span class="typ">BaseSerializer</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">).</span><span class="pln">__init__</span><span class="pun">(**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">Serializer</span><span class="pun">(</span><span class="typ">BaseSerializer</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 没有定义 __init__ 方法</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">pass</span></code></li><li class="L3"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">ModelSerializer</span><span class="pun">(</span><span class="typ">Serializer</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">    </span><span class="com"># 没有定义 __init__ 方法</span></code></li><li class="L5"><code><span class="pln">    </span><span class="kwd">pass</span></code></li><li class="L6"><code></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">Field</span><span class="pun">(</span><span class="kwd">object</span><span class="pun">):</span></code></li><li class="L9"><code><span class="pln">   </span><span class="lit">@property</span></code></li><li class="L0"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> root</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">        root </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> root</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="pln">    </span><span class="lit">@property</span></code></li><li class="L5"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> context</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> getattr</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">.</span><span class="pln">root</span><span class="pun">,</span><span class="pln"> </span><span class="str">'_context'</span><span class="pun">,</span><span class="pln"> </span><span class="pun">{})</span></code></li></ol></pre></li></ol></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="m97z" id="关于pycharm提示的配置与后端也须校验参数的说明">关于Pycharm提示的配置与后端也须校验参数的说明</h2><ul data-anchor-id="kykr">
+<li><p>代码编写和代码运行的环境问题</p></li>
+<li><p>后端校验</p>
+
+<ul><li>前后端分离</li>
+<li>前端校验 <br>
+<ol><li>用户体验</li>
+<li>降低后端压力</li></ol></li>
+<li>后端也校验 <br>
+<ol><li>避免"高级"用户发送请求</li>
+<li>避免恶意用户发送请求</li></ol></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="apxq" id="02短信验证码视图编写">02_短信验证码视图编写</h2><ul data-anchor-id="0wmu">
+<li><p>后端业务顺序</p>
+
+<ol><li>检查图片验证码</li>
+<li>检查是否在60s内有发送记录</li>
+<li><strong>生成短信验证码</strong></li>
+<li><strong>保存短信验证码与发送记录</strong></li>
+<li><strong>发送短信</strong></li></ol></li>
+<li><p>代码步骤</p>
+
+<ol><li>拷贝进来发送短信验证码的库到libs中</li>
+<li>定义 SMSCodeView 继承于 GenericAPIView</li>
+<li>添加 类属性 serializer_class 用于校验数据</li>
+<li><p>定义get方法完成业务逻辑</p>
+
+<ol><li>使用上节课定义的CheckImageCodeSerialzier 进行数据校验</li>
+<li>使用python自带的 random 生成随机数字</li>
+<li>通过redis缓存 存储 手机号码和短信验证码内容</li>
+<li>使用之前的云通讯完成验证码的发送</li>
+<li>返回响应(直接传递字典即可)</li></ol>
+
+<p>细节见下方代码</p></li>
+<li>配置url(后面的视频中完成了)</li></ol></li>
+<li><p>代码</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">import</span><span class="pln"> random</span></code></li><li class="L1"><code><span class="kwd">from</span><span class="pln"> django_redis </span><span class="kwd">import</span><span class="pln"> get_redis_connection</span></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">generics </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">GenericAPIView</span></code></li><li class="L3"><code><span class="kwd">from</span><span class="pln"> meiduo_mall</span><span class="pun">.</span><span class="pln">libs</span><span class="pun">.</span><span class="pln">yuntongxun</span><span class="pun">.</span><span class="pln">sms </span><span class="kwd">import</span><span class="pln"> CCP</span></code></li><li class="L4"><code></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">SMSCodeView</span><span class="pun">(</span><span class="typ">GenericAPIView</span><span class="pun">):</span></code></li><li class="L7"><code><span class="pln">    serializer_class </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">CheckImageCodeSerialzier</span></code></li><li class="L8"><code></code></li><li class="L9"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> mobile</span><span class="pun">):</span></code></li><li class="L0"><code><span class="pln">        </span><span class="com"># 校验数据</span></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># 验证码id 和用户输入的验证码是放在 request.query_params中</span></code></li><li class="L2"><code><span class="pln">        </span><span class="com"># mobile是被放到了类视图对象属性kwargs中</span></code></li><li class="L3"><code><span class="pln">        serializer </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_serializer</span><span class="pun">(</span><span class="pln">data</span><span class="pun">=</span><span class="pln">request</span><span class="pun">.</span><span class="pln">query_params</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">        serializer</span><span class="pun">.</span><span class="pln">is_valid</span><span class="pun">(</span><span class="pln">raise_exception</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">        </span><span class="com"># 校验通过 ,因为不通过会抛异常返回</span></code></li><li class="L7"><code><span class="pln">        </span><span class="com"># 生成短信验证码</span></code></li><li class="L8"><code><span class="pln">        sms_code </span><span class="pun">=</span><span class="pln"> </span><span class="str">'%06d'</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> random</span><span class="pun">.</span><span class="pln">randint</span><span class="pun">(</span><span class="lit">0</span><span class="pun">,</span><span class="pln"> </span><span class="lit">999999</span><span class="pun">)</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">        </span><span class="com"># 保存验证码及发送记录</span></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># 省略的常量定义</span></code></li><li class="L2"><code><span class="pln">        redis_conn </span><span class="pun">=</span><span class="pln"> get_redis_connection</span><span class="pun">(</span><span class="str">'verify_codes'</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">        redis_conn</span><span class="pun">.</span><span class="pln">setex</span><span class="pun">(</span><span class="str">'sms_%s'</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> mobile</span><span class="pun">,</span><span class="pln"> </span><span class="lit">300</span><span class="pun">,</span><span class="pln"> sms_code</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">        redis_conn</span><span class="pun">.</span><span class="pln">setex</span><span class="pun">(</span><span class="str">'send_flag_%s'</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> mobile</span><span class="pun">,</span><span class="pln"> </span><span class="lit">60</span><span class="pun">,</span><span class="pln"> </span><span class="lit">1</span><span class="pun">)</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">        </span><span class="com"># 发送短信</span></code></li><li class="L7"><code><span class="pln">        ccp </span><span class="pun">=</span><span class="pln"> CCP</span><span class="pun">()</span></code></li><li class="L8"><code><span class="pln">        time </span><span class="pun">=</span><span class="pln"> str</span><span class="pun">(</span><span class="lit">300</span><span class="pln"> </span><span class="pun">/</span><span class="pln"> </span><span class="lit">60</span><span class="pun">)</span></code></li><li class="L9"><code><span class="pln">        ccp</span><span class="pun">.</span><span class="pln">send_template_sms</span><span class="pun">(</span><span class="pln">mobile</span><span class="pun">,</span><span class="pln"> </span><span class="pun">[</span><span class="pln">sms_code</span><span class="pun">,</span><span class="pln"> time</span><span class="pun">],</span><span class="pln"> constants</span><span class="pun">.</span><span class="pln">SMS_CODE_TEMP_ID</span><span class="pun">)</span></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># 返回</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">Response</span><span class="pun">({</span><span class="str">'message'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'OK'</span><span class="pun">})</span></code></li></ol></pre></li>
+<li><p>补充</p>
+
+<ul><li><p>让pycharm能够进行提示</p>
+
+<ol><li><p>添加 方法的参数 <br>
+注意request 后面的冒号</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">request </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">Request</span></code></li><li class="L1"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">SMSCodeView</span><span class="pun">(</span><span class="typ">GenericAPIView</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">:</span><span class="typ">Request</span><span class="pun">,</span><span class="pln"> mobile</span><span class="pun">):</span></code></li></ol></pre></li>
+<li><p>修改 方法的返回值 <br>
+ 注意方法 定义后的 -&gt;</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">django_redis</span><span class="pun">.</span><span class="pln">__init__</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> redis </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">StrictRedis</span></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> get_redis_connection</span><span class="pun">(</span><span class="kwd">alias</span><span class="pun">=</span><span class="str">'default'</span><span class="pun">,</span><span class="pln"> write</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span><span class="pln"> </span><span class="pun">-&gt;</span><span class="typ">StrictRedis</span><span class="pun">:</span></code></li></ol></pre></li></ol></li>
+<li><p>参考资料 <br>
+官方资料 3.5 <a href="https://www.python.org/dev/peps/pep-0484/" target="_blank">https://www.python.org/dev/peps/pep-0484/</a> <br>
+中文资料 <a href="http://www.infoq.com/cn/news/2014/08/python-type-annotation-proposal" target="_blank">http://www.infoq.com/cn/news/2014/08/python-type-annotation-proposal</a></p></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="y8n4" id="03补充删除图片验证码与异常说明">03_补充删除图片验证码与异常说明</h2><ul data-anchor-id="33ea">
+<li><p>删除图片验证码 <br>
+在序列化器比获取到了正确的验证码后，可以删除掉这个验证码 <br>
+目的是防止前端重复提交相同的图片验证码id，不同的验证码字符串，来猜测验证码 <br>
+代码</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">def</span><span class="pln"> validate</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> attrs</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""校验图片验证码是否正确"""</span></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># 查询redis数据库，获取真实的验证码</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="pln">    </span><span class="com"># 删除redis中的图片验证码，防止用户对同一个进行多次请求验证</span></code></li><li class="L5"><code><span class="pln">    redis_conn</span><span class="pun">.</span><span class="kwd">delete</span><span class="pun">(</span><span class="str">'img_%s'</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> image_code_id</span><span class="pun">)</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">    </span><span class="com"># 对比</span></code></li><li class="L8"><code><span class="pln">    </span><span class="com"># redis中发送短信验证码的标志 send_flag_&lt;mobile&gt;  : 1, 由redis维护60s的有效期</span></code></li></ol></pre></li>
+<li><p>异常处理 <br>
+删除数据的逻辑可能抛出异常，但不影响主线业务逻辑 <br>
+就算出错，也不应该返回500的响应 <br>
+所以可以捕获异常(Redis),并继续处理 <br>
+也可以记录日志</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">try</span><span class="pun">:</span></code></li><li class="L1"><code><span class="pln">    redis_conn</span><span class="pun">.</span><span class="kwd">delete</span><span class="pun">(</span><span class="str">'img_%s'</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> image_code_id</span><span class="pun">)</span></code></li><li class="L2"><code><span class="kwd">except</span><span class="pln"> </span><span class="typ">RedisError</span><span class="pln"> </span><span class="kwd">as</span><span class="pln"> e</span><span class="pun">:</span></code></li><li class="L3"><code><span class="pln">    logger</span><span class="pun">.</span><span class="pln">error</span><span class="pun">(</span><span class="pln">e</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>一点小说明 <br>
+就算没有对应的key redis里的del方法 也不会报错，因为这个方法返回的是影响的记录数， 也就是不存在键就返回0 <br>
+这里出现redis异常的可能就是redis连不到</p></li>
+<li><p>redis相关文档</p>
+
+<ul><li>redis <a href="http://redisdoc.com/" target="_blank">http://redisdoc.com/</a></li>
+<li>redis-py <a href="https://redis-py.readthedocs.io/en/latest/" target="_blank">https://redis-py.readthedocs.io/en/latest/</a></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="1lcg" id="04redis管道pipeline的使用">04_redis管道pipeline的使用</h2><ul data-anchor-id="1usq">
+<li><p>redis管道 <br>
+通过管道可以 将多个命令一起发送给redis，然后再得到多个执行结果 <br>
+优点是：可以显著减少网络交互次数</p></li>
+<li><p>代码使用</p>
+
+<ul><li><p>api</p>
+
+<ol><li>pl = strict_redis.pipeline()  <br>
+可以得到一个StrictPipeline类型的对象</li>
+<li>进行redis操作 <br>
+pl对象和 strict_redis一样有各种各样的redis命令，但这些命令并没有执行，所以不能得到结果</li>
+<li>pl.execute() <br>
+让所有的命令进行执行，这个方法得到的结果是个list，里面记录了每个命令的返回值(包括异常)</li></ol></li>
+<li><p>例子</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln"> </span><span class="com"># 保存验证码及发送记录</span></code></li><li class="L1"><code><span class="pln">redis_conn </span><span class="pun">=</span><span class="pln"> get_redis_connection</span><span class="pun">(</span><span class="str">'verify_codes'</span><span class="pun">)</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln"> </span><span class="com"># 效率较低的做法</span></code></li><li class="L4"><code><span class="pln"> </span><span class="com"># redis_conn.setex('sms_%s' % mobile, constants.SMS_CODE_REDIS_EXPIRES, sms_code)</span></code></li><li class="L5"><code><span class="pln"> </span><span class="com"># redis_conn.setex('send_flag_%s' % mobile, constants.SEND_SMS_CODE_INTERVAL, 1)</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln"> </span><span class="com"># 使用redis的pipeline管道一次执行多个命令</span></code></li><li class="L8"><code><span class="pln">pl </span><span class="pun">=</span><span class="pln"> redis_conn</span><span class="pun">.</span><span class="pln">pipeline</span><span class="pun">()</span></code></li><li class="L9"><code><span class="pln">pl</span><span class="pun">.</span><span class="pln">setex</span><span class="pun">(</span><span class="str">'sms_%s'</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> mobile</span><span class="pun">,</span><span class="pln"> constants</span><span class="pun">.</span><span class="pln">SMS_CODE_REDIS_EXPIRES</span><span class="pun">,</span><span class="pln"> sms_code</span><span class="pun">)</span></code></li><li class="L0"><code><span class="pln">pl</span><span class="pun">.</span><span class="pln">setex</span><span class="pun">(</span><span class="str">'send_flag_%s'</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> mobile</span><span class="pun">,</span><span class="pln"> constants</span><span class="pun">.</span><span class="pln">SEND_SMS_CODE_INTERVAL</span><span class="pun">,</span><span class="pln"> </span><span class="lit">1</span><span class="pun">)</span></code></li><li class="L1"><code><span class="pln"> </span><span class="com"># 让管道执行命令</span></code></li><li class="L2"><code><span class="pln">pl</span><span class="pun">.</span><span class="pln">execute</span><span class="pun">()</span></code></li></ol></pre></li></ul></li>
+<li><p>课外资料 <br>
+<a href="https://segmentfault.com/a/1190000011440752" target="_blank">https://segmentfault.com/a/1190000011440752</a></p></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="rnln" id="05短信验证码前端实现">05_短信验证码前端实现</h2><ul data-anchor-id="wqwb">
+<li><p>基本流程</p>
+
+<ol><li>关联按钮点击事件</li>
+<li>点击后 <br>
+校验 <br>
+    校验手机号是否填写及格式是否正确 <br>
+    校验验证码是否填写及格式是否正确 <br>
+    如果校验不通过，不继续执行 <br>
+业务 <br>
+    拼装url <br>
+    使用axios发送请求() <br>
+        成功 <br>
+            进行倒计时显示 <br>
+        失败 <br>
+            弹出错误信息</li></ol></li>
+<li><p>一些细节 <br>
+通过sending_flag来标识 点击获取短信验证码是否有效 <br>
+在进入点击事件对应的方法中判断sending_flag如果为true则返回 <br>
+马上改为true <br>
+在发送请求后如果失败了改为false <br>
+如果成功了进行完倒计时后改为false</p></li>
+<li>代码 <br>
+略</li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="40i7" id="06短信验证码测试">06_短信验证码测试</h2><p data-anchor-id="pdod">添加点击事件绑定 <br>
+vue变量 <br>
+修改视图函数的配置(之前配错了)</p><div class="md-section-divider"></div><h2 data-anchor-id="nu1u" id="07celery的整体认识">07_celery的整体认识</h2><ul data-anchor-id="fscu">
+<li>需求 <br>
+在视图函数中 有发送短信逻辑，它本质上是联网请求 <br>
+这个联网请求可能比较耗时 <br>
+进而导致视图函数执行耗时较长 <br>
+进而影响前端用户体验</li>
+<li><p>解决 <br>
+异步 进行耗时处理</p></li>
+<li><p>celery <br>
+分布式异步任务队列调度框架，既支持同步也支持异步</p>
+
+<ul><li>概念 <br>
+<ul><li>任务 <br>
+一些要执行的代码</li>
+<li>任务队列 <br>
+多个任务</li>
+<li>调度 <br>
+优先级/指定worker等</li>
+<li>分布式 <br>
+各个部分可以不在同一个电脑上， 各个部分可以有多个</li>
+<li>异步 <br>
+不阻塞，不等待结果</li>
+<li>同步 <br>
+阻塞，等待结果</li></ul></li>
+<li>特点 <br>
+<ol><li>简单</li>
+<li>高性能</li>
+<li>灵活</li></ol></li>
+<li>图示 <br>
+<ol><li> <br>
+<img src="http://static.zybuluo.com/jsutqb/v1gsiz87qdjespxi8cuqjxdm/image_1chbcgmgc1tcreq11hfdc4h1em29.png" alt="image_1chbcgmgc1tcreq11hfdc4h1em29.png-399.1kB" title=""></li>
+<li> <br>
+<img src="http://static.zybuluo.com/jsutqb/j4h6u4b7s1jw081umqe3kgy0/image_1chbch8cuk151bdt1cdf1abb11aam.png" alt="image_1chbch8cuk151bdt1cdf1abb11aam.png-313.5kB" title=""></li></ol></li>
+<li>主要构成 <br>
+<ol><li>client    任务的发起方</li>
+<li>worker    任务的执行方</li>
+<li>broker    中间人(client和worker的接头人)</li>
+<li>backend   任务执行结果的存储</li></ol></li>
+<li><p>使用步骤</p>
+
+<ol><li>安装celery <br>
+<code>pip install celery</code></li>
+<li><p>创建出Celery对象(一般称为应用app)</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">app </span><span class="pun">=</span><span class="pln"> </span><span class="typ">Celery</span><span class="pun">()</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="com"># 必须指定 broker </span></code></li><li class="L3"><code></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="com"># 可以指定backend</span></code></li></ol></pre></li>
+<li><p>定义函数(普通python函数)</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">def</span><span class="pln"> send_sms_code</span><span class="pun">(</span><span class="pln">to</span><span class="pun">,</span><span class="pln">vcode</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">pass</span></code></li></ol></pre></li>
+<li><p>使用app.task 装饰该函数，使其成为任务函数</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="lit">@app</span><span class="pun">.</span><span class="pln">task</span></code></li><li class="L1"><code><span class="kwd">def</span><span class="pln"> send_sms_code</span><span class="pun">(</span><span class="pln">to</span><span class="pun">,</span><span class="pln">vcode</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">pass</span></code></li></ol></pre></li>
+<li>开启worker <br>
+<code>celery -A 任务函数的路径 -l info</code></li>
+<li><p>client 发布任务</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">send_sms_code</span><span class="pun">.</span><span class="pln">delay</span><span class="pun">(</span><span class="str">"13812345678"</span><span class="pln"> </span><span class="pun">,</span><span class="str">'1234'</span><span class="pun">)</span></code></li></ol></pre></li></ol></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="ammq" id="08celery的程序定义">08_celery的程序定义</h2><p data-anchor-id="quai">这里省略了配置文件和常量文件(为了简化)</p><ul data-anchor-id="jpgp">
+<li><p>建立文件/文件夹</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">celery_tasks        </span><span class="pun">放置所有</span><span class="pln">celery</span><span class="pun">任务的包</span></code></li><li class="L1"><code><span class="pun">├──</span><span class="pln"> __init__</span><span class="pun">.</span><span class="pln">py     </span></code></li><li class="L2"><code><span class="pun">├──</span><span class="pln"> main</span><span class="pun">.</span><span class="pln">py         </span><span class="pun">一会启动</span><span class="pln">worker</span><span class="pun">的入口</span></code></li><li class="L3"><code><span class="pun">└──</span><span class="pln"> sms             </span><span class="pun">与发送短信有关的</span></code></li><li class="L4"><code><span class="pln">    </span><span class="pun">├──</span><span class="pln"> __init__</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L5"><code><span class="pln">    </span><span class="pun">└──</span><span class="pln"> tasks</span><span class="pun">.</span><span class="pln">py    </span><span class="pun">任务函数所在的模块(建议名称为</span><span class="pln">tasks</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>编写代码 </p>
+
+<ul><li><p>main</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln"> </span><span class="com"># 导入Celery类</span></code></li><li class="L1"><code><span class="kwd">from</span><span class="pln"> celery </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">Celery</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="str">''' 老师的代码使用了外部文件，较复杂</span></code></li><li class="L4"><code><span class="str">celery_app = Celery('</span><span class="pln">meiduo</span><span class="str">')</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="str"># 导入配置文件</span></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="str">celery_app.config_from_object('</span><span class="pln">celery_tasks</span><span class="pun">.</span><span class="pln">config</span><span class="str">')</span></code></li><li class="L9"><code><span class="str">'''</span></code></li><li class="L0"><code><span class="pln"> </span><span class="com"># 创建出Celery对象，指定名称，并指定worker和backend</span></code></li><li class="L1"><code><span class="pln">celery_app </span><span class="pun">=</span><span class="pln"> </span><span class="typ">Celery</span><span class="pun">(</span><span class="str">'meiduo'</span><span class="pun">,</span><span class="pln">backend</span><span class="pun">=</span><span class="str">"redis://127.0.0.1:6379/14"</span><span class="pun">,</span><span class="pln">broker</span><span class="pun">=</span><span class="str">"redis://127.0.0.1:6379/15"</span><span class="pun">)</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln"> </span><span class="com"># 自动注册celery任务</span></code></li><li class="L4"><code><span class="pln"> </span><span class="com"># 需要指定 所有任务模块所在的包(一个也要用列表)</span></code></li><li class="L5"><code><span class="pln">celery_app</span><span class="pun">.</span><span class="pln">autodiscover_tasks</span><span class="pun">([</span><span class="str">'celery_tasks.sms'</span><span class="pun">])</span></code></li></ol></pre></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="qjl8" id="09定义使用发送短信验证码异步任务">09_定义使用发送短信验证码异步任务</h2><ul data-anchor-id="n255">
+<li><p>任务函数的步骤</p>
+
+<ol><li>准备发送短信的函数所需要的环境 <br>
+<ol><li>拷贝 yuntongxun 到 sms包中</li></ol></li>
+<li><p>在tasks.py中编写函数</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln">yuntongxun</span><span class="pun">.</span><span class="pln">sms </span><span class="kwd">import</span><span class="pln"> CCP</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">def</span><span class="pln"> send_sms_code</span><span class="pun">(</span><span class="pln">mobile</span><span class="pun">,</span><span class="pln"> sms_code</span><span class="pun">):</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="pln">    </span><span class="com"># 发送短信</span></code></li><li class="L5"><code><span class="pln">    ccp </span><span class="pun">=</span><span class="pln"> CCP</span><span class="pun">()</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">    </span><span class="str">''' 视频中的代码</span></code></li><li class="L8"><code><span class="str">    time = str(constants.SMS_CODE_REDIS_EXPIRES / 60)</span></code></li><li class="L9"><code><span class="str">    ccp.send_template_sms(mobile, [sms_code, time], constants.SMS_CODE_TEMP_ID)</span></code></li><li class="L0"><code><span class="str">    '''</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 为了简化。省略了常量的配置</span></code></li><li class="L2"><code><span class="pln">    ccp</span><span class="pun">.</span><span class="pln">send_template_sms</span><span class="pun">(</span><span class="pln">mobile</span><span class="pun">,</span><span class="pln"> </span><span class="pun">[</span><span class="pln">sms_code</span><span class="pun">,</span><span class="pln"> </span><span class="lit">5</span><span class="pun">],</span><span class="pln"> </span><span class="lit">1</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>把普通函数转为任务函数</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> celery_tasks</span><span class="pun">.</span><span class="pln">main </span><span class="kwd">import</span><span class="pln"> celery_app</span></code></li><li class="L1"><code><span class="pln"> </span><span class="com"># 指定任务函数名称，不指定的话是含有模块名称的</span></code></li><li class="L2"><code><span class="lit">@celery_app</span><span class="pun">.</span><span class="pln">task</span><span class="pun">(</span><span class="pln">name</span><span class="pun">=</span><span class="str">'send_sms_code'</span><span class="pun">)</span></code></li><li class="L3"><code><span class="kwd">def</span><span class="pln"> send_sms_code</span><span class="pun">(</span><span class="pln">mobile</span><span class="pun">,</span><span class="pln"> sms_code</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">pass</span></code></li></ol></pre></li></ol></li>
+<li><p>启动worker <br>
+<code>celery -A celery_tasks.main worker -l info</code> <br>
+-A 表示 app 所在的模块 <br>
+worker 启动 worker <br>
+-l info 在控制台打印 info级别及以上的日志</p></li>
+<li><p>client 发起任务</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> celery_tasks</span><span class="pun">.</span><span class="pln">sms</span><span class="pun">.</span><span class="pln">tasks </span><span class="kwd">import</span><span class="pln"> send_sms_code</span></code></li><li class="L1"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">SMSCodeView</span><span class="pun">(</span><span class="typ">GenericAPIView</span><span class="pun">):</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> mobile</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="pun">...</span></code></li><li class="L5"><code><span class="pln">        </span><span class="com"># 发送短信</span></code></li><li class="L6"><code><span class="pln">        </span><span class="com"># 原始方式</span></code></li><li class="L7"><code><span class="pln">        </span><span class="com"># ccp = CCP()</span></code></li><li class="L8"><code><span class="pln">        </span><span class="com"># time = str(constants.SMS_CODE_REDIS_EXPIRES / 60)</span></code></li><li class="L9"><code><span class="pln">        </span><span class="com"># ccp.send_template_sms(mobile, [sms_code, time], constants.SMS_CODE_TEMP_ID)</span></code></li><li class="L0"><code><span class="pln">        </span><span class="com"># 使用celery发布异步任务 ,注意delay</span></code></li><li class="L1"><code><span class="pln">        send_sms_code</span><span class="pun">.</span><span class="pln">delay</span><span class="pun">(</span><span class="pln">mobile</span><span class="pun">,</span><span class="pln"> sms_code</span><span class="pun">)</span></code></li><li class="L2"><code><span class="pln">        </span><span class="pun">...</span></code></li></ol></pre></li>
+<li><p>测试</p></li>
+<li><p>说明 <br>
+client 在发送任务的时候会把 函数的名称 和 参数发送给 broker ，这些信息只能是值 (必须能被序列化为Json)</p></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="pd09" id="10校验用户名与手机号是否存在的接口说明">10_校验用户名与手机号是否存在的接口说明</h2><p data-anchor-id="r404">这些业务实现在users应用中</p><ul data-anchor-id="yb8n">
+<li><p>校验用户名是否存在</p>
+
+<ul><li><p>设计 <br>
+请求 GET /username/{用户名}/ <br>
+响应 {"username":用户名,"count":出现次数}</p></li>
+<li><p>实现</p>
+
+<ul><li><p>后端</p>
+
+<ul><li><p>views</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">UsernameCountView</span><span class="pun">(</span><span class="typ">APIView</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> username</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">        count </span><span class="pun">=</span><span class="pln"> </span><span class="typ">User</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">filter</span><span class="pun">(</span><span class="pln">username</span><span class="pun">=</span><span class="pln">username</span><span class="pun">).</span><span class="pln">count</span><span class="pun">()</span></code></li><li class="L3"><code><span class="pln">        data </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L4"><code><span class="pln">            </span><span class="str">'username'</span><span class="pun">:</span><span class="pln"> username</span><span class="pun">,</span></code></li><li class="L5"><code><span class="pln">            </span><span class="str">'count'</span><span class="pun">:</span><span class="pln"> count</span></code></li><li class="L6"><code><span class="pln">        </span><span class="pun">}</span></code></li><li class="L7"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">Response</span><span class="pun">(</span><span class="pln">data</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>urls</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'usernames/(?P&lt;username&gt;\w{5,20})/count/'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">UsernameCountView</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">()),</span></code></li><li class="L2"><code><span class="pun">]</span></code></li></ol></pre></li></ul></li>
+<li><p>前端 <br>
+check_username 中 用 axios 发送请求 得到响应 如果count &gt; 0 则不通过，反之则通过</p></li></ul></li></ul></li>
+<li>校验手机号是否存在 <br>
+同上</li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="5btc" id="11注册接口说明">11_注册接口说明</h2><ul data-anchor-id="4rtl">
+<li><p>视图 <br>
+比较简单 ，就是rest方式创建一个用户对象 <br>
+class UserViewSet(CreateAPIView): <br>
+    queryset = User.objects.all() <br>
+    serializer_class = CreateUserSerializer</p></li>
+<li><p>序列化器</p>
+
+<ul><li>序列化器 要考虑如下问题 <br>
+<ol><li>进行参数的接受 <br>
+<ol><li>相比模型，有多余的字段 (确认密码、同意协议、短信验证码)</li></ol></li>
+<li>进行校验 <br>
+<ol><li>借助自身的验证规则 <br>
+必填 required <br>
+类型由 模型保证 <br>
+唯一由 模型保证 <br>
+合理的长度 指定 元选项的 extra_args</li>
+<li>每个字段 <br>
+正则 <br>
+同意协议</li>
+<li>整体校验 <br>
+确认密码是否一致，短信验证码是否正确</li></ol></li>
+<li>进行数据保存(业务处理) <br>
+rest 中create的默认行为是 调用序列化器的save方法 <br>
+模型序列化器的save方法会掉模型的模型管理的create方法 <br>
+但如果这样 保存的密码就是明文的了 <br>
+所以在保存用需要调用 User对象的set_password 方法传入明文密码转为密文密码 <br>
+在调用user对象的save方法保存</li>
+<li>返回响应 <br>
+有些字段不能返回，比如密码，所以要设置外write_only</li></ol></li>
+<li>代码 <br>
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">CreateUserSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">ModelSerializer</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""</span></code></li><li class="L2"><code><span class="str">    创建用户序列化器</span></code></li><li class="L3"><code><span class="str">    """</span></code></li><li class="L4"><code><span class="pln">    password2 </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">CharField</span><span class="pun">(</span><span class="pln">label</span><span class="pun">=</span><span class="str">'确认密码'</span><span class="pun">,</span><span class="pln"> required</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">,</span><span class="pln"> allow_null</span><span class="pun">=</span><span class="kwd">False</span><span class="pun">,</span><span class="pln"> allow_blank</span><span class="pun">=</span><span class="kwd">False</span><span class="pun">,</span><span class="pln"> write_only</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">    sms_code </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">CharField</span><span class="pun">(</span><span class="pln">label</span><span class="pun">=</span><span class="str">'短信验证码'</span><span class="pun">,</span><span class="pln"> required</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">,</span><span class="pln"> allow_null</span><span class="pun">=</span><span class="kwd">False</span><span class="pun">,</span><span class="pln"> allow_blank</span><span class="pun">=</span><span class="kwd">False</span><span class="pun">,</span><span class="pln"> write_only</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">    allow </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">CharField</span><span class="pun">(</span><span class="pln">label</span><span class="pun">=</span><span class="str">'同意协议'</span><span class="pun">,</span><span class="pln"> required</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">,</span><span class="pln"> allow_null</span><span class="pun">=</span><span class="kwd">False</span><span class="pun">,</span><span class="pln"> allow_blank</span><span class="pun">=</span><span class="kwd">False</span><span class="pun">,</span><span class="pln"> write_only</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> validate_mobile</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> value</span><span class="pun">):</span></code></li><li class="L9"><code><span class="pln">        </span><span class="str">"""验证手机号"""</span></code></li><li class="L0"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> </span><span class="kwd">not</span><span class="pln"> re</span><span class="pun">.</span><span class="pln">match</span><span class="pun">(</span><span class="pln">r</span><span class="str">'^1[345789]\d{9}$'</span><span class="pun">,</span><span class="pln"> value</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">            </span><span class="kwd">raise</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">ValidationError</span><span class="pun">(</span><span class="str">'手机号格式错误'</span><span class="pun">)</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> value</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> validate_allow</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> value</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">        </span><span class="str">"""检验用户是否同意协议"""</span></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> value </span><span class="pun">!=</span><span class="pln"> </span><span class="str">'true'</span><span class="pun">:</span></code></li><li class="L7"><code><span class="pln">            </span><span class="kwd">raise</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">ValidationError</span><span class="pun">(</span><span class="str">'请同意用户协议'</span><span class="pun">)</span></code></li><li class="L8"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> value</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> validate</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> data</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># 判断两次密码</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> data</span><span class="pun">[</span><span class="str">'password'</span><span class="pun">]</span><span class="pln"> </span><span class="pun">!=</span><span class="pln"> data</span><span class="pun">[</span><span class="str">'password2'</span><span class="pun">]:</span></code></li><li class="L3"><code><span class="pln">            </span><span class="kwd">raise</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">ValidationError</span><span class="pun">(</span><span class="str">'两次密码不一致'</span><span class="pun">)</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="pln">        </span><span class="com"># 判断短信验证码</span></code></li><li class="L6"><code><span class="pln">        redis_conn </span><span class="pun">=</span><span class="pln"> get_redis_connection</span><span class="pun">(</span><span class="str">'verify_codes'</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pln">        mobile </span><span class="pun">=</span><span class="pln"> data</span><span class="pun">[</span><span class="str">'mobile'</span><span class="pun">]</span></code></li><li class="L8"><code></code></li><li class="L9"><code><span class="pln">        real_sms_code </span><span class="pun">=</span><span class="pln"> redis_conn</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'sms_%s'</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> mobile</span><span class="pun">)</span></code></li><li class="L0"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> real_sms_code </span><span class="kwd">is</span><span class="pln"> </span><span class="kwd">None</span><span class="pun">:</span></code></li><li class="L1"><code><span class="pln">            </span><span class="kwd">raise</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">ValidationError</span><span class="pun">(</span><span class="str">'无效的短信验证码'</span><span class="pun">)</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> data</span><span class="pun">[</span><span class="str">'sms_code'</span><span class="pun">]</span><span class="pln"> </span><span class="pun">!=</span><span class="pln"> real_sms_code</span><span class="pun">.</span><span class="pln">decode</span><span class="pun">():</span></code></li><li class="L3"><code><span class="pln">            </span><span class="kwd">raise</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">ValidationError</span><span class="pun">(</span><span class="str">'短信验证码错误'</span><span class="pun">)</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> data</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> create</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> validated_data</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">        </span><span class="str">"""</span></code></li><li class="L9"><code><span class="str">        创建用户</span></code></li><li class="L0"><code><span class="str">        """</span></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># 移除数据库模型类中不存在的属性</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">del</span><span class="pln"> validated_data</span><span class="pun">[</span><span class="str">'password2'</span><span class="pun">]</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">del</span><span class="pln"> validated_data</span><span class="pun">[</span><span class="str">'sms_code'</span><span class="pun">]</span></code></li><li class="L4"><code><span class="pln">        </span><span class="kwd">del</span><span class="pln"> validated_data</span><span class="pun">[</span><span class="str">'allow'</span><span class="pun">]</span></code></li><li class="L5"><code><span class="pln">        user </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">super</span><span class="pun">().</span><span class="pln">create</span><span class="pun">(</span><span class="pln">validated_data</span><span class="pun">)</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">        </span><span class="com"># 调用django的认证系统加密密码</span></code></li><li class="L8"><code><span class="pln">        user</span><span class="pun">.</span><span class="pln">set_password</span><span class="pun">(</span><span class="pln">validated_data</span><span class="pun">[</span><span class="str">'password'</span><span class="pun">])</span></code></li><li class="L9"><code><span class="pln">        user</span><span class="pun">.</span><span class="pln">save</span><span class="pun">()</span></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> user</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L4"><code><span class="pln">        model </span><span class="pun">=</span><span class="pln"> </span><span class="typ">User</span></code></li><li class="L5"><code><span class="pln">        fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'id'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'username'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'password'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'password2'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'sms_code'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'mobile'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'allow'</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">        extra_kwargs </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L7"><code><span class="pln">            </span><span class="str">'id'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span><span class="str">'read_only'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">True</span><span class="pun">},</span></code></li><li class="L8"><code><span class="pln">            </span><span class="str">'username'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L9"><code><span class="pln">                </span><span class="str">'min_length'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">5</span><span class="pun">,</span></code></li><li class="L0"><code><span class="pln">                </span><span class="str">'max_length'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">20</span><span class="pun">,</span></code></li><li class="L1"><code><span class="pln">                </span><span class="str">'error_messages'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L2"><code><span class="pln">                    </span><span class="str">'min_length'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'仅允许5-20个字符的用户名'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">                    </span><span class="str">'max_length'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'仅允许5-20个字符的用户名'</span><span class="pun">,</span></code></li><li class="L4"><code><span class="pln">                </span><span class="pun">}</span></code></li><li class="L5"><code><span class="pln">            </span><span class="pun">},</span></code></li><li class="L6"><code><span class="pln">            </span><span class="str">'password'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L7"><code><span class="pln">                </span><span class="str">'write_only'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">True</span><span class="pun">,</span></code></li><li class="L8"><code><span class="pln">                </span><span class="str">'min_length'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">8</span><span class="pun">,</span></code></li><li class="L9"><code><span class="pln">                </span><span class="str">'max_length'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">20</span><span class="pun">,</span></code></li><li class="L0"><code><span class="pln">                </span><span class="str">'error_messages'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">                    </span><span class="str">'min_length'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'仅允许8-20个字符的密码'</span><span class="pun">,</span></code></li><li class="L2"><code><span class="pln">                    </span><span class="str">'max_length'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'仅允许8-20个字符的密码'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">                </span><span class="pun">}</span></code></li><li class="L4"><code><span class="pln">            </span><span class="pun">}</span></code></li></ol></pre></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="5y7e" id="12跨域请求与drf解决">12_跨域请求与DRF解决</h2><ul data-anchor-id="d01n">
+<li><p>跨域 <br>
+域 = 协议 +  域名 + 端口 <br>
+跨域 两个域中 其中任意部分不同</p></li>
+<li><p>跨域相关</p>
+
+<ul><li><p>浏览器策略 <br>
+对于aoixs发送的请求，虽然我们在控制台看到了" Access-Control-Allow-Origin" 字样，但并不是没有发出请求。 <br>
+对于简单请求(详情浏览参考资料)，浏览器会发出请求，但得到响应后会校验响应头中是否有当前域，如果没有则会在控制台输出错误，并不会响应的结果交给js代码 <br>
+对于复杂请求(详情浏览参考资料)，浏览器会先发送一个OPTION请求，询问服务器是否支持跨域，如果响应头中表名允许，才会发出对应的请求来获取数据， 并交给js代码</p></li>
+<li><p>参考资料 <br>
+<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS" target="_blank">https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS</a></p></li>
+<li><p>相关头</p>
+
+<ul><li><p>请求</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="typ">Access</span><span class="pun">-</span><span class="typ">Control</span><span class="pun">-</span><span class="typ">Request</span><span class="pun">-</span><span class="typ">Method</span><span class="pun">:</span><span class="pln"> </span></code></li><li class="L1"><code><span class="typ">Access</span><span class="pun">-</span><span class="typ">Control</span><span class="pun">-</span><span class="typ">Request</span><span class="pun">-</span><span class="typ">Headers</span><span class="pun">:</span><span class="pln"> </span></code></li></ol></pre></li>
+<li><p>响应</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="typ">Access</span><span class="pun">-</span><span class="typ">Control</span><span class="pun">-</span><span class="typ">Allow</span><span class="pun">-</span><span class="typ">Origin</span><span class="pun">:</span><span class="pln"> </span></code></li><li class="L1"><code><span class="typ">Access</span><span class="pun">-</span><span class="typ">Control</span><span class="pun">-</span><span class="typ">Allow</span><span class="pun">-</span><span class="typ">Methods</span><span class="pun">:</span><span class="pln"> </span></code></li><li class="L2"><code><span class="typ">Access</span><span class="pun">-</span><span class="typ">Control</span><span class="pun">-</span><span class="typ">Allow</span><span class="pun">-</span><span class="typ">Headers</span><span class="pun">:</span><span class="pln"> </span></code></li><li class="L3"><code><span class="typ">Access</span><span class="pun">-</span><span class="typ">Control</span><span class="pun">-</span><span class="typ">Max</span><span class="pun">-</span><span class="typ">Age</span><span class="pun">:</span><span class="pln"> </span></code></li></ol></pre></li></ul></li></ul></li>
+<li><p>跨域资源访问的解决</p>
+
+<ul><li>请求端 <br>
+通过前向代理进行处理(在vue中已经使用)</li>
+<li>响应端 <br>
+<ol><li>通过后向代理解决(nginx经过合适配置后，可以合并为同一个域就不存在跨域了)</li>
+<li>服务器配置</li></ol></li></ul></li>
+<li><p>django中 对于 跨域资源共享的解决</p>
+
+<ol><li>安装django-cors-headers <br>
+<code>pip install django-cors-headers</code> <br>
+<ul><li>专用于django </li>
+<li>cors=Cross-Origin Resource Sharing</li>
+<li>heads 用于处理跨域资源共享的相关http头</li></ul></li>
+<li><p>安装应用</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">INSTALLED_APPS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span></code></li><li class="L1"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">'corsheaders'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L4"><code><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>配置中间件</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">MIDDLEWARE </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'corsheaders.middleware.CorsMiddleware'</span><span class="pun">,</span></code></li><li class="L2"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L3"><code><span class="pun">]</span></code></li></ol></pre>
+
+<p>一定要添加到最前面</p></li>
+<li><p>添加白名单</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln"> </span><span class="com"># 这些域会被添加到Access-Control-Allow-Origin头中</span></code></li><li class="L1"><code><span class="pln"> </span><span class="com"># 如果允许所有的，就使用 "*"</span></code></li><li class="L2"><code><span class="pln">CORS_ORIGIN_WHITELIST </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span></code></li><li class="L3"><code><span class="pln">    </span><span class="str">'127.0.0.1:8080'</span><span class="pun">,</span></code></li><li class="L4"><code><span class="pln">    </span><span class="str">'localhost:8080'</span><span class="pun">,</span></code></li><li class="L5"><code><span class="pln">    </span><span class="str">'www.meiduo.site:8080'</span></code></li><li class="L6"><code><span class="pun">)</span></code></li><li class="L7"><code><span class="pln">CORS_ALLOW_CREDENTIALS </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">True</span><span class="pln">  </span><span class="com"># 允许携带cookie</span></code></li></ol></pre></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="7xzn" id="13配置本机域名">13_配置本机域名</h2><ul data-anchor-id="3fpm">
+<li><p>域名 dns 与 hosts <br>
+域名是人易于记忆的内容，用于标识一个网站 <br>
+ip 这是计算机在进行数据传输时使用到 <br>
+域名到ip的转化过程有两种方式</p>
+
+<ol><li>查询dns服务器 </li>
+<li>本地hosts文件 <br>
+其中优先查询hosts文件，没找到再查dns服务器</li></ol></li>
+<li><p>hosts文件</p>
+
+<ul><li>位置 <br>
+<ul><li>linux/max <br>
+<code>/etc/hosts</code></li>
+<li>windows <br>
+<code>C:\Windows\System32\drivers\etc\hosts</code></li></ul></li>
+<li>重要性 <br>
+因为涉及到域名解析过程，所以如果被恶意程序篡改，可能上一个假网站，所以修改需要管理员权限</li>
+<li>格式 <br>
+一行一个映射关系 <br>
+ip  空白 域名</li></ul></li>
+<li><p>使用域名访问程序</p>
+
+<ol><li><p>修改hosts文件</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="lit">127.0</span><span class="pun">.</span><span class="lit">0.1</span><span class="pln">   api</span><span class="pun">.</span><span class="pln">meiduo</span><span class="pun">.</span><span class="pln">site</span></code></li><li class="L1"><code><span class="lit">127.0</span><span class="pun">.</span><span class="lit">0.1</span><span class="pln">   www</span><span class="pun">.</span><span class="pln">meiduo</span><span class="pun">.</span><span class="pln">site</span></code></li></ol></pre></li>
+<li><p>访问</p>
+
+<ul><li>live-server <br>
+<a href="http://www.meiduo.site:8080/" target="_blank">http://www.meiduo.site:8080/</a></li>
+<li>django <br>
+<a href="http://api.meiduo.site:8000/" target="_blank">http://api.meiduo.site:8000/</a></li></ul></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="qp0m" id="14在前端文件中使用后端域名">14_在前端文件中使用后端域名</h2><ul data-anchor-id="5afu">
+<li><p>步骤</p>
+
+<ol><li><p>定义常量js文件</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">host</span><span class="pun">.</span><span class="pln">js</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">var</span><span class="pln"> host </span><span class="pun">=</span><span class="pln"> </span><span class="str">'http://api.meiduo.site:8000'</span></code></li></ol></pre></li>
+<li>在html中引入常量js文件 <br>
+<code>&lt;scirpt src='js/host.js'&gt;&lt;/script&gt;</code></li>
+<li>在其他js中使用常量 <br>
+并修改对应使用地址的地方</li></ol></li>
+<li><p>原理</p>
+
+<ol><li>顶层js中定义的变量为全局变量</li>
+<li>后面使用的js可以使用全局变量</li></ol></li>
+<li><p>好处 <br>
+便于维护</p></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="w0ai" id="14关于allowhost说明与pycharm对js的提示修改">14_关于AllowHost说明与PyCharm对JS的提示修改</h2><ul data-anchor-id="ks7j">
+<li>pycharm中的js提示 <br>
+<img src="http://static.zybuluo.com/jsutqb/ajsqqq0tt99vudwiebukzn0z/image_1chd6te5cdds1fc22541gkqnq9.png" alt="image_1chd6te5cdds1fc22541gkqnq9.png-19.8kB" title=""></li>
+<li><p>django中的ALLOWED_HOSTS</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">dev</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code><span class="pln"> </span><span class="com"># 允许以 api.meiduo.site 的域名进行访问，因为配置是个列表，所以可以添加其他的</span></code></li><li class="L2"><code><span class="pln">ALLOWED_HOSTS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="str">"api.meiduo.site"</span><span class="pun">]</span></code></li><li class="L3"><code><span class="pln"> </span><span class="com"># 允许所有</span></code></li><li class="L4"><code><span class="pln"> </span><span class="com"># ALLOWED_HOSTS = ["*"]</span></code></li></ol></pre></li>
+</ul></div>
+<a href="7.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="9.html">下一页</a>
+</body>
+</html>

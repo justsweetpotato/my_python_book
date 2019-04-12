@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <pre>
+一、简化登录校验的处理
+
+
+class MyJSONWebTokenAuthentication(JSONWebTokenAuthentication):
+    def authenticate(self, request):
+        try:
+            return  super().authenticate(request)
+        except:
+            return None
+
+
+
+
+# REST配置
+REST_FRAMEWORK = {
+    # 认证机制后端
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'meiduo_mall.utils.authentication.MyJSONWebTokenAuthentication',
+        ...
+    ),
+}
+
+
+
+
+
+二、 使用mixin 简化购物车代码
+
+
+class CartMixin():
+    prefix = "cart"
+    cache_name = "cart"
+
+    def str2dict(self, cart_str):
+        cart_bytes = base64.b64decode(cart_str)
+        cart_dict = pickle.loads(cart_bytes)
+        return cart_dict
+
+    def dict2str(self, cart_dict):
+        cart_bytes = pickle.dumps(cart_dict)
+        cart_str = base64.b64encode(cart_bytes).decode()
+        return cart_str
+
+    def write_cart(self, request: Request, response:Response, cart_dict:dict):
+        cart_str = self.dict2str(cart_dict)
+        if request.user.is_authenticated:
+            key = "%s_%s" % (self.prefix ,request.user.id)
+            print( key , cart_str)
+            get_redis_connection(self.cache_name).set(key, cart_str)
+        else:
+            response.set_cookie(self.prefix, cart_str)
+
+    def read(self, request: Request) -> dict:
+
+        if request.user.is_authenticated:
+            cart_dict = self.read_from_redis(request.user.id)
+        else:
+            cart_dict = self.read_from_cookie(request)
+
+        return cart_dict
+
+    def read_from_redis(self, userid):
+        key = "%s_%s" % (self.prefix ,userid)
+        value = get_redis_connection(self.cache_name).get(key)
+        if value is None:
+            return {}
+        cart_str = value.decode()
+        return self.str2dict(cart_str)
+
+    def read_from_cookie(self, request:Request):
+        cart_str = request.COOKIES.get(self.prefix)
+        if cart_str is None:
+            return {}
+        return self.str2dict(cart_str)
+
+
+
+
+class CartView(CartMixin,APIView):
+    """
+    购物车
+    """
+    prefix = "history"
+
+    #{sku_id :[count,select]}
+    def post(self,request):
+        serializer = CartSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        sku_id = serializer.validated_data.get('sku_id')
+        count = serializer.validated_data.get('count')
+        selected = serializer.validated_data.get('selected')
+
+        cart_dict = self.read(request)
+
+        if sku_id in cart_dict:
+            new_count = cart_dict[sku_id][0] + count
+            cart_dict[sku_id] = [new_count,selected]
+        else:
+            cart_dict[sku_id] = [count,selected]
+
+        resp = Response(serializer.data, status=status.HTTP_201_CREATED)
+        self.write_cart(request,resp,cart_dict)
+        return resp
+
+    def put(self, request):
+        # 检查前端发送的数据是否正确
+        serializer = CartSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        sku_id = serializer.validated_data.get('sku_id')
+        count = serializer.validated_data.get('count')
+        selected = serializer.validated_data.get('selected')
+
+        cart_dict = self.read(request)
+
+        cart_dict[sku_id] = [count, selected]
+
+        resp = Response(serializer.data, status=status.HTTP_201_CREATED)
+        self.write_cart(request, resp, cart_dict)
+        return resp
+
+    def delete(self, request):
+        """删除"""
+        # 检查参数sku_id
+        serializer = CartDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        sku_id = serializer.validated_data['sku_id']
+
+        cart_dict = self.read(request)
+
+        if sku_id in cart_dict:
+            del cart_dict[sku_id]
+
+        resp = Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+        self.write_cart(request, resp, cart_dict)
+
+        return resp
+
+    def get(self, request):
+
+        cart_dict = self.read(request)
+        print(cart_dict)
+        skus = SKU.objects.filter(id__in=cart_dict.keys())
+        print(skus)
+
+        for sku in skus:
+            sku.count = cart_dict[sku.id][0]
+            sku.selected = cart_dict[sku.id][1]
+
+        serializer =  CartSKUSerializer(skus, many=True)
+
+        return Response(serializer.data)
+    </pre>
+</body>
+</html>

@@ -1,0 +1,737 @@
+﻿<!DOCTYPE html>
+<html class="theme theme-white">
+<head>
+<meta charset="utf-8">
+ <a href="5.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="7.html">下一页</a>
+<title>Django-4.0-Day6</title>
+<link href="https://www.zybuluo.com/static/assets/template-theme-white.css" rel="stylesheet" media="screen">
+<style type="text/css">
+
+#wmd-preview h1  {
+    color: #0077bb; /* 将标题改为蓝色 */
+}</style>
+</head>
+<body class="theme theme-white">
+<div id="wmd-preview" class="wmd-preview wmd-preview-full-reader"><div class="md-section-divider"></div><div class="md-section-divider"></div><h1 data-anchor-id="q7gq" id="django-40-day6">Django-4.0-Day6</h1><p data-anchor-id="f64z"><code>django</code></p><hr><div class="md-section-divider"></div><h2 data-anchor-id="tggn" id="知识点复习">知识点复习</h2><ul data-anchor-id="3zwx">
+<li>drf介绍 <br>
+<ul><li>什么是rest</li>
+<li>什么是前后端分离</li>
+<li>通用的代码</li>
+<li>项目搭建</li>
+<li>项目配置</li></ul></li>
+<li>序列化器 <br>
+<ul><li>作用 <br>
+<ul><li>序列化</li>
+<li>反序列化</li></ul></li>
+<li>定义 <br>
+<ul><li>Serializer <br>
+<ul><li>字段</li>
+<li>选项</li>
+<li>对象的创建</li>
+<li>数据校验 <br>
+<ul><li>单个字段对应的方法</li>
+<li>单个字段对应的校验函数</li>
+<li>多个字段的校验方法</li>
+<li>自带的校验函数</li></ul></li>
+<li>保存(更新、新增)</li></ul></li>
+<li>ModelSerializer <br>
+<ul><li>元选项 <br>
+<ul><li>model</li>
+<li>fileds</li>
+<li>exclude</li>
+<li>depth</li>
+<li>read_only_fields</li>
+<li>extra_kwargs</li></ul></li>
+<li>关联 <br>
+<ul><li>一对多</li>
+<li>多对一</li>
+<li>自定义关联序列化器</li></ul></li></ul></li></ul></li></ul></li>
+<li>视图 <br>
+<ul><li>视图类继承关系</li>
+<li>视图集继承关系</li>
+<li>request 和 response</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="guf2" id="01-针对部分浏览器乱码的说明">01-针对部分浏览器乱码的说明</h2><ul data-anchor-id="qdy5">
+<li>原因 <br>
+drf返回没有指定编码 <br>
+浏览器的默认编码不对</li>
+<li>解决 <br>
+自定义jsonrender</li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="2uec" id="02对drf类视图的整体认识">02_对DRF类视图的整体认识</h2><ul data-anchor-id="bvkg">
+<li><p>今日内容</p>
+
+<ul><li>视图 <br>
+<ul><li>请求和响应</li>
+<li>视图类</li>
+<li>视图集</li>
+<li>视图集的路由</li></ul></li>
+<li>其他 <br>
+<ul><li>认证</li>
+<li>权限</li>
+<li>限流</li>
+<li>列表 <br>
+<ul><li>过滤</li>
+<li>分页</li></ul></li>
+<li>异常</li>
+<li>版本</li>
+<li>文档</li></ul></li></ul></li>
+<li><p>类视图概览  </p>
+
+<ul><li>继承关系 <br>
+<ol><li>django.view.generic.base.View</li>
+<li>rest_framework.views.APIView</li>
+<li>rest_framework.generics.GenericAPIView    </li>
+<li>特定功能 <br>
+....</li></ol></li>
+<li><p>作用</p>
+
+<ol><li><p>django.view.generic.base.View</p></li>
+<li><p>rest_framework.views.APIView</p></li>
+<li>rest_framework.generics.GenericAPIView    </li></ol></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="obb8" id="03使用apiview基类">03_使用APIView基类</h2><ul data-anchor-id="ikq8">
+<li><p>APIView与View的不同之处在于：</p>
+
+<ol><li>允许post提交不添加csrf_token</li>
+<li>传入到视图方法中的是REST framework的Request对象，而不是Django的HttpRequeset对象；</li>
+<li>视图方法可以返回REST framework的Response对象，视图会为响应数据设置（render）符合前端要求的格式；</li>
+<li>任何Exception异常都会被捕获到，并且处理成合适的响应信息；</li>
+<li>在dispatch()分发前，会对请求进行身份认证、权限检查、流量控制等操作。</li></ol></li>
+<li><p>原理(主要源码)</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">APIView</span><span class="pun">(</span><span class="typ">View</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="lit">@classmethod</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> as_view</span><span class="pun">(</span><span class="pln">cls</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">initkwargs</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        </span><span class="com"># 找到django.view.generic.base.View 的as_view方法，并调用，得到返回的函数</span></code></li><li class="L4"><code><span class="pln">        view </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">super</span><span class="pun">(</span><span class="typ">APIView</span><span class="pun">,</span><span class="pln"> cls</span><span class="pun">).</span><span class="pln">as_view</span><span class="pun">(**</span><span class="pln">initkwargs</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">        </span><span class="com"># 进行csrf免除</span></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> csrf_exempt</span><span class="pun">(</span><span class="pln">view</span><span class="pun">)</span></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> dispatch</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L9"><code><span class="pln">        </span><span class="com"># 替换掉请求</span></code></li><li class="L0"><code><span class="pln">        request </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">initialize_request</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L1"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">request </span><span class="pun">=</span><span class="pln"> request</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">try</span><span class="pun">:</span></code></li><li class="L4"><code><span class="pln">            </span><span class="com"># 进行登录校验、权限校验、限流校验</span></code></li><li class="L5"><code><span class="pln">            </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">initial</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">            </span><span class="com"># 找到请求方式对应的方法去调用，并得到response返回值</span></code></li><li class="L7"><code><span class="pln">            </span><span class="kwd">if</span><span class="pln"> request</span><span class="pun">.</span><span class="pln">method</span><span class="pun">.</span><span class="pln">lower</span><span class="pun">()</span><span class="pln"> </span><span class="kwd">in</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">http_method_names</span><span class="pun">:</span></code></li><li class="L8"><code><span class="pln">                handler </span><span class="pun">=</span><span class="pln"> getattr</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">.</span><span class="pln">method</span><span class="pun">.</span><span class="pln">lower</span><span class="pun">(),</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">http_method_not_allowed</span><span class="pun">)</span></code></li><li class="L9"><code><span class="pln">            </span><span class="kwd">else</span><span class="pun">:</span></code></li><li class="L0"><code><span class="pln">                handler </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">http_method_not_allowed</span></code></li><li class="L1"><code><span class="pln">            response </span><span class="pun">=</span><span class="pln"> handler</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">except</span><span class="pln"> </span><span class="typ">Exception</span><span class="pln"> </span><span class="kwd">as</span><span class="pln"> exc</span><span class="pun">:</span></code></li><li class="L3"><code><span class="pln">            </span><span class="com"># 统一进行异常捕获，并处理</span></code></li><li class="L4"><code><span class="pln">            response </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">handle_exception</span><span class="pun">(</span><span class="pln">exc</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">        </span><span class="com"># 根据请求中要求的数据类型，进行数据转化，并转为和HttpResponse一样的行为(头+体)</span></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">response </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">finalize_response</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> response</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">response</span></code></li><li class="L8"><code></code></li><li class="L9"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> initialize_request</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L0"><code><span class="pln">        </span><span class="com"># 返回 rest_framework 中定义的请求</span></code></li><li class="L1"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">Request</span><span class="pun">(</span></code></li><li class="L2"><code><span class="pln">            request</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">            parsers</span><span class="pun">=</span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_parsers</span><span class="pun">(),</span></code></li><li class="L4"><code><span class="pln">            authenticators</span><span class="pun">=</span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_authenticators</span><span class="pun">(),</span></code></li><li class="L5"><code><span class="pln">            negotiator</span><span class="pun">=</span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_content_negotiator</span><span class="pun">(),</span></code></li><li class="L6"><code><span class="pln">            parser_context</span><span class="pun">=</span><span class="pln">parser_context</span></code></li><li class="L7"><code><span class="pln">        </span><span class="pun">)</span></code></li><li class="L8"><code></code></li><li class="L9"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> initial</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L0"><code><span class="pln">        </span><span class="com"># 获取请求中的期望格式，并保存</span></code></li><li class="L1"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">format_kwarg </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_format_suffix</span><span class="pun">(**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L2"><code><span class="pln">        neg </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">perform_content_negotiation</span><span class="pun">(</span><span class="pln">request</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">        request</span><span class="pun">.</span><span class="pln">accepted_renderer</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">.</span><span class="pln">accepted_media_type </span><span class="pun">=</span><span class="pln"> neg</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># 处理版本</span></code></li><li class="L5"><code><span class="pln">        version</span><span class="pun">,</span><span class="pln"> scheme </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">determine_version</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">        request</span><span class="pun">.</span><span class="pln">version</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">.</span><span class="pln">versioning_scheme </span><span class="pun">=</span><span class="pln"> version</span><span class="pun">,</span><span class="pln"> scheme</span></code></li><li class="L7"><code><span class="pln">        </span><span class="com"># 检查登录 ， 有问题会抛出异常</span></code></li><li class="L8"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">perform_authentication</span><span class="pun">(</span><span class="pln">request</span><span class="pun">)</span></code></li><li class="L9"><code><span class="pln">        </span><span class="com"># 检查权限， 有问题会抛出异常</span></code></li><li class="L0"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">check_permissions</span><span class="pun">(</span><span class="pln">request</span><span class="pun">)</span></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># 检查限流， 有问题会抛出异常</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">check_throttles</span><span class="pun">(</span><span class="pln">request</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>直接使用APIView的例子</p></li>
+</ul><div class="md-section-divider"></div><pre class="prettyprint linenums prettyprinted" data-anchor-id="asei"><ol class="linenums"><li class="L0"><code><span class="pln">views</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookListAPIView</span><span class="pun">(</span><span class="typ">APIView</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># 数据库查询</span></code></li><li class="L5"><code><span class="pln">        queryset </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">()</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">        </span><span class="com"># 构建序列化器对象，进行序列化操作</span></code></li><li class="L8"><code><span class="pln">        serializer </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span><span class="pun">(</span><span class="pln">queryset</span><span class="pun">,</span><span class="pln"> many</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">Response</span><span class="pun">(</span><span class="pln">serializer</span><span class="pun">.</span><span class="pln">data</span><span class="pun">)</span></code></li></ol></pre><div class="md-section-divider"></div><pre class="prettyprint linenums prettyprinted" data-anchor-id="gd17"><ol class="linenums"><li class="L0"><code><span class="pln">urls</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L3"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'books/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">BookListAPIView</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">()),</span></code></li><li class="L4"><code><span class="pun">]</span></code></li></ol></pre><div class="md-section-divider"></div><h2 data-anchor-id="si2b" id="04使用genericapiview基类">04_使用GenericAPIView基类</h2><ul data-anchor-id="d3oi">
+<li><p>GenericAPIView 主要功能</p>
+
+<ul><li>为增删改查提供数据集的功能</li>
+<li>提供序列化器功能</li>
+<li>通过现成的方法去找类属性</li>
+<li>提供列表过滤功能</li>
+<li>提供列表分页功能</li></ul></li>
+<li><p>属性方法表 <br>
+最前面两个最重要 <br>
+后面的 √√表示必须 √表示可以配置其他 空表示没用</p>
+
+<table class="table table-striped-white table-bordered">
+<thead>
+<tr>
+ <th>属性</th>
+ <th>默认值</th>
+ <th>方法</th>
+ <th>作用</th>
+ <th>查多</th>
+ <th>查单</th>
+ <th>增</th>
+ <th>删</th>
+ <th>改</th>
+</tr>
+</thead>
+<tbody><tr>
+ <td>queryset</td>
+ <td>None</td>
+ <td>get_queryset(self)</td>
+ <td>指定关联数据</td>
+ <td>√√</td>
+ <td>√√</td>
+ <td>√√</td>
+ <td>√√</td>
+ <td>√√</td>
+</tr>
+<tr>
+ <td>serializer_class</td>
+ <td>None</td>
+ <td>get_serializer_class(self)<br> get_serializer(self, *args, **kwargs)<br>   get_serializer_context(self)</td>
+ <td>执行序列化类</td>
+ <td>√√</td>
+ <td>√√</td>
+ <td>√√</td>
+ <td></td>
+ <td>√√</td>
+</tr>
+<tr>
+ <td>lookup_field</td>
+ <td>'pk'</td>
+ <td>get_object(self)</td>
+ <td>指定查询条件</td>
+ <td></td>
+ <td>√</td>
+ <td>√</td>
+ <td>√</td>
+ <td>√</td>
+</tr>
+<tr>
+ <td>lookup_url_kwarg</td>
+ <td>None</td>
+ <td>get_object(self):</td>
+ <td>指定url中的命名匹配,默认同lookup_field</td>
+ <td></td>
+ <td>√</td>
+ <td>√</td>
+ <td>√</td>
+ <td>√</td>
+</tr>
+<tr>
+ <td>filter_backends</td>
+ <td>DEFAULT_<br>FILTER_<br>BACKENDS</td>
+ <td>filter_queryset(self, queryset):</td>
+ <td>指定过滤后端</td>
+ <td>√</td>
+ <td></td>
+ <td></td>
+ <td></td>
+ <td></td>
+</tr>
+<tr>
+ <td>pagination_class</td>
+ <td>DEFAULT_<br>PAGINATION_<br>CLASS</td>
+ <td>paginate_queryset(self, queryset)<br> get_paginated_response(self, data)</td>
+ <td>指定分页列</td>
+ <td>√</td>
+ <td></td>
+ <td></td>
+ <td></td>
+ <td></td>
+</tr>
+</tbody></table>
+</li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="nx5j" id="05直接继承genericapiview的使用方法">05_直接继承GenericAPIView的使用方法</h2><p data-anchor-id="0srl">GenericAPIView 只是对增删改查提供帮助(配置类属性并提供好方法使用类属性)，我们需要自己在请求方式对应的方法中使用这些方法</p><ul data-anchor-id="2erf">
+<li><p>查列表</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">views</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookListAPIView</span><span class="pun">(</span><span class="typ">GenericAPIView</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">    queryset </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">()</span></code></li><li class="L4"><code><span class="pln">    serializer_class </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">    </span><span class="com"># 严格/通用的写法应该是 def get(self,  request, *args, **kwargs):</span></code></li><li class="L7"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">        </span><span class="com"># 数据库查询</span></code></li><li class="L9"><code><span class="pln">        qs </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_queryset</span><span class="pun">()</span></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># 构建序列化器对象，进行序列化操作</span></code></li><li class="L2"><code><span class="pln">        serializer </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_serializer</span><span class="pun">(</span><span class="pln">qs</span><span class="pun">,</span><span class="pln"> many</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">Response</span><span class="pun">(</span><span class="pln">serializer</span><span class="pun">.</span><span class="pln">data</span><span class="pun">)</span></code></li></ol></pre>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">urls</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L3"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'books/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">BookListAPIView</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">()),</span></code></li><li class="L4"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>查单个</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">views</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookDetailAPIView</span><span class="pun">(</span><span class="typ">GenericAPIView</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">    queryset </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">()</span></code></li><li class="L4"><code><span class="pln">    serializer_class </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">    </span><span class="com"># 严格/通用的写法应该是 def get(self,  request, *args, **kwargs):</span></code></li><li class="L7"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> pk</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">        book </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_object</span><span class="pun">()</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">        serializer </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_serializer</span><span class="pun">(</span><span class="pln">book</span><span class="pun">)</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">Response</span><span class="pun">(</span><span class="pln">serializer</span><span class="pun">.</span><span class="pln">data</span><span class="pun">)</span></code></li></ol></pre>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">urls</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L3"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'books/(?P&lt;pk&gt;\d+)/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">BookDetailAPIView</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">()),</span></code></li><li class="L4"><code><span class="pun">]</span></code></li></ol></pre></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="5wvs" id="06mixin扩展类的使用">06_mixin扩展类的使用</h2><ul data-anchor-id="rsp9">
+<li><p>mixin <br>
+在 rest_framework.mixins中提供了众多的 混合类(Mixin)，方便的配合GenericAPIView一起使用</p>
+
+<ul><li>多个混合类 <br>
+<ul><li>查询多个 ListModelMixin        </li>
+<li>创建单个 CreateModelMixin      </li>
+<li>查询单个 RetrieveModelMixin    </li>
+<li>更新单个 UpdateModelMixin      </li>
+<li>删除单个 DestroyModelMixin     </li></ul></li>
+<li><p>例子</p>
+
+<ol><li><p>查询多个</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookListAPIView</span><span class="pun">(</span><span class="pln">mixins</span><span class="pun">.</span><span class="typ">ListModelMixin</span><span class="pun">,</span><span class="pln"> </span><span class="typ">GenericAPIView</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    queryset </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">()</span></code></li><li class="L2"><code><span class="pln">    serializer_class </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln">  request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">list</span><span class="pun">(</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>查询单个</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookDetailAPIView</span><span class="pun">(</span><span class="pln">mixins</span><span class="pun">.</span><span class="typ">RetrieveModelMixin</span><span class="pun">,</span><span class="pln"> </span><span class="typ">GenericAPIView</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    queryset </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">()</span></code></li><li class="L2"><code><span class="pln">    serializer_class </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln">  request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">retrieve</span><span class="pun">(</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li></ol></pre></li></ol></li></ul></li>
+<li><p>使用已经定义好的混合类+GenericAPIView <br>
+只需要配置 queryset 和 serializer_class 类属性即可</p>
+
+<table class="table table-striped-white table-bordered">
+<thead>
+<tr>
+ <th>类视图</th>
+ <th>多</th>
+ <th>单</th>
+ <th>增</th>
+ <th>删</th>
+ <th>改</th>
+ <th>查</th>
+</tr>
+</thead>
+<tbody><tr>
+ <td>ListCreateAPIView</td>
+ <td>√</td>
+ <td></td>
+ <td>√</td>
+ <td></td>
+ <td></td>
+ <td>√</td>
+</tr>
+<tr>
+ <td>ListAPIView</td>
+ <td>√</td>
+ <td></td>
+ <td></td>
+ <td></td>
+ <td></td>
+ <td>√</td>
+</tr>
+<tr>
+ <td>CreateAPIView</td>
+ <td>√</td>
+ <td></td>
+ <td>√</td>
+ <td></td>
+ <td></td>
+ <td></td>
+</tr>
+<tr>
+ <td>RetrieveUpdateDestroyAPIView</td>
+ <td></td>
+ <td>√</td>
+ <td></td>
+ <td>√</td>
+ <td>√</td>
+ <td>√</td>
+</tr>
+<tr>
+ <td>RetrieveUpdateAPIView</td>
+ <td></td>
+ <td>√</td>
+ <td></td>
+ <td></td>
+ <td>√</td>
+ <td>√</td>
+</tr>
+<tr>
+ <td>RetrieveDestroyAPIView</td>
+ <td></td>
+ <td>√</td>
+ <td></td>
+ <td>√</td>
+ <td></td>
+ <td>√</td>
+</tr>
+<tr>
+ <td>RetrieveAPIView</td>
+ <td></td>
+ <td>√</td>
+ <td></td>
+ <td></td>
+ <td></td>
+ <td>√</td>
+</tr>
+<tr>
+ <td>DestroyAPIView</td>
+ <td></td>
+ <td>√</td>
+ <td></td>
+ <td>√</td>
+ <td></td>
+ <td></td>
+</tr>
+<tr>
+ <td>UpdateAPIView</td>
+ <td></td>
+ <td>√</td>
+ <td></td>
+ <td></td>
+ <td>√</td>
+ <td></td>
+</tr>
+</tbody></table>
+</li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="6w3m" id="07视图集的使用">07_视图集的使用</h2><ul data-anchor-id="cgdo">
+<li><p>开发中，该选取那个视图进行继承</p>
+
+<ol><li>如果是对模型进行增删改查操作，根据允许的操作使用通用视图(已经继承了mixin 和 GenericAPIView的)</li>
+<li>如果对于模型操作，在某些环节中有特殊需求，可以适当重写某些方法来完成需求(后面有演示)</li>
+<li>如果是特殊业务，与模型无关，继承于APIView</li></ol></li>
+<li><p>视图集</p>
+
+<ul><li><p>概念 <br>
+多个url可以指定同一个视图类的as_view方法 <br>
+通过请求方式与行为(actions)的映射进行完成</p>
+
+<table class="table table-striped-white table-bordered">
+<thead>
+<tr>
+ <th>请求方式</th>
+ <th>含义</th>
+ <th>行为(actions)</th>
+</tr>
+</thead>
+<tbody><tr>
+ <td>get</td>
+ <td>查询多个</td>
+ <td>list</td>
+</tr>
+<tr>
+ <td>get</td>
+ <td>查询单个</td>
+ <td>retrieve</td>
+</tr>
+<tr>
+ <td>delete</td>
+ <td>删除单个</td>
+ <td>destory</td>
+</tr>
+<tr>
+ <td>patch</td>
+ <td>部分更新单个</td>
+ <td>partial_update</td>
+</tr>
+<tr>
+ <td>put</td>
+ <td>整体更新单个</td>
+ <td>update</td>
+</tr>
+<tr>
+ <td>post</td>
+ <td>创建单个</td>
+ <td>create</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>原理</p>
+
+<ul><li>class ViewSet(ViewSetMixin, views.APIView):</li>
+<li>class GenericViewSet(ViewSetMixin, generics.GenericAPIView)</li>
+<li>通过as_view传递名为actions，类型为字典的参数，进行映射不同的请求方式</li></ul></li>
+<li><p>使用实例</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">views</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoViewSet</span><span class="pun">(</span><span class="pln">viewsets</span><span class="pun">.</span><span class="typ">ViewSet</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> list</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        </span><span class="pun">...</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> retrieve</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> pk</span><span class="pun">=</span><span class="kwd">None</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">        </span><span class="pun">...</span></code></li></ol></pre>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">urls</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L2"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'^books/$'</span><span class="pun">,</span><span class="pln"> </span><span class="typ">BookInfoViewSet</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">(</span><span class="str">'get'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'list'</span><span class="pun">)),</span></code></li><li class="L3"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'^books/(?P&lt;pk&gt;\d+)/$'</span><span class="pun">,</span><span class="pln"> </span><span class="typ">BookInfoViewSet</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">(</span><span class="str">'get'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'retrieve'</span><span class="pun">)),</span></code></li><li class="L4"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>关键源码</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">ViewSetMixin</span><span class="pun">(</span><span class="kwd">object</span><span class="pun">):</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">    </span><span class="lit">@classonlymethod</span></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> as_view</span><span class="pun">(</span><span class="pln">cls</span><span class="pun">,</span><span class="pln"> actions</span><span class="pun">=</span><span class="kwd">None</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">initkwargs</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># 如果没有传递actions参数，就会报错</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> </span><span class="kwd">not</span><span class="pln"> actions</span><span class="pun">:</span></code></li><li class="L6"><code><span class="pln">            </span><span class="kwd">raise</span><span class="pln"> </span><span class="typ">TypeError</span><span class="pun">(</span><span class="str">"..."</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pln">        </span><span class="com"># 定义一个函数</span></code></li><li class="L8"><code><span class="pln">        </span><span class="kwd">def</span><span class="pln"> view</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L9"><code><span class="pln">            </span><span class="kwd">self</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> cls</span><span class="pun">(**</span><span class="pln">initkwargs</span><span class="pun">)</span></code></li><li class="L0"><code><span class="pln">            </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">action_map </span><span class="pun">=</span><span class="pln"> actions</span></code></li><li class="L1"><code><span class="pln">            </span><span class="com"># 对字典actions ，进行映射</span></code></li><li class="L2"><code><span class="pln">            </span><span class="com"># 比如{'get':'list'}</span></code></li><li class="L3"><code><span class="pln">            </span><span class="com"># 就会拿到实例的 list方法，添加(或替换)掉get方法</span></code></li><li class="L4"><code><span class="pln">            </span><span class="com"># 在调用get方法的时候，实际上调用了list方法</span></code></li><li class="L5"><code><span class="pln">            </span><span class="kwd">for</span><span class="pln"> method</span><span class="pun">,</span><span class="pln"> action </span><span class="kwd">in</span><span class="pln"> actions</span><span class="pun">.</span><span class="pln">items</span><span class="pun">():</span></code></li><li class="L6"><code><span class="pln">                handler </span><span class="pun">=</span><span class="pln"> getattr</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> action</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pln">                setattr</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> method</span><span class="pun">,</span><span class="pln"> handler</span><span class="pun">)</span></code></li><li class="L8"><code><span class="pln">            </span><span class="com"># 调用dispatch 让子类 使用 dispatch找到 请求方式对应的方法</span></code></li><li class="L9"><code><span class="pln">            </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">dispatch</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L0"><code><span class="pln">        </span><span class="com"># 返回这个函数</span></code></li><li class="L1"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> csrf_exempt</span><span class="pun">(</span><span class="pln">view</span><span class="pun">)</span></code></li></ol></pre></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="t6kb" id="08视图集使用举例">08_视图集使用举例</h2><ul data-anchor-id="xc8z">
+<li><p>使用举例</p>
+
+<ul><li><p>urls.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'books/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">BookInfoViewSet</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">({</span><span class="str">'get'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'list'</span><span class="pun">})),</span><span class="pln">  </span><span class="com"># book-list</span></code></li><li class="L2"><code><span class="pln">        url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'books/(?P&lt;pk&gt;\d)/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">BookInfoViewSet</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">({</span><span class="str">'get'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'retrieve'</span><span class="pun">})),</span><span class="pln">  </span><span class="com"># book-retrieve</span></code></li><li class="L3"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>views.py</p>
+
+<ol><li><p>原始</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoViewSet</span><span class="pun">(</span><span class="typ">ViewSet</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> list</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">        </span><span class="com"># 大量代码略</span></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> retrieve</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># 大量代码略</span></code></li></ol></pre></li>
+<li><p>麻烦</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoViewSet</span><span class="pun">(</span><span class="pln"> </span><span class="typ">GenericViewSet</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    queryset </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">()</span></code></li><li class="L2"><code><span class="pln">    serializer_class </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> list</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># 中量代码略</span></code></li><li class="L5"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> retrieve</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L6"><code><span class="pln">        </span><span class="com"># 中量代码略</span></code></li></ol></pre></li>
+<li><p>最简单</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoViewSet</span><span class="pun">(</span><span class="typ">ListModelMixin</span><span class="pun">,</span><span class="pln"> </span><span class="typ">RetrieveModelMixin</span><span class="pun">,</span><span class="pln"> </span><span class="typ">GenericViewSet</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    queryset </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">()</span></code></li><li class="L2"><code><span class="pln">    serializer_class </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span></code></li></ol></pre></li></ol></li></ul></li>
+<li><p>常用的ViewSet</p>
+
+<ul><li>支持所有5种操作的 ModelViewSet</li>
+<li>仅支持2种只读操作的 ReadOnlyModelViewSet</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="y81p" id="09视图集中附加action的方法">09_视图集中附加action的方法</h2><ul data-anchor-id="n8qp">
+<li><p>action装饰器 <br>
+目前其实不需要，只是为了后面添加路由和文档的时候需要</p>
+
+<ul><li><p>语法</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">decorators </span><span class="kwd">import</span><span class="pln"> action</span></code></li><li class="L1"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">XxViewSet</span><span class="pun">(...)</span></code></li><li class="L2"><code><span class="pln">    </span><span class="lit">@action</span><span class="pun">(</span><span class="pln">methods</span><span class="pun">=[</span><span class="str">'请求方式'</span><span class="pun">]</span><span class="pln"> </span><span class="pun">,</span><span class="pln"> detail</span><span class="pun">=</span><span class="kwd">False</span><span class="pun">/</span><span class="kwd">True</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> action</span><span class="pun">方法</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args </span><span class="pun">,**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="pun">...</span></code></li></ol></pre></li>
+<li><p>例子</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoViewSet</span><span class="pun">(</span><span class="pln">mixins</span><span class="pun">.</span><span class="typ">ListModelMixin</span><span class="pun">,</span><span class="pln"> mixins</span><span class="pun">.</span><span class="typ">RetrieveModelMixin</span><span class="pun">,</span><span class="pln"> </span><span class="typ">GenericViewSet</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="lit">@action</span><span class="pun">(</span><span class="pln">methods</span><span class="pun">=[</span><span class="str">'get'</span><span class="pun">],</span><span class="pln"> detail</span><span class="pun">=</span><span class="kwd">False</span><span class="pun">)</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> latest</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args </span><span class="pun">,**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">pass</span></code></li></ol></pre></li>
+<li><p>含义 <br>
+methods  表示可以对应的请求方式 <br>
+detail  False表示是列表  True表示是详情</p></li></ul></li>
+<li><p>定义获取最新图书的方法</p>
+
+<ul><li><p>urls.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'books/latest/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">BookInfoViewSet</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">({</span><span class="str">'get'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'latest'</span><span class="pun">})),</span></code></li><li class="L2"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>views.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoViewSet</span><span class="pun">(</span><span class="pln">mixins</span><span class="pun">.</span><span class="typ">ListModelMixin</span><span class="pun">,</span><span class="pln"> mixins</span><span class="pun">.</span><span class="typ">RetrieveModelMixin</span><span class="pun">,</span><span class="pln"> </span><span class="typ">GenericViewSet</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="lit">@action</span><span class="pun">(</span><span class="pln">methods</span><span class="pun">=[</span><span class="str">'get'</span><span class="pun">],</span><span class="pln"> detail</span><span class="pun">=</span><span class="kwd">False</span><span class="pun">)</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> latest</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        book </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">latest</span><span class="pun">(</span><span class="str">'id'</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">        serializer </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_serializer</span><span class="pun">(</span><span class="pln">book</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">Response</span><span class="pun">(</span><span class="pln">serializer</span><span class="pun">.</span><span class="pln">data</span><span class="pun">)</span></code></li></ol></pre>
+
+<p>说明 <br>
+QuerySet的 latest方法需要传入一个字段名称，返回降序排列后的第一个模型 <br>
+<code>BookInfo.objects.latest('id')</code> <br>
+等价 <br>
+<code>BookInfo.objects.order_by('-id')[0:1].get()</code></p></li></ul></li>
+<li><p>定义更新图书阅读量的方法</p>
+
+<ul><li><p>urls.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'books/(?P&lt;pk&gt;\d)/read/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">BookInfoViewSet</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">({</span><span class="str">'put'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'read'</span><span class="pun">})),</span><span class="pln">  </span></code></li><li class="L2"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>views.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoViewSet</span><span class="pun">(</span><span class="pln">mixins</span><span class="pun">.</span><span class="typ">ListModelMixin</span><span class="pun">,</span><span class="pln"> mixins</span><span class="pun">.</span><span class="typ">RetrieveModelMixin</span><span class="pun">,</span><span class="pln"> </span><span class="typ">GenericViewSet</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> get_serializer_class</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">        </span><span class="com"># 重写，提供不同的序列化器</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">action </span><span class="pun">==</span><span class="pln"> </span><span class="str">'read'</span><span class="pun">:</span></code></li><li class="L4"><code><span class="pln">            </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">BookReadSerializer</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">else</span><span class="pun">:</span></code></li><li class="L6"><code><span class="pln">            </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">super</span><span class="pun">().</span><span class="pln">get_serializer_class</span><span class="pun">()</span></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="pln">    </span><span class="lit">@action</span><span class="pun">(</span><span class="pln">methods</span><span class="pun">=[</span><span class="str">'put'</span><span class="pun">],</span><span class="pln"> detail</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li><li class="L9"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> read</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> pk</span><span class="pun">):</span></code></li><li class="L0"><code><span class="pln">        book </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_object</span><span class="pun">()</span></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># get_serializer 方法 会调用get_serializer_class 得到类，并把当前方法的参数交给 类 创建出来对象</span></code></li><li class="L2"><code><span class="pln">        serializer </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_serializer</span><span class="pun">(</span><span class="pln">instance</span><span class="pun">=</span><span class="pln">book</span><span class="pun">,</span><span class="pln"> data</span><span class="pun">=</span><span class="pln">request</span><span class="pun">.</span><span class="pln">data</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">        serializer</span><span class="pun">.</span><span class="pln">is_valid</span><span class="pun">(</span><span class="pln">raise_exception</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">        serializer</span><span class="pun">.</span><span class="pln">save</span><span class="pun">()</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">Response</span><span class="pun">(</span><span class="pln">serializer</span><span class="pun">.</span><span class="pln">data</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>serializers.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookReadSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">ModelSerializer</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L2"><code><span class="pln">        model </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span></code></li><li class="L3"><code><span class="pln">        </span><span class="com"># 只需要 阅读量字段</span></code></li><li class="L4"><code><span class="pln">        fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'bread'</span><span class="pun">,</span><span class="pln"> </span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">        </span><span class="com"># 定义字段的选项</span></code></li><li class="L6"><code><span class="pln">        extra_kwargs </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L7"><code><span class="pln">            </span><span class="str">'bread'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L8"><code><span class="pln">                </span><span class="str">'required'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">True</span><span class="pun">,</span></code></li><li class="L9"><code><span class="pln">                </span><span class="str">'min_value'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">0</span><span class="pun">,</span></code></li><li class="L0"><code><span class="pln">            </span><span class="pun">}</span></code></li><li class="L1"><code><span class="pln">        </span><span class="pun">}</span></code></li></ol></pre></li>
+<li><p>说明</p>
+
+<ol><li>可以通过super增强代码的复用</li>
+<li>request.data 已经是经过parse的请求体了，它的类型是字典</li>
+<li>创建序列化对象的时候，指定模型实例和字典，在对序列化器对象save的时候，实际上走update方法</li>
+<li>因为是模型类序列化器所以可以不写 update方法，默认的足够好</li></ol></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="nu2e" id="10router路由的定义">10_Router路由的定义</h2><ul data-anchor-id="grkz">
+<li>作用 <br>
+简化/省略 url的配置</li>
+<li>内置两个可用的路由 <br>
+<ul><li>SimpleRouter </li>
+<li>DefaultRouter <br>
+在SimpleRouter的基础上添加了</li></ul></li>
+<li><p>使用方法</p>
+
+<ul><li><p>SimpleRouter <br>
+在urls.py中</p>
+
+<ol><li>创建对象 <br>
+router = SimpleRouter()</li>
+<li>注册视图集 <br>
+router = routers.SimpleRouter() <br>
+router.register(prefix, viewset, base_name=None) <br>
+prefix表示url的前面一部分 <br>
+viewset 表示视图类 <br>
+base_name 可以不指定，默认是模型类名小写，作用是生成url的name，规则是<code>base_name-action方法名称</code></li>
+<li><p>添加到urlpatterns</p>
+
+<ul><li><p>第一种方式 <br>
+<code>urlpatterns += router.urls</code></p></li>
+<li><p>第二种方式</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'^'</span><span class="pln"> </span><span class="pun">,</span><span class="pln"> include</span><span class="pun">(</span><span class="pln">router</span><span class="pun">.</span><span class="pln">urls</span><span class="pun">))</span></code></li><li class="L2"><code><span class="pun">]</span></code></li></ol></pre></li></ul></li></ol></li>
+<li><p>DefaultRouter <br>
+同SimpleRouter</p></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="enwy" id="11认证配置方法">11_认证配置方法</h2><ul data-anchor-id="vou0">
+<li><p>认证 <br>
+当前登录用户是谁，如果没有登录则是匿名用户</p>
+
+<ul><li><p>配置</p>
+
+<ul><li><p>整体</p>
+
+<ul><li><p>默认 <br>
+在rest_framework.settings.py中 有如下配置</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln"> </span><span class="str">'DEFAULT_AUTHENTICATION_CLASSES'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">(</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 登录后在session中存储登录用户信息</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">'rest_framework.authentication.SessionAuthentication'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">    </span><span class="com"># 在每次的请求头中附带用户名和密码 目前很少用</span></code></li><li class="L4"><code><span class="pln">    </span><span class="str">'rest_framework.authentication.BasicAuthentication'</span></code></li><li class="L5"><code><span class="pln">    </span><span class="com"># 项目阶段会使用到TokenAuthentication，但这个不是默认的认证</span></code></li><li class="L6"><code><span class="pln">    </span><span class="com"># 'rest_framework.authentication.TokenAuthentication'</span></code></li><li class="L7"><code><span class="pun">),</span></code></li></ol></pre></li>
+<li><p>自定义 <br>
+在项目的settings.py中配置 ，会覆盖默认的</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">REST_FRAMEWORK </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'DEFAULT_AUTHENTICATION_CLASSES'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">(</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">'rest_framework.authentication.BasicAuthentication'</span><span class="pun">,</span><span class="pln">   </span><span class="com"># 基本认证</span></code></li><li class="L3"><code><span class="pln">        </span><span class="str">'rest_framework.authentication.SessionAuthentication'</span><span class="pun">,</span><span class="pln">  </span><span class="com"># session认证</span></code></li><li class="L4"><code><span class="pln">    </span><span class="pun">)</span></code></li><li class="L5"><code><span class="pun">}</span></code></li></ol></pre></li></ul></li>
+<li><p>单个视图/视图集</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">authentication </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">SessionAuthentication</span><span class="pun">,</span><span class="pln"> </span><span class="typ">BasicAuthentication</span></code></li><li class="L1"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">views </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">APIView</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">ExampleView</span><span class="pun">(</span><span class="typ">APIView</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">    authentication_classes </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="typ">SessionAuthentication</span><span class="pun">,</span><span class="pln"> </span><span class="typ">BasicAuthentication</span><span class="pun">)</span></code></li></ol></pre></li></ul></li></ul></li>
+<li><p>两种错误</p>
+
+<ul><li>401 Unauthorized 未认证</li>
+<li>403 Permission Denied 权限被禁止</li></ul></li>
+<li><p>相关源码</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">APIView</span><span class="pun">(</span><span class="typ">View</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    authentication_classes </span><span class="pun">=</span><span class="pln"> api_settings</span><span class="pun">.</span><span class="pln">DEFAULT_AUTHENTICATION_CLASSES</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> dispatch</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">initialize_request</span><span class="pun">(</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">initial</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> initial</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">perform_authentication</span><span class="pun">(</span><span class="pln">request</span><span class="pun">)</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> perform_authentication</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">        request</span><span class="pun">.</span><span class="pln">user</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> initialize_request</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">Request</span><span class="pun">(</span></code></li><li class="L5"><code><span class="pln">            request</span><span class="pun">,</span></code></li><li class="L6"><code><span class="pln">            parsers</span><span class="pun">=</span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_parsers</span><span class="pun">(),</span></code></li><li class="L7"><code><span class="pln">            authenticators</span><span class="pun">=</span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_authenticators</span><span class="pun">(),</span><span class="pln"> </span><span class="com">##</span></code></li><li class="L8"><code><span class="pln">            negotiator</span><span class="pun">=</span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_content_negotiator</span><span class="pun">(),</span></code></li><li class="L9"><code><span class="pln">            parser_context</span><span class="pun">=</span><span class="pln">parser_context</span></code></li><li class="L0"><code><span class="pln">        </span><span class="pun">)</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> get_authenticators</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">[</span><span class="pln">auth</span><span class="pun">()</span><span class="pln"> </span><span class="kwd">for</span><span class="pln"> auth </span><span class="kwd">in</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">authentication_classes</span><span class="pun">]</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">Request</span><span class="pun">(</span><span class="kwd">object</span><span class="pun">):</span></code></li><li class="L6"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> __init__</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> parsers</span><span class="pun">=</span><span class="kwd">None</span><span class="pun">,</span><span class="pln"> authenticators</span><span class="pun">=</span><span class="kwd">None</span><span class="pln">  </span><span class="com">##</span></code></li><li class="L7"><code><span class="pln">        </span><span class="pun">,</span><span class="pln">negotiator</span><span class="pun">=</span><span class="kwd">None</span><span class="pun">,</span><span class="pln"> parser_context</span><span class="pun">=</span><span class="kwd">None</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">    </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">authenticators </span><span class="pun">=</span><span class="pln"> authenticators </span><span class="kwd">or</span><span class="pln"> </span><span class="pun">()</span></code></li><li class="L9"><code></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="pln">    </span><span class="lit">@property</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> user</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> </span><span class="kwd">not</span><span class="pln"> hasattr</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> </span><span class="str">'_user'</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">            </span><span class="kwd">with</span><span class="pln"> wrap_attributeerrors</span><span class="pun">():</span></code></li><li class="L5"><code><span class="pln">                </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">_authenticate</span><span class="pun">()</span><span class="pln">  </span><span class="com">##</span></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">_user</span></code></li><li class="L7"><code><span class="pln">    </span><span class="com">##</span></code></li><li class="L8"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> _authenticate</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L9"><code><span class="pln">        </span><span class="com"># 遍历所有的认证对象</span></code></li><li class="L0"><code><span class="pln">        </span><span class="com"># 如果某个认证通过了，就返回，不继续校验</span></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># 如果遍历完了，都没通过，就认为没登陆</span></code></li><li class="L2"><code><span class="pln">        </span><span class="com"># 在遍历的如果抛出异常，就会保存</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">for</span><span class="pln"> authenticator </span><span class="kwd">in</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">authenticators</span><span class="pun">:</span></code></li><li class="L4"><code><span class="pln">            </span><span class="kwd">try</span><span class="pun">:</span></code></li><li class="L5"><code><span class="pln">                user_auth_tuple </span><span class="pun">=</span><span class="pln"> authenticator</span><span class="pun">.</span><span class="pln">authenticate</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">            </span><span class="kwd">except</span><span class="pln"> exceptions</span><span class="pun">.</span><span class="typ">APIException</span><span class="pun">:</span></code></li><li class="L7"><code><span class="pln">                </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">_not_authenticated</span><span class="pun">()</span></code></li><li class="L8"><code><span class="pln">                </span><span class="kwd">raise</span></code></li><li class="L9"><code><span class="pln">            </span><span class="kwd">if</span><span class="pln"> user_auth_tuple </span><span class="kwd">is</span><span class="pln"> </span><span class="kwd">not</span><span class="pln"> </span><span class="kwd">None</span><span class="pun">:</span></code></li><li class="L0"><code><span class="pln">                </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">_authenticator </span><span class="pun">=</span><span class="pln"> authenticator</span></code></li><li class="L1"><code><span class="pln">                </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">user</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">auth </span><span class="pun">=</span><span class="pln"> user_auth_tuple</span></code></li><li class="L2"><code><span class="pln">                </span><span class="kwd">return</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">_not_authenticated</span><span class="pun">()</span></code></li></ol></pre></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="s55h" id="12权限配置方法">12_权限配置方法</h2><ul data-anchor-id="cwr1">
+<li><p>权限 <br>
+当前用户能否进行资源操作(访问某个视图、或者某个资源)</p>
+
+<ul><li><p>原理</p>
+
+<ol><li>在APIView上dispatch 方法中在把请求分发给具体的方法时，使用类属性permission_classes 进行了权限校验</li>
+<li>permission_classes默认是 api_settings.DEFAULT_PERMISSION_CLASSES，也就是如果没有额外配置，使用项目的整体配置</li>
+<li>如果配置了类属性，就不使用全局设置了</li>
+<li>对于多个权限校验，只要有一个不通过，就无法继续</li>
+<li>可以对视图方法进行校验，也可以对单个对象进行校验</li></ol></li>
+<li><p>源码</p>
+
+<ul><li><p>APIView</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">APIView</span><span class="pun">(</span><span class="typ">View</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    permission_classes </span><span class="pun">=</span><span class="pln"> api_settings</span><span class="pun">.</span><span class="pln">DEFAULT_PERMISSION_CLASSES</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> dispatch</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="kwd">try</span><span class="pun">:</span></code></li><li class="L5"><code><span class="pln">            </span><span class="com"># 分发前进行初始化</span></code></li><li class="L6"><code><span class="pln">            </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">initial</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pln">        </span><span class="kwd">except</span><span class="pln"> </span><span class="typ">Exception</span><span class="pln"> </span><span class="kwd">as</span><span class="pln"> exc</span><span class="pun">:</span></code></li><li class="L8"><code><span class="pln">            </span><span class="kwd">pass</span></code></li><li class="L9"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">response </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">finalize_response</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> response</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L0"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">response</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> initial</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">perform_authentication</span><span class="pun">(</span><span class="pln">request</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># 初始化检查权限</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">check_permissions</span><span class="pun">(</span><span class="pln">request</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">check_throttles</span><span class="pun">(</span><span class="pln">request</span><span class="pun">)</span></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> check_permissions</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L9"><code><span class="pln">        </span><span class="com"># 获取多个权限对象</span></code></li><li class="L0"><code><span class="pln">        </span><span class="kwd">for</span><span class="pln"> permission </span><span class="kwd">in</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_permissions</span><span class="pun">():</span></code></li><li class="L1"><code><span class="pln">            </span><span class="com"># 并调用每个 权限对象的 has_permission方法</span></code></li><li class="L2"><code><span class="pln">            </span><span class="com"># 如果其中有一个 返回False 则执行permission_denied</span></code></li><li class="L3"><code><span class="pln">            </span><span class="kwd">if</span><span class="pln"> </span><span class="kwd">not</span><span class="pln"> permission</span><span class="pun">.</span><span class="pln">has_permission</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">                </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">permission_denied</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> message</span><span class="pun">=</span><span class="pln">getattr</span><span class="pun">(</span><span class="pln">permission</span><span class="pun">,</span><span class="pln"> </span><span class="str">'message'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">None</span><span class="pun">))</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> get_permissions</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L7"><code><span class="pln">        </span><span class="com"># 创建出 权限的实例对象 并装入列表</span></code></li><li class="L8"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">[</span><span class="pln">permission</span><span class="pun">()</span><span class="pln"> </span><span class="kwd">for</span><span class="pln"> permission </span><span class="kwd">in</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">permission_classes</span><span class="pun">]</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> permission_denied</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> message</span><span class="pun">=</span><span class="kwd">None</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># 如果要登录，但没登录，抛出 401  NotAuthenticated 异常</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> request</span><span class="pun">.</span><span class="pln">authenticators </span><span class="kwd">and</span><span class="pln"> </span><span class="kwd">not</span><span class="pln"> request</span><span class="pun">.</span><span class="pln">successful_authenticator</span><span class="pun">:</span></code></li><li class="L3"><code><span class="pln">            </span><span class="kwd">raise</span><span class="pln"> exceptions</span><span class="pun">.</span><span class="typ">NotAuthenticated</span><span class="pun">()</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># 如果权限通不过，则抛出 403 PermissionDenied</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">raise</span><span class="pln"> exceptions</span><span class="pun">.</span><span class="typ">PermissionDenied</span><span class="pun">(</span><span class="pln">detail</span><span class="pun">=</span><span class="pln">message</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">     </span><span class="com"># 检查是否有权限访问某个对象， 在这里只定义，没有使用</span></code></li><li class="L7"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> check_object_permissions</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> obj</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">        </span><span class="com"># 获得所有权限对象 ，调用has_object_permission方法 检查，如果有一个返回False，则抛出异常</span></code></li><li class="L9"><code><span class="pln">        </span><span class="kwd">for</span><span class="pln"> permission </span><span class="kwd">in</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_permissions</span><span class="pun">():</span></code></li><li class="L0"><code><span class="pln">            </span><span class="kwd">if</span><span class="pln"> </span><span class="kwd">not</span><span class="pln"> permission</span><span class="pun">.</span><span class="pln">has_object_permission</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> obj</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">                </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">permission_denied</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> message</span><span class="pun">=</span><span class="pln">getattr</span><span class="pun">(</span><span class="pln">permission</span><span class="pun">,</span><span class="pln"> </span><span class="str">'message'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">None</span><span class="pun">))</span></code></li></ol></pre></li></ul></li>
+<li><p>GenericAPIView</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">GenericAPIView</span><span class="pun">(</span><span class="pln">views</span><span class="pun">.</span><span class="typ">APIView</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> get_object</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">        queryset </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">filter_queryset</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">.</span><span class="pln">get_queryset</span><span class="pun">())</span></code></li><li class="L3"><code><span class="pln">        obj </span><span class="pun">=</span><span class="pln"> get_object_or_404</span><span class="pun">(</span><span class="pln">queryset</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">filter_kwargs</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># 会调用父类(APIView) 的 check_object_permissions 方法</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">check_object_permissions</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">.</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> obj</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> obj</span></code></li></ol></pre></li>
+<li><p>BasePermission <br>
+所有的权限类都是这个类的子类</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BasePermission</span><span class="pun">(</span><span class="kwd">object</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> has_permission</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> view</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">"""</span></code></li><li class="L3"><code><span class="str">        返回True，代表权限校验通过，False表示不通过</span></code></li><li class="L4"><code><span class="str">        """</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">True</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> has_object_permission</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> view</span><span class="pun">,</span><span class="pln"> obj</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">        </span><span class="str">"""</span></code></li><li class="L9"><code><span class="str">        返回True，代表权限校验通过，False表示不通过</span></code></li><li class="L0"><code><span class="str">        """</span></code></li><li class="L1"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">True</span></code></li></ol></pre></li>
+<li><p>配置</p>
+
+<ul><li><p>整体</p>
+
+<ul><li><p>默认 <br>
+在rest_framework.settings.py中 有如下配置</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code></code></li><li class="L1"><code><span class="str">'DEFAULT_PERMISSION_CLASSES'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">(</span></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># 允许所有用户(包括匿名用户)可以访问</span></code></li><li class="L3"><code><span class="pln">    </span><span class="str">'rest_framework.permissions.AllowAny'</span><span class="pun">,</span></code></li><li class="L4"><code><span class="pln">    </span><span class="com">#  非匿名用户可以访问</span></code></li><li class="L5"><code><span class="pln">    </span><span class="com"># 'rest_framework.permissions.IsAuthenticated',</span></code></li><li class="L6"><code><span class="pln">    </span><span class="com"># 管理员用户可以访问</span></code></li><li class="L7"><code><span class="pln">    </span><span class="com"># 'rest_framework.permissions.IsAdminUser',</span></code></li><li class="L8"><code><span class="pln">    </span><span class="com"># 匿名用户允许只读方法 ， 登录用户可以访问所有</span></code></li><li class="L9"><code><span class="pln">    </span><span class="com"># 'rest_framework.permissions.IsAuthenticatedOrReadOnly',</span></code></li><li class="L0"><code><span class="pln">    </span><span class="com"># 使用 auth应用配置的权限控制</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 'rest_framework.permissions.DjangoModelPermissions',</span></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># 同上，但允许匿名用户访问只读</span></code></li><li class="L3"><code><span class="pln">    </span><span class="com"># 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',</span></code></li><li class="L4"><code><span class="pln">    </span><span class="com"># 同上上， 但可以进行对象级别控制 </span></code></li><li class="L5"><code><span class="pln">    </span><span class="com"># 'rest_framework.permissions.DjangoObjectPermissions',</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pun">),</span></code></li></ol></pre></li>
+<li><p>自定义 <br>
+在项目的settings.py中配置 ，会覆盖默认的</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">REST_FRAMEWORK </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'DEFAULT_PERMISSION_CLASSES'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">(</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">'rest_framework.permissions.AllowAny'</span><span class="pun">,</span><span class="pln">   </span><span class="com"># 基本认证</span></code></li><li class="L3"><code><span class="pln">        </span><span class="str">'rest_framework.permissions.IsAuthenticated'</span><span class="pun">,</span><span class="pln">  </span><span class="com"># session认证</span></code></li><li class="L4"><code><span class="pln">    </span><span class="pun">)</span></code></li><li class="L5"><code><span class="pun">}</span></code></li></ol></pre></li></ul></li>
+<li><p>单个视图/视图集</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">permissions </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">IsAuthenticated</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">ExampleView</span><span class="pun">(</span><span class="typ">APIView</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">    permission_classes </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="typ">IsAuthenticated</span><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>配置单独配置某个Action</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">permissions </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">IsAuthenticated</span></code></li><li class="L1"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">permissions </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">AllowAny</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">ExampleView</span><span class="pun">(</span><span class="typ">GenericViewSet</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">    permission_classes </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="typ">IsAuthenticated</span><span class="pun">]</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> get_permissions</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L7"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">action </span><span class="pun">==</span><span class="pln"> </span><span class="str">'list'</span><span class="pun">:</span></code></li><li class="L8"><code><span class="pln">            </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">[</span><span class="typ">AllowAny</span><span class="pun">]</span></code></li><li class="L9"><code><span class="pln">        </span><span class="kwd">elif</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">action </span><span class="pun">==</span><span class="pln"> </span><span class="str">'create'</span><span class="pun">:</span></code></li><li class="L0"><code><span class="pln">            </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">[</span><span class="typ">IsAuthenticated</span><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>自定义权限类并配置 <br>
+允许登录用户访问列表，但不允许访问单个对象</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">MyPermission</span><span class="pun">(</span><span class="typ">BasePermission</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> has_object_permission</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> view</span><span class="pun">,</span><span class="pln"> obj</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">"""控制对obj对象的访问权限，此案例决绝所有对对象的访问"""</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">False</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoViewSet</span><span class="pun">(</span><span class="typ">ModelViewSet</span><span class="pun">):</span></code></li><li class="L6"><code><span class="pln">    queryset </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">()</span></code></li><li class="L7"><code><span class="pln">    serializer_class </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span></code></li><li class="L8"><code><span class="pln">    permission_classes </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="typ">IsAuthenticated</span><span class="pun">,</span><span class="pln"> </span><span class="typ">MyPermission</span><span class="pun">]</span></code></li></ol></pre></li></ul></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="w9jb" id="13限流配置方法">13_限流配置方法</h2><p data-anchor-id="idol">可以配置用户访问接口的频率</p><ul data-anchor-id="8fks">
+<li><p>整体配置</p>
+
+<ul><li>默认 <br>
+默认无限流配置</li>
+<li><p>项目配置</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">REST_FRAMEWORK </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'DEFAULT_THROTTLE_CLASSES'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">(</span></code></li><li class="L2"><code><span class="pln">        </span><span class="com"># 限制匿名用户的 根据ip进行区分(近似认为)</span></code></li><li class="L3"><code><span class="pln">        </span><span class="str">'rest_framework.throttling.AnonRateThrottle'</span><span class="pun">,</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># 限制登录用户的 根据用户id进行区分</span></code></li><li class="L5"><code><span class="pln">        </span><span class="str">'rest_framework.throttling.UserRateThrottle'</span></code></li><li class="L6"><code><span class="pln">    </span><span class="pun">),</span></code></li><li class="L7"><code><span class="pln">    </span><span class="str">'DEFAULT_THROTTLE_RATES'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L8"><code><span class="pln">        </span><span class="com"># 次数/周期  s秒 m分 h时 d天</span></code></li><li class="L9"><code><span class="pln">        </span><span class="com"># anon 与 AnonRateThrottle 对应</span></code></li><li class="L0"><code><span class="pln">        </span><span class="str">'anon'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'100/day'</span><span class="pun">,</span></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># user 与 UserRateThrottle 对应</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">'user'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'1000/day'</span></code></li><li class="L3"><code><span class="pln">    </span><span class="pun">}</span></code></li><li class="L4"><code><span class="pun">}</span></code></li></ol></pre>
+
+<p>注意 <br>
+必须指定两个一起指定</p></li>
+<li><p>自定义视图限流</p>
+
+<ul><li><p>views.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">ContactListView</span><span class="pun">(</span><span class="typ">APIView</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    throttle_scope </span><span class="pun">=</span><span class="pln"> </span><span class="str">'contacts'</span></code></li><li class="L2"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">ContactDetailView</span><span class="pun">(</span><span class="typ">APIView</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">    throttle_scope </span><span class="pun">=</span><span class="pln"> </span><span class="str">'contacts'</span></code></li><li class="L6"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">UploadView</span><span class="pun">(</span><span class="typ">APIView</span><span class="pun">):</span></code></li><li class="L9"><code><span class="pln">    throttle_scope </span><span class="pun">=</span><span class="pln"> </span><span class="str">'uploads'</span></code></li><li class="L0"><code><span class="pln">    </span><span class="pun">...</span></code></li></ol></pre></li>
+<li><p>settings.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">REST_FRAMEWORK </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'DEFAULT_THROTTLE_CLASSES'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">(</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">'rest_framework.throttling.ScopedRateThrottle'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">    </span><span class="pun">),</span></code></li><li class="L4"><code><span class="pln">    </span><span class="str">'DEFAULT_THROTTLE_RATES'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L5"><code><span class="pln">        </span><span class="str">'contacts'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'1000/day'</span><span class="pun">,</span></code></li><li class="L6"><code><span class="pln">        </span><span class="str">'uploads'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'20/day'</span></code></li><li class="L7"><code><span class="pln">    </span><span class="pun">}</span></code></li><li class="L8"><code><span class="pun">}</span></code></li></ol></pre></li></ul></li></ul></li>
+<li><p>多个限流器的关系 <br>
+配置了多个限流器，只要有一个不通过就不通过， <br>
+通过重写限流器的get_cache_key方法，可以根据情况返回None，让当前限流器不起作用</p></li>
+<li><p>面试提高</p>
+
+<ol><li>此功能需要进行数据库存储，默认使用的是cache</li>
+<li>如果使用的不是内存缓存(包括django自带的内存缓存和redis)，而是磁盘数据库(比如mysql)则会很慢</li>
+<li>关于限流的算法，可以看看rest_framework.throttling源码 </li>
+<li>如果没有使用django自带的用户系统，则会出问题( 所有用户都是匿名用户)</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="6imr" id="14过滤配置方法">14_过滤配置方法</h2><p data-anchor-id="6fie">通过过滤配置，可以很简单的对列表进行过滤 <br>
+主要借助第三方开源库django</p><p data-anchor-id="k8e4"><a href="https://django-filter.readthedocs.io/en/master/" target="_blank">https://django-filter.readthedocs.io/en/master/</a></p><ul data-anchor-id="2za0">
+<li><p>步骤</p>
+
+<ol><li>安装 django-filter <br>
+<code>pip insall django-filter</code></li>
+<li><p>注册应用</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">INSTALLED_APPS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'django_filters'</span><span class="pun">,</span></code></li><li class="L2"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>项目配置</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">REST_FRAMEWORK </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'DEFAULT_FILTER_BACKENDS'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">(</span><span class="str">'django_filters.rest_framework.DjangoFilterBackend'</span><span class="pun">,),</span></code></li><li class="L2"><code><span class="pun">}</span></code></li></ol></pre></li>
+<li><p>视图集配置</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookInfoViewSet</span><span class="pun">(</span><span class="pln">mixins</span><span class="pun">.</span><span class="typ">ListModelMixin</span><span class="pun">,</span><span class="pln"> mixins</span><span class="pun">.</span><span class="typ">RetrieveModelMixin</span><span class="pun">,</span><span class="pln"> </span><span class="typ">GenericViewSet</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    filter_fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'btitle'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'bread'</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>测试访问 <br>
+<code>http://127.0.0.1:8000/books/?bread=20</code></p></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="lss0" id="15分页设置及版本号使用配置">15_分页设置及版本号使用配置</h2><ul data-anchor-id="o855">
+<li><p>分页 <br>
+当一个列表中有太多数据的时候，就需要分页</p>
+
+<ul><li><p>整体配置</p>
+
+<ul><li>默认 <br>
+默认没有开启分页</li>
+<li><p>自定义</p>
+
+<ul><li><p>第一种</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">REST_FRAMEWORK </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'DEFAULT_PAGINATION_CLASS'</span><span class="pun">:</span><span class="pln">  </span><span class="str">'rest_framework.pagination.PageNumberPagination'</span><span class="pun">,</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">'PAGE_SIZE'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">100</span><span class="pln">  </span><span class="com"># 每页数目</span></code></li><li class="L3"><code><span class="pun">}</span></code></li></ol></pre></li>
+<li><p>第二种</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">REST_FRAMEWORK </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'DEFAULT_PAGINATION_CLASS'</span><span class="pun">:</span><span class="pln">  </span><span class="str">'rest_framework.pagination.LimitOffsetPagination'</span><span class="pun">,</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">'PAGE_SIZE'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">100</span><span class="pln">  </span><span class="com"># 每页数目</span></code></li><li class="L3"><code><span class="pun">}</span></code></li></ol></pre></li></ul></li></ul></li>
+<li><p>单个视图类/视图集类配置</p>
+
+<ol><li><p>定义分页类</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">StandardPageNumberPagination</span><span class="pun">(</span><span class="typ">PageNumberPagination</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    page_size_query_param </span><span class="pun">=</span><span class="pln"> </span><span class="str">'page_size'</span></code></li><li class="L2"><code><span class="pln">    max_page_size </span><span class="pun">=</span><span class="pln"> </span><span class="lit">10</span></code></li></ol></pre></li>
+<li><p>指定视图集的分页类</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BookListView</span><span class="pun">(</span><span class="typ">ListAPIView</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    queryset </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">().</span><span class="pln">order_by</span><span class="pun">(</span><span class="str">'id'</span><span class="pun">)</span></code></li><li class="L2"><code><span class="pln">    serializer_class </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfoSerializer</span></code></li><li class="L3"><code><span class="pln">    pagination_class </span><span class="pun">=</span><span class="pln"> </span><span class="typ">StandardPageNumberPagination</span></code></li></ol></pre></li>
+<li><p>访问 <br>
+<code>http://127.0.0.1/books/?page=1&amp;page_size=4</code></p></li></ol></li></ul></li>
+<li>版本 <br>
+略</li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="kcp4" id="16异常处理使用方法">16_异常处理使用方法</h2><ul data-anchor-id="ft75">
+<li><p>意义 <br>
+当代码中出现了异常后，不能显示一个错误页面，应该根据rest风格返回一个对应格式的响应</p></li>
+<li><p>配置</p>
+
+<ul><li>默认 <br>
+默认是 rest_framework.views.exception_handler <br>
+限制是  <br>
+    1. 只能处理部分类型(APIException及其子类，django中的Http404和PermissionDenied)的异常 <br>
+    2. 不属于的，将返回None，然后就会出现错误页面</li>
+<li><p>项目整体配置 <br>
+因为默认的有限制，所以我们可以自定义错误处理函数返回一个响应，尽可能的多的处理异常</p>
+
+<ul><li><p>步骤</p>
+
+<ol><li><p>定义一个函数，接受两个参数，处理异常 <br>
+第一个参数是异常，第二个参数是上下文(包含  request请求 args位置参数 kwargs关键字参数 和 view视图对象)</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">views </span><span class="kwd">import</span><span class="pln"> exception_handler</span></code></li><li class="L1"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">response </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">Response</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="kwd">def</span><span class="pln"> custom_exception_handler</span><span class="pun">(</span><span class="pln">exc</span><span class="pun">,</span><span class="pln"> context</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">    </span><span class="com"># 先调用REST framework默认的异常处理方法获得标准错误响应对象</span></code></li><li class="L5"><code><span class="pln">    response </span><span class="pun">=</span><span class="pln"> exception_handler</span><span class="pun">(</span><span class="pln">exc</span><span class="pun">,</span><span class="pln"> context</span><span class="pun">)</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">    </span><span class="com"># 在此处补充自定义的异常处理</span></code></li><li class="L8"><code><span class="pln">    </span><span class="kwd">if</span><span class="pln"> response </span><span class="kwd">is</span><span class="pln"> </span><span class="kwd">not</span><span class="pln"> </span><span class="kwd">None</span><span class="pun">:</span></code></li><li class="L9"><code><span class="pln">        response</span><span class="pun">.</span><span class="pln">data</span><span class="pun">[</span><span class="str">'status_code'</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> response</span><span class="pun">.</span><span class="pln">status_code</span></code></li><li class="L0"><code><span class="pln">    </span><span class="kwd">else</span><span class="pun">:</span></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># 进行兜底</span></code></li><li class="L2"><code><span class="pln">        response </span><span class="pun">=</span><span class="pln"> </span><span class="typ">Response</span><span class="pun">(</span><span class="pln">data</span><span class="pun">={</span><span class="str">"detail"</span><span class="pun">:</span><span class="str">"未知异常"</span><span class="pun">}</span><span class="pln"> </span><span class="pun">,</span><span class="pln">status</span><span class="pun">=</span><span class="lit">500</span><span class="pun">,</span><span class="pln">exception</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">        </span><span class="com"># 并记录日志</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">return</span><span class="pln"> response</span></code></li></ol></pre></li>
+<li><p>配置这个函数</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">REST_FRAMEWORK </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'EXCEPTION_HANDLER'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'my_project.my_app.utils.custom_exception_handler'</span></code></li><li class="L2"><code><span class="pun">}</span></code></li></ol></pre></li></ol></li></ul></li>
+<li><p>单个视图类/视图集类 <br>
+对于某些特殊的视图，我们通过重写方法<code>get_exception_handler(self)</code>可以定义单个视图的异常处理函数</p></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="igfl" id="17自动生成接口文档方法">17_自动生成接口文档方法</h2><ul data-anchor-id="vkct">
+<li><p>文档 <br>
+前后端分离后，后端需要给前端提供接口使用的说明(什么url 如何请求 返回什么)，这个称为文档</p></li>
+<li><p>自动文档 <br>
+通过代码生成文档，可以保证文档不是脱离于代码的，也减少维护文档的工作</p></li>
+<li><p>如何做</p>
+
+<ol><li>安装coreapi及其依赖 <br>
+<code>pip install coreapi</code></li>
+<li><p>添加url配置 <br>
+一般添加到项目的urls.py中</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">documentation </span><span class="kwd">import</span><span class="pln"> include_docs_urls</span></code></li><li class="L1"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L2"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L3"><code><span class="pln">    </span><span class="com"># title=... 可以指定文档页面的标题</span></code></li><li class="L4"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'^docs/'</span><span class="pun">,</span><span class="pln"> include_docs_urls</span><span class="pun">(</span><span class="pln">title</span><span class="pun">=</span><span class="str">'My API title'</span><span class="pun">))</span></code></li><li class="L5"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>测试</p></li></ol></li>
+<li><p>代码与文档关系</p>
+
+<ol><li>配置每个action的说明 <br>
+<ul><li>第一种：在视图集上整体添加python的文档</li>
+<li>第二种：在每个action方法上添加python的文档</li></ul></li>
+<li>给参数添加描述 <br>
+<ul><li>第一种： 在序列化器的字段上添加 help_text 说明</li>
+<li>第二种： 在模型的字段上添加 help_text 说明</li></ul></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="ou9u" id="作业">作业</h2><ul data-anchor-id="ld4g">
+<li><p>具体做 <br>
+实现图书列表功能</p>
+
+<ol><li>使用django View + Serializer</li>
+<li>使用APIView  + Serializer</li>
+<li>使用GenericAPIView  + Serializer</li>
+<li>使用Mixin + GenericAPIView  + Serializer</li>
+<li>使用ListAPIView  + Serializer</li>
+<li>使用ModelView  + Serializer</li></ol>
+
+<p>实现其他 </p></li>
+<li><p>重点 <br>
+类视图的继承关系、用途、使用方式、[及原理]</p>
+
+<ul><li><p>django view <br>
+根据请求方式 找到对应的方法进行处理 <br>
+APIView <br>
+允许post提交不添加csrf_token <br>
+*传入到视图方法中的是REST framework的Request对象，而不是Django的HttpRequeset对象； <br>
+*视图方法可以返回REST framework的Response对象，视图会为响应数据设置（render）符合前端要求的格式； <br>
+任何Exception异常都会被捕获到，并且处理成合适的响应信息； <br>
+在dispatch()分发前，会对请求进行身份认证、权限检查、流量控制等操作。</p></li>
+<li><p>GenericAPIView <br>
+*为增删改查提供数据集的功能 <br>
+*提供序列化器功能 <br>
+提供列表过滤功能 <br>
+提供列表分页功能</p>
+
+<p>需要配置类属性 <br>
+还需要实现get/post方法 ，只是在实现的过程中 可以使用  get_query_set get_object get_serializer</p></li>
+<li><p>Mixin  <br>
+提供规范的 增删改查操作 <br>
+需要与GenericAPIView</p>
+
+<p>多继承 与 Mixin GenericAPIView  <br>
+需要配置类属性 <br>
+直接在get/post  调用 list/retrive/create 方法</p></li>
+<li><p>多个 = Mixin + GenericAPIView <br>
+需要配置类属性</p></li></ul></li>
+<li><p>次重点</p>
+
+<ul><li>认证类： 项目中 / View</li>
+<li>权限类： 项目中 / View</li>
+<li>异常</li></ul></li>
+<li><p>次次重点</p>
+
+<ul><li>分页</li>
+<li>过滤</li>
+<li>ViewSet 、路由</li></ul></li>
+<li><p>无所谓</p>
+
+<ul><li>限流</li>
+<li>文档</li>
+<li>版本</li></ul></li>
+<li><p>复习 <br>
+没时间的话，后面几天再看</p>
+
+<ul><li>vue：  el v-if v-bind : v-on @  mounted</li>
+<li>axios：发送ajax请求  <a href="https://www.kancloud.cn/yunye/axios/234845" target="_blank">https://www.kancloud.cn/yunye/axios/234845</a></li>
+<li><a href="https://developer.mozilla.org/zh/docs/Web/HTTP/Access_control_CORS" target="_blank">https://developer.mozilla.org/zh/docs/Web/HTTP/Access_control_CORS</a></li></ul></li>
+</ul></div>
+<a href="5.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="7.html">下一页</a>
+</body>
+</html>
+

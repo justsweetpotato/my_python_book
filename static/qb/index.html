@@ -1,0 +1,432 @@
+﻿<!DOCTYPE html>
+<html class="theme theme-white">
+<head>
+<meta charset="utf-8">
+<a href='../../'>导航页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="2.html">下一页</a>
+<title>Django-4.0-Day1</title>
+<link href="https://www.zybuluo.com/static/assets/template-theme-white.css" rel="stylesheet" media="screen">
+<style type="text/css">
+
+#wmd-preview h1  {
+    color: #0077bb; /* 将标题改为蓝色 */
+}</style>
+</head>
+<body class="theme theme-white">
+<div id="wmd-preview" class="wmd-preview wmd-preview-full-reader"><div class="md-section-divider"></div><div class="md-section-divider"></div><h1 data-anchor-id="unhx" id="django-40-day1">Django-4.0-Day1</h1><p data-anchor-id="nzvh"><code>django</code></p><div class="md-section-divider"></div><h2 data-anchor-id="rvvb" id="01框架细节复习">01_框架细节复习</h2><p data-anchor-id="1i5l"><img src="http://static.zybuluo.com/jsutqb/wokhuxe8t1gz4s5bnnt6x78f/image_1cf781kjh1msf1jht1joacbm10o9.png" alt="image_1cf781kjh1msf1jht1joacbm10o9.png-233.3kB" title="点击查看大图"></p><ul data-anchor-id="erhy">
+<li><p>web开发本质</p>
+
+<ol><li>处理HTTP请求</li>
+<li>返回HTTP响应</li></ol></li>
+<li><p>web开发两部分 <br>
+他们通过WSGI协议对接</p>
+
+<ol><li>服务器程序</li>
+<li>框架程序</li></ol></li>
+<li><p>框架程序的一般流程</p>
+
+<ol><li>请求</li>
+<li>中间层</li>
+<li>具体业务处理 <br>
+数据库、模板、表单 等</li>
+<li>中间层</li>
+<li>响应</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="29yl" id="02如何学习框架">02_如何学习框架</h2><ul data-anchor-id="6rys">
+<li><p>框架的本质 <br>
+框架规定好了流程，避免了重复代码 <br>
+我们只需要按照框架规则在特定的地方写上代码就完成了流程中的步骤</p></li>
+<li><p>Web框架学习方法</p>
+
+<ul><li>如何搭建工程程序 <br>
+<ul><li>工程的组建</li>
+<li>工程的配置</li>
+<li>路由定义</li>
+<li>视图函数定义</li></ul></li>
+<li>如何获取请求数据（操作request对象）</li>
+<li>如何构造响应数据（构造response对象）</li>
+<li>如何使用中间层</li>
+<li>框架提供的其他功能组件的使用 <br>
+快速开发</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="sncm" id="03django框架简介">03_Django框架简介</h2><p data-anchor-id="69d8">Django的主要目的是<strong>简便</strong>、<strong>快速</strong>的开发数据库驱动的网站。它强调<strong>代码复用</strong>，多个组件可以很方便的以"<strong>插件</strong>"形式服务于整个框架，Django有许多功能强大的第三方插件，你甚至可以很方便的开发出自己的工具包。这使得Django具有很强的<strong>可扩展性</strong>。它还强调快速开发和<strong>DRY</strong>(DoNotRepeatYourself)原则。</p><div class="md-section-divider"></div><h2 data-anchor-id="agxa" id="04django框架特点">04_Django框架特点</h2><ul data-anchor-id="z858">
+<li>特点 <br>
+<ul><li><strong>重量级</strong>框架，原生提供了更多功能 <br>
+<ol><li>项目工程管理的自动化脚本工具</li>
+<li>ORM</li>
+<li>模板</li>
+<li>表单</li>
+<li>后台管理站点</li>
+<li>文件管理</li>
+<li>认证、权限</li>
+<li>session</li>
+<li>缓存</li></ol></li>
+<li>MVT = MVC <br>
+<img src="http://static.zybuluo.com/jsutqb/nrcsblrlyn4liihm74nsqeku/image_1cf7ghpo019v719ko16ff1b47diq9.png" alt="image_1cf7ghpo019v719ko16ff1b47diq9.png-51.1kB"> <br>
+<ul><li>构成 <br>
+<ul><li>M全拼为Model，与MVC中的M功能相同，负责和数据库交互，进行数据处理。</li>
+<li>V全拼为View，与MVC中的C功能相同，接收请求，进行业务处理，返回应答。</li>
+<li>T全拼为Template，与MVC中的V功能相同，负责封装构造要返回的html。</li></ul></li>
+<li>好处 <br>
+<ol><li>分工</li>
+<li>解耦</li></ol></li></ul></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="bseg" id="05django环境创建">05_Django环境创建</h2><ol data-anchor-id="5f3x">
+<li><p>创建虚拟环境</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">mkvirtualenv django_py3_1</span><span class="pun">.</span><span class="lit">11</span><span class="pln"> </span><span class="pun">-</span><span class="pln">p python3</span></code></li></ol></pre></li>
+<li><p>虚拟环境中安装django1.11</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">pip install django</span><span class="pun">==</span><span class="lit">1.11</span><span class="pun">.</span><span class="lit">11</span></code></li></ol></pre></li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="d05o" id="06创建django工程">06_创建Django工程</h2><ol data-anchor-id="b24c">
+<li>进入已经安装了django的虚拟环境</li>
+<li>创建工程 <br>
+<code>djangoadmin startproject 工程名称</code></li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="j6tu" id="07pycharm使用django工程">07_Pycharm使用Django工程</h2><ul data-anchor-id="knvy">
+<li>文件介绍 <br>
+<img src="http://static.zybuluo.com/jsutqb/gq42li4eyxs3wtoa747izbmq/image_1cf7kdfg0les13o2n791ibl1ri213.png" alt="image_1cf7kdfg0les13o2n791ibl1ri213.png-31.3kB"></li>
+<li>启动 <br>
+<code>python manage.py [ip:][端口]</code> <br>
+ip默认是127.0.0.1，如果指定为0.0.0.0则监听本机所有网卡  <br>
+端口默认是8000</li>
+<li>启动结果</li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="6qei" id="08创建子应用">08_创建子应用</h2><ul data-anchor-id="uwxc">
+<li>应用 <br>
+一个项目中，相对独立的业务功能模块，亦可以进行分工。约等于Flask的BluePrint</li>
+<li>创建子应用 <br>
+<code>python manage.py startapp 应用名称</code></li>
+<li>文件介绍 <br>
+<img src="http://static.zybuluo.com/jsutqb/m291f5fs6k0m2j1ilm4gplzc/image_1cf7lh5bs1g8o17cb1q6o13kkggl1g.png" alt="image_1cf7lh5bs1g8o17cb1q6o13kkggl1g.png-27.1kB"></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="87f5" id="09在应用中创建视图定义路由">09_在应用中创建视图定义路由</h2><ol data-anchor-id="mmst">
+<li><p>注册子应用 <br>
+在项目的 settings.py中 有常量 INSTALLED_APPS ，它的类型是列表，里面有一些内置的应用</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">INSTALLED_APPS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'django.contrib.admin'</span><span class="pun">,</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">'django.contrib.auth'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">    </span><span class="str">'django.contrib.contenttypes'</span><span class="pun">,</span></code></li><li class="L4"><code><span class="pln">    </span><span class="str">'django.contrib.sessions'</span><span class="pun">,</span></code></li><li class="L5"><code><span class="pln">    </span><span class="str">'django.contrib.messages'</span><span class="pun">,</span></code></li><li class="L6"><code><span class="pln">    </span><span class="str">'django.contrib.staticfiles'</span><span class="pun">,</span></code></li><li class="L7"><code><span class="pun">]</span></code></li></ol></pre>
+
+<p>我们可以继续把我们的应用添加上</p>
+
+<p>有两种添加方式</p>
+
+<ol><li><p>应用名称</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">INSTALLED_APPS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">'user'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>应用的配置</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">INSTALLED_APPS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">'user.apps.UserConfig'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pun">]</span></code></li></ol></pre></li></ol></li>
+<li><p>定义视图 <br>
+在user/views.py 中添加函数 <br>
+函数的特点是 第一个参数是request <br>
+函数需要返回一个django.http.HttpResponse类型的对象</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">http </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">HttpResponse</span></code></li><li class="L1"><code><span class="kwd">def</span><span class="pln"> index</span><span class="pun">(</span><span class="pln">request</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">HttpResponse</span><span class="pun">(</span><span class="str">"Hello World!"</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>配置url路由</p>
+
+<ol><li><p>配置应用路由 <br>
+在应用文件夹中新建 urls.py <br>
+具有如下内容</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">conf</span><span class="pun">.</span><span class="pln">urls </span><span class="kwd">import</span><span class="pln"> url</span></code></li><li class="L1"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln"> </span><span class="kwd">import</span><span class="pln"> views</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L4"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln"> r</span><span class="str">'^index/$'</span><span class="pln"> </span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="pln">index </span><span class="pun">)</span></code></li><li class="L5"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>配置全局 <br>
+在项目的urls.py中</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">conf</span><span class="pun">.</span><span class="pln">urls </span><span class="kwd">import</span><span class="pln"> include</span></code></li><li class="L1"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L2"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L3"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'^users/'</span><span class="pln"> </span><span class="pun">,</span><span class="pln"> include</span><span class="pun">(</span><span class="str">'user.urls'</span><span class="pun">)),</span></code></li><li class="L4"><code><span class="pun">]</span></code></li></ol></pre></li></ol></li>
+<li><p>访问  <br>
+使用浏览器 访问 <a href="http://127.0.0.1:8000/users/index/" target="_blank">http://127.0.0.1:8000/users/index/</a> 可以看到 <br>
+<img src="http://static.zybuluo.com/jsutqb/37vfimhbaxu8szparmerbdle/image_1cf7mle881otm5001ll6196j1h51t.png" alt="image_1cf7mle881otm5001ll6196j1h51t.png-12.3kB"></p></li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="6pao" id="10配置文件说明">10_配置文件说明</h2><ol data-anchor-id="q6lj">
+<li><p>BASE_DIR</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">BASE_DIR </span><span class="pun">=</span><span class="pln"> os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">dirname</span><span class="pun">(</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">dirname</span><span class="pun">(</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">abspath</span><span class="pun">(</span><span class="pln">__file__</span><span class="pun">)))</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">a </span><span class="pun">=</span><span class="pln"> __file__</span></code></li><li class="L3"><code><span class="pln">b </span><span class="pun">=</span><span class="pln"> os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">abspath</span><span class="pun">(</span><span class="pln">a</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">c </span><span class="pun">=</span><span class="pln"> os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">dirname</span><span class="pun">(</span><span class="pln">b</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">d </span><span class="pun">=</span><span class="pln"> os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">dirname</span><span class="pun">(</span><span class="pln">c</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">BASE_DIR </span><span class="pun">=</span><span class="pln"> d</span></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="kwd">print</span><span class="pun">(</span><span class="str">'-'</span><span class="pln"> </span><span class="pun">*</span><span class="lit">10</span><span class="pun">)</span></code></li><li class="L9"><code><span class="kwd">print</span><span class="pun">(</span><span class="pln">a</span><span class="pun">)</span></code></li><li class="L0"><code><span class="kwd">print</span><span class="pun">(</span><span class="pln">b</span><span class="pun">)</span></code></li><li class="L1"><code><span class="kwd">print</span><span class="pun">(</span><span class="pln">c</span><span class="pun">)</span></code></li><li class="L2"><code><span class="kwd">print</span><span class="pun">(</span><span class="pln">d</span><span class="pun">)</span></code></li><li class="L3"><code><span class="kwd">print</span><span class="pun">(</span><span class="str">'='</span><span class="pun">*</span><span class="pln"> </span><span class="lit">10</span><span class="pun">)</span></code></li></ol></pre>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln"> </span><span class="pun">----------</span></code></li><li class="L1"><code><span class="pln"> </span><span class="pun">/</span><span class="pln">home</span><span class="pun">/</span><span class="pln">python</span><span class="pun">/</span><span class="typ">Desktop</span><span class="pun">/</span><span class="pln">demo</span><span class="pun">/</span><span class="pln">demo</span><span class="pun">/</span><span class="pln">settings</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L2"><code><span class="pln"> </span><span class="pun">/</span><span class="pln">home</span><span class="pun">/</span><span class="pln">python</span><span class="pun">/</span><span class="typ">Desktop</span><span class="pun">/</span><span class="pln">demo</span><span class="pun">/</span><span class="pln">demo</span><span class="pun">/</span><span class="pln">settings</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L3"><code><span class="pln"> </span><span class="pun">/</span><span class="pln">home</span><span class="pun">/</span><span class="pln">python</span><span class="pun">/</span><span class="typ">Desktop</span><span class="pun">/</span><span class="pln">demo</span><span class="pun">/</span><span class="pln">demo</span></code></li><li class="L4"><code><span class="pln"> </span><span class="pun">/</span><span class="pln">home</span><span class="pun">/</span><span class="pln">python</span><span class="pun">/</span><span class="typ">Desktop</span><span class="pun">/</span><span class="pln">demo</span></code></li><li class="L5"><code><span class="pln"> </span><span class="pun">==========</span></code></li></ol></pre></li>
+<li><p>DEBUG</p>
+
+<ol><li>代码修改，自动重启</li>
+<li>显示详细的错误信息</li></ol>
+
+<p>开发时开启，上线后关闭 <br>
+如果关闭了调试模式，ALLOWED_HOSTS = ["*"]</p></li>
+<li><p>本地化</p></li>
+</ol><div class="md-section-divider"></div><pre class="prettyprint linenums prettyprinted" data-anchor-id="8puk"><ol class="linenums"><li class="L0"><code><span class="pln"> </span><span class="com"># LANGUAGE_CODE = 'en-us'</span></code></li><li class="L1"><code><span class="pln"> LANGUAGE_CODE </span><span class="pun">=</span><span class="pln"> </span><span class="str">'zh-hans'</span></code></li><li class="L2"><code><span class="pln"> </span><span class="com"># TIME_ZONE = 'UTC'</span></code></li><li class="L3"><code><span class="pln"> TIME_ZONE </span><span class="pun">=</span><span class="pln"> </span><span class="str">'Asia/Shanghai'</span></code></li></ol></pre><div class="md-section-divider"></div><h2 data-anchor-id="ne4i" id="11静态文件使用">11_静态文件使用</h2><ul data-anchor-id="m7zr">
+<li><p>两个配置</p>
+
+<ul><li><p>STATIC_URL <br>
+url中的访问规则</p></li>
+<li><p>STATICFILES_DIRS <br>
+静态文件的存储位置</p></li></ul></li>
+<li><p>例子</p>
+
+<ol><li>在项目根据目录中建立文件夹 static_files</li>
+<li><p>添加配置 STATICFILES_DIRS</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">STATICFILES_DIRS </span><span class="pun">=[</span></code></li><li class="L1"><code><span class="pln">    os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">join</span><span class="pun">(</span><span class="pln">BASE_DIR</span><span class="pun">,</span><span class="str">'static_files'</span><span class="pun">)</span></code></li><li class="L2"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>保留默认的 STATIC_URL 配置</p></li>
+<li>在static_files 中新建index.html，并添加一些内容</li>
+<li>通过 <a href="http://127.0.0.1:8000/static/index.html" target="_blank">http://127.0.0.1:8000/static/index.html</a></li></ol></li>
+<li><p>DEBUG与静态 <br>
+如果关闭了调试模式，将无法使用静态文件</p></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="4qzw" id="12django解析路由的流程">12_Django解析路由的流程</h2><p data-anchor-id="hhzl">访问<a href="http://127.0.0.1:8000/users/index/" target="_blank">http://127.0.0.1:8000/users/index/</a> 为何看到HelloWorld</p><p data-anchor-id="gxv9"><img src="http://static.zybuluo.com/jsutqb/iklwedbzv5pm95qvpp6qt9u2/image_1cf7uqkgok13jft1hm1126g1o0d2a.png" alt="image_1cf7uqkgok13jft1hm1126g1o0d2a.png-66.9kB"></p><div class="md-section-divider"></div><h2 data-anchor-id="giqt" id="13路由定义的顺序">13_路由定义的顺序</h2><ul data-anchor-id="nap9">
+<li><p>匹配中的重点</p>
+
+<ol><li>从上往下匹配</li>
+<li>匹配到就不继续找</li></ol></li>
+<li><p>"url屏蔽"问题 <br>
+课堂中的演示</p></li>
+<li>所以 <br>
+<ol><li>注意先后顺序</li>
+<li>要么统一加上<code>$</code></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="mznv" id="14路由命名与reverser反推">14_路由命名与reverser反推</h2><ul data-anchor-id="qapy">
+<li><p>步骤</p>
+
+<ol><li>在项目的urls.py中 <br>
+include 的时候添加 namespace参数</li>
+<li>在应用url的urls.py中 <br>
+url 添加name参数</li>
+<li>在需要找到某个地址的时候 <br>
+<code>from django.core.urlresolvers import reverse</code> <br>
+使用 <code>reverse("命名空间:名称")</code></li></ol></li>
+<li><p>总结</p>
+
+<ol><li>url反向解析的目的是：避免某个资源的url匹配规则发生变化的时候，曾经使用了这个url的地方 使用了错误的(过时)的地址</li>
+<li>通过函数动态生成地址即可</li>
+<li>为每个url起一个不变的名字(name)</li>
+<li>因为不同的应用中可能出现同样名字的url，所以添加命名空间来进行确定化</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="saxy" id="15路由定义位置与斜线结尾的说明">15_路由定义位置与斜线结尾的说明</h2><ul data-anchor-id="hvmc">
+<li><p>url路由的第2种定义方式 <br>
+在项目的urls.py中直接指向url对应的视图函数</p></li>
+<li><p>两种比较</p>
+
+<table class="table table-striped-white table-bordered">
+<thead>
+<tr>
+ <th>&nbsp;</th>
+ <th>集中</th>
+ <th>分散</th>
+</tr>
+</thead>
+<tbody><tr>
+ <td>优点</td>
+ <td>清晰，明确</td>
+ <td>便于分工，"面向对象"</td>
+</tr>
+<tr>
+ <td>缺点</td>
+ <td>多人开发中冲突</td>
+ <td>比较隐蔽</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>url中最后的斜线</p>
+
+<ol><li>在匹配过程中 <br>
+django如果发现路径后添加/能够匹配到某个，就会返回301状态码，并指定Location为带斜线的地址</li>
+<li>浏览器会再次发送请求访问最后带斜线的地址</li></ol></li>
+<li><p>两点补充</p>
+
+<ol><li><p>301 与 302 </p>
+
+<ul><li>区别 <br>
+<ul><li>301 永久重定向</li>
+<li>302 临时重定向</li></ul></li>
+<li><p>例子 <br>
+访问A，重定向到B</p>
+
+<ul><li><p>302 <br>
+浏览器访问A，返回302到B <br>
+浏览器访问B</p>
+
+<p>浏览器访问A，返回302到B <br>
+浏览器访问B</p></li>
+<li><p>301 <br>
+浏览器访问A，返回301到B <br>
+浏览器访问B</p>
+
+<p>用户输入A，浏览器访问B <br>
+除非用户清空对应的浏览记录</p></li></ul></li></ul></li>
+<li>配置 <br>
+<code>APPEND_SLASH</code> 默认为True，表示会自动添加斜线， <br>
+可以设置为False，关闭</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="iw74" id="16app应用配置">16_App应用配置</h2><ul data-anchor-id="ef29">
+<li>继承于 AppConfig</li>
+<li>名称管理 应用名称+Config 大驼峰</li>
+<li>常用类属性 <br>
+<ol><li>name <br>
+配置对应的应用名称</li>
+<li>verbose_name <br>
+人性化的名称，主要用于后台管理</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="sqag" id="17前端传递参数的方式">17_前端传递参数的方式</h2><ul data-anchor-id="oe7h">
+<li>传参方式 <br>
+<ol><li>url路径 <br>
+/weather/beijing</li>
+<li>url 中的query <br>
+/login?username=itcast&amp;password=123</li>
+<li>请求头 <br>
+My-Header:any_string</li>
+<li>请求体 <br>
+各种格式：form json xml 二进制协议 ...</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="y4mm" id="18url提取参数">18_URL提取参数</h2><ul data-anchor-id="1vnp">
+<li>从路径中获取参数 <br>
+<ol><li>在url的规则中添加<code>(正则表达式)</code>捕获内容</li>
+<li>在url的规则中添加<code>(?P&lt;名称&gt;正则表达式)</code>捕获内容</li></ol></li>
+<li>在视图函数中接受参数 <br>
+<ol><li>除了request，捕获几个就额外写几个</li>
+<li>除了request，捕获几个就额外写几个，并且参数名称与捕获名称一致</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="o93l" id="19querydict对象">19_QueryDict对象</h2><ul data-anchor-id="u6jz">
+<li><p>与请求方式的关系</p>
+
+<ol><li>上面url规则与请求方式无关</li>
+<li>当前与请求方式有关</li></ol></li>
+<li><p>QueryDict对象</p>
+
+<ol><li>创建 <br>
+<code>qd = QueryDict("a=1&amp;b=2&amp;c=3&amp;a=4")</code></li>
+<li><p>方法</p>
+
+<table class="table table-striped-white table-bordered">
+<thead>
+<tr>
+ <th>&nbsp;</th>
+ <th>存在一个</th>
+ <th>不存在</th>
+ <th>存在多个</th>
+</tr>
+</thead>
+<tbody><tr>
+ <td>[键]</td>
+ <td>返回对应</td>
+ <td>报错</td>
+ <td>返回最后一个</td>
+</tr>
+<tr>
+ <td>get(键)</td>
+ <td>返回对应</td>
+ <td>返回None</td>
+ <td>返回最后一个</td>
+</tr>
+<tr>
+ <td>get(键,默认值)</td>
+ <td>返回对应</td>
+ <td>返回默认值</td>
+ <td>返回最后一个</td>
+</tr>
+<tr>
+ <td>getlist(键)</td>
+ <td>返回列表(一个元素)</td>
+ <td>返回空列表</td>
+ <td>返回列表(多个元素)</td>
+</tr>
+</tbody></table>
+</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="lcqy" id="20提取查询字符串参数">20_提取查询字符串参数</h2><ul data-anchor-id="uuom">
+<li><p>如果<code>k=v&amp;a=b</code> 出现在url中 <br>
+不论请求方式如何 <br>
+request.GET就是QueryDict类型的对象 <br>
+我们可以通过上述方法获得参数值</p></li>
+<li><p>post提交 <br>
+会出现403页面，原因是django默认开启了csrf防护，可以在settings的<code>MIDDLEWARE</code>中注释掉相应内容，关闭防护</p></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="ivom" id="21postman安装使用">21_Postman安装使用</h2><ul data-anchor-id="1iw6">
+<li><p>安装</p>
+
+<ul><li>linux <br>
+<ol><li>解压</li>
+<li>运行Postman</li></ol></li>
+<li>mac windows 略</li></ul></li>
+<li><p>使用</p>
+
+<ol><li>跳过登录</li>
+<li>界面构成 <br>
+<img src="http://static.zybuluo.com/jsutqb/15z5m64lr8v6ymmcjj7otnud/image_1chvqova31pbfspl112j1bas1iff9.png" alt="image_1chvqova31pbfspl112j1bas1iff9.png-93.5kB"></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="rkgi" id="22获取请求体数据">22_获取请求体数据</h2><ol data-anchor-id="00e7">
+<li><p>哪些请求方式可以携带请求体数据 <br>
+POST <br>
+PUT <br>
+DELETE <br>
+PATCH</p></li>
+<li><p>request.POST <br>
+QueryDict类型的对象 <br>
+可以获取表单格式(c=4&amp;d=5&amp;c=6)的请求体的内容 <br>
+注意： <br>
+    1. 请求头中的格式必须为<code>Content-Type: x-www-form-urlencoded</code> <br>
+    2. 请求体中的格式为'键1=值1&amp;键2=值2&amp;...'</p></li>
+<li><p>request.body <br>
+原始的请求体信息，bytes 类型</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">import</span><span class="pln"> json</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">json_bytes </span><span class="pun">=</span><span class="pln"> b</span><span class="str">'{"a"=1,"b"=2}'</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="pln">json_str </span><span class="pun">=</span><span class="pln"> json_bytes</span><span class="pun">.</span><span class="pln">decode</span><span class="pun">()</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">json_d </span><span class="pun">=</span><span class="pln"> json</span><span class="pun">.</span><span class="pln">loads</span><span class="pun">(</span><span class="pln">json_str</span><span class="pun">)</span></code></li><li class="L7"><code><span class="kwd">print</span><span class="pun">(</span><span class="pln">json_d</span><span class="pun">[</span><span class="str">'a'</span><span class="pun">])</span></code></li><li class="L8"><code><span class="kwd">print</span><span class="pun">(</span><span class="pln">json_d</span><span class="pun">[</span><span class="str">'b'</span><span class="pun">])</span></code></li></ol></pre></li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="kysr" id="23获取请求头与其他属性">23_获取请求头与其他属性</h2><ul data-anchor-id="jnwt">
+<li><p>request.META <br>
+request.META 把原始的请求信息封装成一个字典了 <br>
+其中很多都是请求头，但名字与原始的请求头并不一致 <br>
+变换规则如下 <br>
+原始请求头 <code>单词A-单词B</code> 转换后为 <code>HTTP_单词A全大写_单词B全大写</code></p></li>
+<li><p>请求头 含义 及对应 META</p>
+
+<table class="table table-striped-white table-bordered">
+<thead>
+<tr>
+ <th>请求头</th>
+ <th>含义</th>
+ <th>META中的key</th>
+</tr>
+</thead>
+<tbody><tr>
+ <td>Content-Length</td>
+ <td>请求体的长度(单位字节，类型字符串)</td>
+ <td>CONTENT_LENGTH</td>
+</tr>
+<tr>
+ <td>Content-Type</td>
+ <td>The MIME type of the request body.</td>
+ <td>CONTENT_TYPE</td>
+</tr>
+<tr>
+ <td>Accept</td>
+ <td>浏览器期望的格式</td>
+ <td>HTTP_ACCEPT</td>
+</tr>
+<tr>
+ <td>Accept-Encoding</td>
+ <td>浏览器期望的编码(二进制)</td>
+ <td>HTTP_ACCEPT_ENCODING</td>
+</tr>
+<tr>
+ <td>Accept-Language</td>
+ <td>浏览器期望的语言</td>
+ <td>HTTP_ACCEPT_LANGUAGE</td>
+</tr>
+<tr>
+ <td>Host</td>
+ <td>访问的主机</td>
+ <td>HTTP_HOST</td>
+</tr>
+<tr>
+ <td>Referer</td>
+ <td>引用页面(上一个页面)(如果有的话)</td>
+ <td>HTTP_REFERER</td>
+</tr>
+<tr>
+ <td>User-Agent</td>
+ <td>浏览器信息</td>
+ <td>HTTP_USER_AGENT</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>其他 <br>
+<strong>method</strong> 请求方式 <br>
+<strong>user</strong> 请求的用户对象 <br>
+path 路径 <br>
+encoding 编码</p></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="ayvt" id="总结">总结</h2><ul data-anchor-id="380d">
+<li>django框架概貌 <br>
+符合wsgi协议的 web框架(请求响应) <br>
+<ol><li>项目搭建 <br>
+虚拟环境 <br>
+创建工程 <br>
+创建应用 <br>
+配置</li>
+<li>如何把请求变成响应 <br>
+函数</li>
+<li>如何找到这个函数 <br>
+url路由</li>
+<li>该怎么处理请求 <br>
+请求的属性和方法 (本质上是 Http请求的头和体)</li></ol></li>
+</ul></div>
+<a href='../../'>导航页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="2.html">下一页</a>
+</body>
+</html>
+

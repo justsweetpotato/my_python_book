@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block header %}
+    <h3>文本加密 中级
+        <small>AES加密</small>
+    </h3>
+    <small>
+        <a href="{% url 'books:crypto' %}">初级</a>&nbsp;&nbsp;&nbsp;中级
+    </small>
+{% endblock header %}
+
+{% block content %}
+    <form action="/crypto_lv2/" method="post">
+        {% csrf_token %}
+        <small style="color: red">
+            {{ error }}
+        </small>
+        <br>
+        明文(4000字以内)：
+        <br>
+        <textarea autofocus="autofocus" name="text" style="width: 300px; height: 100px">{{ serverMsgT }}</textarea>
+        <br>
+        密钥(100字符以内, 不支持中文)：
+        <br>
+        <small>*密钥可自定， 请务必保管好密钥。</small>
+        <br>
+        <textarea name="key" style="width: 300px; height: 25px"></textarea>
+        <br>
+        <input type="submit" value="转换">
+        <br>
+        密文：
+        <br>
+        <textarea name="crypto_text" style="width: 300px; height: 100px">{{ serverMsgCT }}</textarea>
+        <br>
+    </form>
+        <br>
+        <br>
+{% endblock content %}

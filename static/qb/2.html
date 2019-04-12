@@ -1,0 +1,364 @@
+﻿<!DOCTYPE html>
+<html class="theme theme-white">
+<head>
+<meta charset="utf-8">
+ <a href="index.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="3.html">下一页</a>
+<title>Django-4.0-Day2</title>
+<link href="https://www.zybuluo.com/static/assets/template-theme-white.css" rel="stylesheet" media="screen">
+<style type="text/css">
+
+#wmd-preview h1  {
+    color: #0077bb; /* 将标题改为蓝色 */
+}</style>
+</head>
+<body class="theme theme-white">
+<div id="wmd-preview" class="wmd-preview wmd-preview-full-reader"><div class="md-section-divider"></div><div class="md-section-divider"></div><h1 data-anchor-id="kqmr" id="django-40-day2">Django-4.0-Day2</h1><p data-anchor-id="8ibw"><code>django</code></p><hr><div class="md-section-divider"></div><h2 data-anchor-id="yaqx" id="知识点复习">知识点复习</h2><ol data-anchor-id="at0m">
+<li>框架的职责 <br>
+<ul><li>MVC</li></ul></li>
+<li>Django <br>
+<ul><li>MVT</li>
+<li>开发环境搭建 <br>
+<ul><li>虚拟环境</li>
+<li>包</li></ul></li>
+<li>项目和应用的创建</li>
+<li>配置项 <br>
+<ul><li>INSTALLED_APPS</li>
+<li>DEBUG</li>
+<li>BASE_DIR</li>
+<li>STATIC_URL</li>
+<li>STATICFILES_DIRS</li>
+<li>本地化</li></ul></li>
+<li>视图</li>
+<li>url路由 <br>
+<ul><li>项目urls.py和应用的urls.py</li>
+<li>url路由配置(位置参数捕获和关键字参数捕获)</li></ul></li>
+<li>请求中传递参数的四种方式</li>
+<li>获取请求中传递的参数 <br>
+<ul><li>QueryDict</li></ul></li>
+<li>请求 <br>
+<ul><li>体</li>
+<li>头</li></ul></li></ul></li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="cv5t" id="01构造响应对象方法">01_构造响应对象方法</h2><ul data-anchor-id="r3z4">
+<li><p>三部分</p>
+
+<ol><li>响应行</li>
+<li>响应头</li>
+<li>响应体</li></ol></li>
+<li><p>创建 <br>
+HttpResponse(content=响应体， contenty_type= 响应类型头 , status= 状态码) <br>
+其他的头  <br>
+httpResponse["头名称"] = "对应的值"</p></li>
+<li><p>常见的HttpResponse子类及对应的响应码</p>
+
+<table class="table table-striped-white table-bordered">
+<thead>
+<tr>
+ <th>状态码</th>
+ <th>含义</th>
+ <th>django.http.</th>
+</tr>
+</thead>
+<tbody><tr>
+ <td>301</td>
+ <td>永久重定向</td>
+ <td>HttpResponseRedirect</td>
+</tr>
+<tr>
+ <td>302</td>
+ <td>临时重定向</td>
+ <td>HttpResponsePermanentRedirect</td>
+</tr>
+<tr>
+ <td>304</td>
+ <td>内容无更改，使用缓存</td>
+ <td>HttpResponseNotModified</td>
+</tr>
+<tr>
+ <td>400</td>
+ <td>错误的请求</td>
+ <td>HttpResponseBadRequest</td>
+</tr>
+<tr>
+ <td>404</td>
+ <td>资源没找到</td>
+ <td>HttpResponseNotFound</td>
+</tr>
+<tr>
+ <td>403</td>
+ <td>禁止访问</td>
+ <td>HttpResponseForbidden</td>
+</tr>
+<tr>
+ <td>405</td>
+ <td>请求方式不允许</td>
+ <td>HttpResponseNotAllowed</td>
+</tr>
+<tr>
+ <td>410</td>
+ <td>已停用</td>
+ <td>HttpResponseGone</td>
+</tr>
+<tr>
+ <td>500</td>
+ <td>服务器错误</td>
+ <td>HttpResponseServerError</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>JsonResponse <br>
+方便之处</p>
+
+<ol><li>默认Content-Type: 'application/json'</li>
+<li>默认的状态码 200</li>
+<li>创建对象时给字典，就可以自动转为对应的json格式</li></ol></li>
+<li><p>django.shotcuts.redicrect</p>
+
+<ol><li>返回HttpResponsePermanentRedirect对象</li>
+<li>调用时，指定Location头对应的值即可</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="h2et" id="02cookiesessiondjango使用缓存">02_Cookie_Session_django使用缓存</h2><ul data-anchor-id="apy8">
+<li><p>cookie</p>
+
+<ul><li><p>设置cookie <br>
+响应对象， set_cookie方法 <br>
+set_cookie(键,值,max_age=存活时间) <br>
+ max_age </p>
+
+<ul><li>None 默认值(项目中配置的SESSION_COOKIE_AGE为准) </li>
+<li>0 浏览器关闭失效 </li>
+<li>其他 秒数</li></ul></li>
+<li><p>读取cookie <br>
+request.COOKIE 当作字典去使用</p></li></ul></li>
+<li><p>session</p>
+
+<ul><li>启用和禁用  <br>
+settings 中的中间件</li>
+<li><p>存放位置</p>
+
+<ol><li><p>数据库</p>
+
+<ul><li><p>两个配置</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">INSTALLED_APPS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'django.contrib.sessions'</span><span class="pun">,</span></code></li><li class="L2"><code><span class="pun">]</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="pln">MIDDLEWARE </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L5"><code><span class="pln">    </span><span class="str">'django.contrib.sessions.middleware.SessionMiddleware'</span><span class="pun">,</span></code></li><li class="L6"><code><span class="pun">]</span></code></li><li class="L7"><code><span class="pln"> </span><span class="com"># 不写默认就是这个</span></code></li><li class="L8"><code><span class="pln">SESSION_ENGINE</span><span class="pun">=</span><span class="str">'django.contrib.sessions.backends.db'</span></code></li></ol></pre></li>
+<li><p>默认表</p>
+
+<ul><li>名称 <br>
+django_sessin</li>
+<li>表结构 <br>
+三个字段 session_key、session_data、expire_date</li></ul></li></ul></li>
+<li>本地缓存(内存) <br>
+<code>SESSION_ENGINE='django.contrib.sessions.backends.cached'</code></li>
+<li>混合 <br>
+<code>SESSION_ENGINE='django.contrib.sessions.backends.cached_db'</code></li>
+<li>redis <br>
+下节课</li></ol></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="f2ws" id="03本地缓存跨机问题">03_本地缓存跨机问题</h2><ul data-anchor-id="a703">
+<li>状态不一致问题 <br>
+<ol><li>出现情况 <br>
+nginx + 负载均衡 + 本地缓存内存</li>
+<li>解决 <br>
+使用redis存储session，多个django服务器公用一个redis，用redis来保证数据一致</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="ghte" id="04使用django-redis保存session">04_使用django-redis保存session</h2><ul data-anchor-id="ee3n">
+<li><p>使用django-redis保存session</p>
+
+<ol><li><p>安装扩展 <br>
+<code>pip install django-redis</code></p></li>
+<li><p>配置 <br>
+在settings.py文件中做如下设置</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">CACHES </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"default"</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">"BACKEND"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"django_redis.cache.RedisCache"</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">        </span><span class="str">"LOCATION"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"redis://127.0.0.1:6379/1"</span><span class="pun">,</span></code></li><li class="L4"><code><span class="pln">        </span><span class="str">"OPTIONS"</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L5"><code><span class="pln">            </span><span class="str">"CLIENT_CLASS"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"django_redis.client.DefaultClient"</span><span class="pun">,</span></code></li><li class="L6"><code><span class="pln">        </span><span class="pun">}</span></code></li><li class="L7"><code><span class="pln">    </span><span class="pun">}</span></code></li><li class="L8"><code><span class="pun">}</span></code></li><li class="L9"><code><span class="pln">SESSION_ENGINE </span><span class="pun">=</span><span class="pln"> </span><span class="str">"django.contrib.sessions.backends.cache"</span></code></li><li class="L0"><code><span class="pln">SESSION_CACHE_ALIAS </span><span class="pun">=</span><span class="pln"> </span><span class="str">"default"</span></code></li></ol></pre></li></ol></li>
+<li><p>session相关api</p>
+
+<ol><li>存 <br>
+request.session['键'] = 值</li>
+<li>取 <br>
+value = request.session['键'] <br>
+value = request.session.get('键') <br>
+value = request.session.get('键', 默认值)</li>
+<li>改 <br>
+request.session['键'] = 值</li>
+<li>删 <br>
+<ol><li>删单个 <br>
+del request.session['键']</li>
+<li>清空 <br>
+request.session.clear()</li>
+<li>删除整个 <br>
+request.session.flush()</li></ol></li>
+<li>设置有效期 <br>
+request.session.set_expiry(value) <br>
+同cookie</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="sl58" id="05类视图引入">05_类视图引入</h2><ul data-anchor-id="0vox">
+<li>类视图(Class Based View  / CBV) <br>
+<ul><li>需求/解决的问题 <br>
+<ol><li>判断请求方式，进行不同的处理</li>
+<li>内聚， 相关的代码放在一起</li>
+<li>使用类的继承特点，实现代码复用 (后期可以感受到)</li></ol></li>
+<li>好处 <br>
+<ul><li>代码可读性</li>
+<li>提升复用性</li></ul></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="b2bc" id="06类视图的定义与使用">06_类视图的定义与使用</h2><ul data-anchor-id="dgrl">
+<li><p>步骤</p>
+
+<ol><li><p>定义类 <br>
+继承于 django.view.generic.View 或者 django.view.generic.base.View (其实是同一个东西)</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> djang</span><span class="pun">.</span><span class="pln">view</span><span class="pun">.</span><span class="kwd">generic</span><span class="pln"> </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">View</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">RegisterView</span><span class="pun">(</span><span class="typ">View</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">pass</span></code></li></ol></pre></li>
+<li><p>实现请求方式所对应的示例方法 <br>
+没有实现的方法会返回405</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">def</span><span class="pln">  </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">pass</span></code></li><li class="L2"><code><span class="kwd">def</span><span class="pln">  post</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">pass</span></code></li></ol></pre></li>
+<li><p>配置urls.py <br>
+调用类视图的as_view类方法，来代替视图函数的名称</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 视图函数：注册</span></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># url(r'^register/$', views.register, name='register'),</span></code></li><li class="L3"><code><span class="pln">    </span><span class="com"># 类视图：注册</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'^register/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">RegisterView</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">(),</span><span class="pln"> name</span><span class="pun">=</span><span class="str">'register'</span><span class="pun">),</span></code></li><li class="L6"><code><span class="pun">]</span></code></li></ol></pre></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="7gxx" id="07类视图实现的原理">07_类视图实现的原理</h2><ul data-anchor-id="43uq">
+<li><p>as_view</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="lit">@classonlymethod</span></code></li><li class="L1"><code><span class="kwd">def</span><span class="pln"> as_view</span><span class="pun">(</span><span class="pln">cls</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">initkwargs</span><span class="pun">):</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">    </span><span class="com"># 定义了一个视图函数</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> view</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">pass</span></code></li><li class="L6"><code><span class="pln">    </span><span class="pun">...省略代码...</span></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="pln">    </span><span class="com"># 返回定义了一个视图函数</span></code></li><li class="L9"><code><span class="pln">    </span><span class="kwd">return</span><span class="pln"> view</span></code></li></ol></pre></li>
+<li><p>view</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">def</span><span class="pln"> view</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">self</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> cls</span><span class="pun">(**</span><span class="pln">initkwargs</span><span class="pun">)</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">request </span><span class="pun">=</span><span class="pln"> request</span></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">args </span><span class="pun">=</span><span class="pln"> args</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">kwargs </span><span class="pun">=</span><span class="pln"> kwargs</span></code></li><li class="L5"><code><span class="pln">    </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">dispatch</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>dispatch</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">def</span><span class="pln"> dispatch</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 把请求方式转为小写</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">if</span><span class="pln"> request</span><span class="pun">.</span><span class="pln">method</span><span class="pun">.</span><span class="pln">lower</span><span class="pun">()</span><span class="pln"> </span><span class="kwd">in</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">http_method_names</span><span class="pun">:</span></code></li><li class="L3"><code><span class="pln">        </span><span class="com"># 寻找对应的属性(方法)</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># 如果找不到 属性则是http_method_not_allowed</span></code></li><li class="L5"><code><span class="pln">        handler </span><span class="pun">=</span><span class="pln"> getattr</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">.</span><span class="pln">method</span><span class="pun">.</span><span class="pln">lower</span><span class="pun">(),</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">http_method_not_allowed</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">    </span><span class="kwd">else</span><span class="pun">:</span></code></li><li class="L7"><code><span class="pln">        </span><span class="com"># 如果不在8种请求方式中的一种 ，属性则是http_method_not_allowed</span></code></li><li class="L8"><code><span class="pln">        handler </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">http_method_not_allowed</span></code></li><li class="L9"><code><span class="pln">    </span><span class="pun">调用找到的方法</span></code></li><li class="L0"><code><span class="pln">    </span><span class="kwd">return</span><span class="pln"> handler</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>get/post <br>
+自己实现，被dispatch 方法调用，传入request、位置参数(如果有的话)、关键字参数(如果有的话)，需要返回一个HttpResponse类型的对象，作为dispath的返回值</p></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="cbef" id="08在路径中添加装饰器行为">08_在路径中添加装饰器行为</h2><ul data-anchor-id="62tq">
+<li><p>装饰器的装饰视图函数的三种用法</p>
+
+<ol><li>在urls.py中加装饰</li>
+<li>直接装饰视图类或者视图类中的方法</li>
+<li>使用扩展类(多继承)</li></ol></li>
+<li><p>例子</p>
+
+<ol><li><p>装饰函数</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">def</span><span class="pln"> my_decorator</span><span class="pun">(</span><span class="pln">view_func</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> wrapper</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">print</span><span class="pun">(</span><span class="str">'装饰器被调用'</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">print</span><span class="pun">(</span><span class="pln">request</span><span class="pun">.</span><span class="pln">path</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> view_func</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">    </span><span class="kwd">return</span><span class="pln"> wrapper</span></code></li></ol></pre></li>
+<li><p>使用装饰函数</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'^demoview/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="pln">my_decorator</span><span class="pun">(</span><span class="pln">views</span><span class="pun">.</span><span class="typ">DemoView</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">()))</span></code></li><li class="L2"><code><span class="pun">]</span></code></li></ol></pre></li></ol></li>
+<li><p>原理</p>
+
+<ol><li>在url中的配置 <br>
+my_decorator 接受一个函数作为参数，并返回一个函数作为结果 <br>
+它在这里 接受 as_view方法的返回值，并返回wrapper</li>
+<li>每次请求到达 <br>
+django框架会调用wrapper函数，传递 request 及可能存在的位置参数和关键字参数 <br>
+wrapper函数内部 记录一些日志后， 调用了 as_view()返回的函数， 传递 request 及可能存在的位置参数和关键字参数 <br>
+并且接受返回值，作为当前函数的返回值 <br>
+我们知道as_view 会调用 dispatch 会根据请求方式调用get\post方法，最终返回一个HttpResponse</li></ol></li>
+<li><p>在urls.py中加装饰</p>
+
+<ul><li>优点 代码实现简单</li>
+<li>缺点 逻辑分散，不够明确</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="k162" id="09在定义类时使用methoddecorator添加装饰器">09_在定义类时使用method_decorator添加装饰器</h2><ul data-anchor-id="y6kc">
+<li><p>问题 <br>
+无法直接添加 自定义装饰器函数到 视图类的 方法上</p></li>
+<li><p>原因</p>
+
+<ul><li>我们写的只支持视图函数，不支持视图方法</li>
+<li>方法是绑定函数，其第一个参数是self，为当前实例对象，而不是request</li></ul></li>
+<li><p>解决 <br>
+django 提供了一个装饰器(django.utils.decorators.method_decorator)，可以把函数装饰器转为 方法装饰器 或者 类装饰器</p></li>
+<li><p>使用方式</p>
+
+<ul><li><p>装饰方法</p>
+
+<ul><li>只对一种请求有效</li></ul>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="lit">@method_decorator</span><span class="pun">(</span><span class="pln">my_decorator</span><span class="pun">)</span></code></li><li class="L1"><code><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">pass</span></code></li></ol></pre>
+
+<ul><li>对所有类型的请求有效</li></ul>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="lit">@method_decorator</span><span class="pun">(</span><span class="pln">my_decorator</span><span class="pun">)</span></code></li><li class="L1"><code><span class="kwd">def</span><span class="pln"> dispatch</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,*</span><span class="pln">args</span><span class="pun">,**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">super</span><span class="pun">().</span><span class="pln">dispatch</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,*</span><span class="pln">args</span><span class="pun">,**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>装饰类</p>
+
+<ul><li>只对一种请求有效</li></ul>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="lit">@method_decorator</span><span class="pun">(</span><span class="pln">my_decorator</span><span class="pun">,</span><span class="pln">name</span><span class="pun">=</span><span class="str">"get"</span><span class="pun">)</span></code></li><li class="L1"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">DemoView</span><span class="pun">(</span><span class="typ">View</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">pass</span></code></li></ol></pre>
+
+<ul><li>对所有类型的请求有效   </li></ul>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="lit">@method_decorator</span><span class="pun">(</span><span class="pln">my_decorator</span><span class="pun">,</span><span class="pln">name</span><span class="pun">=</span><span class="str">"dispatch"</span><span class="pun">)</span></code></li><li class="L1"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">DemoView</span><span class="pun">(</span><span class="typ">View</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">pass</span></code></li></ol></pre></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="c1ro" id="10装饰器需要进行转换的原因">10_装饰器需要进行转换的原因</h2><ul data-anchor-id="b4cd">
+<li><p>原因 <br>
+方法是绑定函数，其第一个参数是self，为当前实例对象，而不是request</p></li>
+<li><p>method_decorator原理 <br>
+判断被装饰的是类还是方法 <br>
+如果是方法，把参数装饰器添加上self后再装饰真正的方法</p></li>
+<li><p>修改适用于方法的装饰器</p>
+
+<ul><li><p>定义</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">def</span><span class="pln"> my_decorator_for_class</span><span class="pun">(</span><span class="pln">view_func</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> wrapper</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">print</span><span class="pun">(</span><span class="str">'装饰器被调用'</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">print</span><span class="pun">(</span><span class="pln">request</span><span class="pun">.</span><span class="pln">path</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> view_func</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">    </span><span class="kwd">return</span><span class="pln"> wrapper</span></code></li></ol></pre></li>
+<li><p>使用</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">DemoView</span><span class="pun">(</span><span class="typ">View</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="lit">@my_decorator_for_class</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">HttpResponse</span><span class="pun">(</span><span class="str">'get page'</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> post</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">HttpResponse</span><span class="pun">(</span><span class="str">'post page'</span><span class="pun">)</span></code></li></ol></pre></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="qtra" id="11创建扩展类">11_创建扩展类</h2><ul data-anchor-id="7x34">
+<li><p>扩展类(Mixin)</p></li>
+<li><p>例子</p>
+
+<ul><li><p>定义扩展类</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">BaseView</span><span class="pun">(</span><span class="kwd">object</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="lit">@classmethod</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> as_view</span><span class="pun">(</span><span class="pln">cls</span><span class="pun">,</span><span class="pln"> </span><span class="pun">*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">print</span><span class="pun">(</span><span class="str">'在最终as_view方法执行之前别调用'</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">        view </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">super</span><span class="pun">().</span><span class="pln">as_view</span><span class="pun">(*</span><span class="pln">args</span><span class="pun">,</span><span class="pln"> </span><span class="pun">**</span><span class="pln">kwargs</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">        view </span><span class="pun">=</span><span class="pln"> my_decorator</span><span class="pun">(</span><span class="pln">view</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> view</span></code></li></ol></pre></li>
+<li><p>使用扩展类</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">DemoView</span><span class="pun">(</span><span class="typ">BaseView</span><span class="pun">,</span><span class="pln"> </span><span class="typ">View</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">HttpResponse</span><span class="pun">(</span><span class="str">'get page'</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> post</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">HttpResponse</span><span class="pun">(</span><span class="str">'post page'</span><span class="pun">)</span></code></li></ol></pre></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="rib4" id="12理解扩展类">12_理解扩展类</h2><p data-anchor-id="2mjl">super 与 mro</p><ul data-anchor-id="ouj3">
+<li><p>MRO</p>
+
+<ul><li>深度优先 <br>
+2.2 之前 旧式类：</li>
+<li>广度优先 <br>
+2.2      新式类</li>
+<li>C3算法 <br>
+2.3~2.x 新式类 <br>
+3.x </li></ul>
+
+<p><a href="https://mozillazg.com/2016/11/python-mro-compute.html" target="_blank">https://mozillazg.com/2016/11/python-mro-compute.html</a></p></li>
+<li>super <br>
+<a href="https://mozillazg.com/2016/12/python-super-is-not-as-simple-as-you-thought.html" target="_blank">https://mozillazg.com/2016/12/python-super-is-not-as-simple-as-you-thought.html</a> <br>
+super() 不是定义类的父类，而是 运行类的 mro中 定义类的 下一个</li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="jewg" id="13中间件使用">13_中间件使用</h2><ul data-anchor-id="u1w2">
+<li><p>中间件 与 装饰器的区别</p>
+
+<ul><li>相同点 <br>
+<ul><li>都是为了通用的请求响应处理 与 具体的业务代码分离开来</li>
+<li>并且实现代码复用</li></ul></li>
+<li>不同点 <br>
+<ul><li>中间件是对所有的请求和响应生效</li>
+<li>装饰器只对装饰了的视图生效</li></ul></li></ul></li>
+<li><p>中间件</p>
+
+<ul><li><p>单个中间件</p>
+
+<ul><li><p>定义</p>
+
+<ol><li>定义一个方法 接受参数 get_response (其实名称随意，它是一个函数对象)</li>
+<li>定义一个内部方法 middleware 接受参数 request (名称可以随意) <br>
+<ol><li>可选，对请求(参数)进行一些处理 (这些代码会在视图处理请求之前调用)</li>
+<li>调用 response = get_response(request) (这些代码会在进行视图处理 ，当然还包含其他中间件方法的处理)</li>
+<li>可选 ， 对请求或者响应做一些处理 (这些代码会在视图处理请求之后调用)</li>
+<li>返回 response</li></ol></li>
+<li>返回这个内部方法 middleware</li></ol>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code></code></li><li class="L1"><code><span class="kwd">def</span><span class="pln"> my_middleware</span><span class="pun">(</span><span class="pln">get_response</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">print</span><span class="pun">(</span><span class="str">'init 被调用'</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> middleware</span><span class="pun">(</span><span class="pln">request</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="kwd">print</span><span class="pun">(</span><span class="str">'before request 被调用'</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">        response </span><span class="pun">=</span><span class="pln"> get_response</span><span class="pun">(</span><span class="pln">request</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">print</span><span class="pun">(</span><span class="str">'after response 被调用'</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> response</span></code></li><li class="L8"><code><span class="pln">    </span><span class="kwd">return</span><span class="pln"> middleware</span></code></li></ol></pre></li>
+<li><p>配置 <br>
+在settings.py中的MIDDLEWARE 的列表中添加这个方法的 路径</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">MIDDLEWARE </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">'middleware.my_middleware'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>效果 <br>
+<img src="http://static.zybuluo.com/jsutqb/8b34c3rrmdcu60epclp9yigz/image_1cfs6mq6h1vh91iq8jmsgjl18fn9.png" alt="image_1cfs6mq6h1vh91iq8jmsgjl18fn9.png-23kB" title=""></p></li></ul></li>
+<li><p>多个中间件</p>
+
+<ul><li>顺序问题 <br>
+调用视图前 从上往下 <br>
+调用视图后 从下往上</li>
+<li>配置 <br>
+<img src="http://static.zybuluo.com/jsutqb/9cwyp5w78ci09ws4qeijv5sh/image_1cfs6v1jj1gqe15nk4811ffl1q301m.png" alt="image_1cfs6v1jj1gqe15nk4811ffl1q301m.png-21.4kB" title=""></li>
+<li>效果 <br>
+<img src="http://static.zybuluo.com/jsutqb/t0saszgaohcjzzfvf6bmw1u5/image_1cfs713h7m8hg0u1mb4689std23.png" alt="image_1cfs713h7m8hg0u1mb4689std23.png-28.8kB" title=""></li></ul></li></ul></li>
+</ul></div>
+ <a href="index.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="3.html">下一页</a>
+</body>
+</html>
+

@@ -1,0 +1,1284 @@
+<!DOCTYPE HTML>
+<html lang="en" >
+    
+    <head>
+        
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>多因子回归法选股 | 量化交易课程定位、目标</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 2.6.7">
+        
+        
+        <meta name="HandheldFriendly" content="true"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+        <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+        
+    <link rel="stylesheet" href="../gitbook/style.css">
+    
+        
+        <link rel="stylesheet" href="../gitbook/plugins/gitbook-plugin-katex/katex.min.css">
+        
+    
+        
+        <link rel="stylesheet" href="../gitbook/plugins/gitbook-plugin-expandable-chapters-small/expandable-chapters-small.css">
+        
+    
+        
+        <link rel="stylesheet" href="../gitbook/plugins/gitbook-plugin-highlight/website.css">
+        
+    
+        
+        <link rel="stylesheet" href="../gitbook/plugins/gitbook-plugin-search/search.css">
+        
+    
+        
+        <link rel="stylesheet" href="../gitbook/plugins/gitbook-plugin-fontsettings/website.css">
+        
+    
+    
+
+        
+    
+    
+    <link rel="next" href="../day04/section4.html" />
+    
+    
+    <link rel="prev" href="../day04/section2.html" />
+    
+
+        
+    </head>
+    <body>
+        
+        
+    <div class="book"
+        data-level="5.3"
+        data-chapter-title="多因子回归法选股"
+        data-filepath="day04/section3.md"
+        data-basepath=".."
+        data-revision="Sun Jun 03 2018 15:21:49 GMT+0800 (CST)"
+        data-innerlanguage="">
+    
+
+<div class="book-summary">
+    <nav role="navigation">
+        <ul class="summary">
+            
+            
+            
+            
+
+            
+
+            
+    
+        <li class="chapter " data-level="0" data-path="index.html">
+            
+                
+                    <a href="../index.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                        量化交易课程
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1" data-path="Quantitative_trading/index.html">
+            
+                
+                    <a href="../Quantitative_trading/index.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.</b>
+                        
+                        量化交易简介
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1" data-path="Quantitative_trading/section1.html">
+            
+                
+                    <a href="../Quantitative_trading/section1.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.1.</b>
+                        
+                        什么是量化交易
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="Quantitative_trading/section2.html">
+            
+                
+                    <a href="../Quantitative_trading/section2.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.2.</b>
+                        
+                        量化交易分类
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="Quantitative_trading/section3.html">
+            
+                
+                    <a href="../Quantitative_trading/section3.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.3.</b>
+                        
+                        量化交易历史
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="Quantitative_trading/section4.html">
+            
+                
+                    <a href="../Quantitative_trading/section4.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>1.4.</b>
+                        
+                        量化交易项目做什么
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2" data-path="day01/index.html">
+            
+                
+                    <a href="../day01/index.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.</b>
+                        
+                        量化回测框架介绍
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.1" data-path="day01/section1.html">
+            
+                
+                    <a href="../day01/section1.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.1.</b>
+                        
+                        回测框架介绍
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="day01/section2.html">
+            
+                
+                    <a href="../day01/section2.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.2.</b>
+                        
+                        策略创建运行流程
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="day01/section3.html">
+            
+                
+                    <a href="../day01/section3.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.3.</b>
+                        
+                        数据获取接口
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="day01/section4.html">
+            
+                
+                    <a href="../day01/section4.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.4.</b>
+                        
+                        回测交易接口
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="day01/section5.html">
+            
+                
+                    <a href="../day01/section5.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.5.</b>
+                        
+                        策略评价指标
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="day01/section6.html">
+            
+                
+                    <a href="../day01/section6.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.6.</b>
+                        
+                        实现第一个股票策略
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.7" data-path="day01/section7.html">
+            
+                
+                    <a href="../day01/section7.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.7.</b>
+                        
+                        总结
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="2.8" data-path="day01/section8.html">
+            
+                
+                    <a href="../day01/section8.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>2.8.</b>
+                        
+                        每日作业
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3" data-path="day02/index.html">
+            
+                
+                    <a href="../day02/index.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.</b>
+                        
+                        多因子策略1
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.1" data-path="day02/section1.html">
+            
+                
+                    <a href="../day02/section1.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.1.</b>
+                        
+                        股票量化策略介绍
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="day02/section2.html">
+            
+                
+                    <a href="../day02/section2.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.2.</b>
+                        
+                        Alpha与Beta
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="day02/section3.html">
+            
+                
+                    <a href="../day02/section3.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.3.</b>
+                        
+                        多因子策略与理论介绍
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="day02/section4.html">
+            
+                
+                    <a href="../day02/section4.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.4.</b>
+                        
+                        多因子策略流程
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" data-path="day02/section5.html">
+            
+                
+                    <a href="../day02/section5.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.5.</b>
+                        
+                        因子数据处理-去极值
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.6" data-path="day02/section6.html">
+            
+                
+                    <a href="../day02/section6.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.6.</b>
+                        
+                        因子数据处理-标准化
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.7" data-path="day02/section7.html">
+            
+                
+                    <a href="../day02/section7.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.7.</b>
+                        
+                        因子数据处理-市值中性化
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.8" data-path="day02/section8.html">
+            
+                
+                    <a href="../day02/section8.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.8.</b>
+                        
+                        总结
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="3.9" data-path="day02/section9.html">
+            
+                
+                    <a href="../day02/section9.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>3.9.</b>
+                        
+                        每日作业
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="4" data-path="day03/index.html">
+            
+                
+                    <a href="../day03/index.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.</b>
+                        
+                        多因子策略2
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1" data-path="day03/section1.html">
+            
+                
+                    <a href="../day03/section1.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.1.</b>
+                        
+                        多因子的筛选阶段介绍
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="day03/section2.html">
+            
+                
+                    <a href="../day03/section2.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.2.</b>
+                        
+                        单因子有效性分析目的
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.3" data-path="day03/section3.html">
+            
+                
+                    <a href="../day03/section3.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.3.</b>
+                        
+                        单因子有效性分析-因子IC分析
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.4" data-path="day03/section4.html">
+            
+                
+                    <a href="../day03/section4.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.4.</b>
+                        
+                        单因子有效性分析-因子收益率分析
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.5" data-path="day03/section5.html">
+            
+                
+                    <a href="../day03/section5.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.5.</b>
+                        
+                        单因子测试框架和单因子回测框架搭建
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.6" data-path="day03/section6.html">
+            
+                
+                    <a href="../day03/section6.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.6.</b>
+                        
+                        分组动手练习
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.7" data-path="day03/section7.html">
+            
+                
+                    <a href="../day03/section7.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.7.</b>
+                        
+                        多因子相关性分析
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.8" data-path="day03/section8.html">
+            
+                
+                    <a href="../day03/section8.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.8.</b>
+                        
+                        多因子合成
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.9" data-path="day03/section9.html">
+            
+                
+                    <a href="../day03/section9.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.9.</b>
+                        
+                        总结
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="4.10" data-path="day03/section10.html">
+            
+                
+                    <a href="../day03/section10.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>4.10.</b>
+                        
+                        每日作业
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="5" data-path="day04/index.html">
+            
+                
+                    <a href="../day04/index.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.</b>
+                        
+                        多因子策略3
+                    </a>
+            
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="5.1" data-path="day04/section1.html">
+            
+                
+                    <a href="../day04/section1.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.1.</b>
+                        
+                        多因子策略-回测阶段介绍
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" data-path="day04/section2.html">
+            
+                
+                    <a href="../day04/section2.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.2.</b>
+                        
+                        多因子打分法选股
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter active" data-level="5.3" data-path="day04/section3.html">
+            
+                
+                    <a href="../day04/section3.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.3.</b>
+                        
+                        多因子回归法选股
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4" data-path="day04/section4.html">
+            
+                
+                    <a href="../day04/section4.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.4.</b>
+                        
+                        技术分析策略
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="5.5" data-path="day04/section5.html">
+            
+                
+                    <a href="../day04/section5.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.5.</b>
+                        
+                        模拟交易
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="5.6" data-path="day04/section6.html">
+            
+                
+                    <a href="../day04/section6.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.6.</b>
+                        
+                        量化总结
+                    </a>
+            
+            
+        </li>
+    
+        <li class="chapter " data-level="5.7" data-path="day04/section7.html">
+            
+                
+                    <a href="../day04/section7.html">
+                
+                        <i class="fa fa-check"></i>
+                        
+                            <b>5.7.</b>
+                        
+                        每日作业
+                    </a>
+            
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+
+            
+            <li class="divider"></li>
+            <li>
+                <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+                    Published with GitBook
+                </a>
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="book-header" role="navigation">
+    <!-- Actions Left -->
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../" >量化交易课程定位、目标</a>
+    </h1>
+</div>
+
+            <div class="page-wrapper" tabindex="-1" role="main">
+                <div class="page-inner">
+                
+                
+                    <section class="normal" id="section-">
+                    
+                        <h1 id="&#x591A;&#x56E0;&#x5B50;&#x56DE;&#x5F52;&#x6CD5;&#x9009;&#x80A1;">&#x591A;&#x56E0;&#x5B50;&#x56DE;&#x5F52;&#x6CD5;&#x9009;&#x80A1;</h1>
+<h2 id="&#x5B66;&#x4E60;&#x76EE;&#x6807;">&#x5B66;&#x4E60;&#x76EE;&#x6807;</h2>
+<ul>
+<li>&#x76EE;&#x6807;<ul>
+<li>&#x5B9A;&#x4E49;&#x7B5B;&#x9009;&#x7684;&#x56E0;&#x5B50;</li>
+<li>&#x8BF4;&#x660E;&#x56DE;&#x5F52;&#x6CD5;&#x56E0;&#x5B50;&#x6743;&#x91CD;&#x7684;&#x5EFA;&#x7ACB;&#x516C;&#x5F0F;</li>
+<li>&#x5E94;&#x7528;&#x56DE;&#x5F52;&#x6CD5;&#x8BAD;&#x7EC3;&#x5B9E;&#x73B0;&#x5386;&#x53F2;&#x6D4B;&#x8BD5;&#x533A;&#x95F4;&#x56E0;&#x5B50;&#x7684;&#x6743;&#x91CD;&#x7CFB;&#x6570;&#x8BA1;&#x7B97;</li>
+<li>&#x5E94;&#x7528;&#x56E0;&#x5B50;&#x6743;&#x91CD;&#x7CFB;&#x6570;&#x5B9E;&#x73B0;&#x56DE;&#x6D4B;&#x533A;&#x95F4;&#x7684;&#x80A1;&#x7968;&#x6536;&#x76CA;&#x7387;&#x9884;&#x6D4B;</li>
+</ul>
+</li>
+<li>&#x5E94;&#x7528;<ul>
+<li>&#x56DE;&#x5F52;&#x6CD5;&#x9009;&#x80A1;</li>
+</ul>
+</li>
+</ul>
+<h2 id="1&#x3001;&#x56DE;&#x5F52;&#x6CD5;&#x9009;&#x80A1;&#x6B65;&#x9AA4;">1&#x3001;&#x56DE;&#x5F52;&#x6CD5;&#x9009;&#x80A1;&#x6B65;&#x9AA4;</h2>
+<h3 id="11-&#x9009;&#x80A1;&#x56E0;&#x5B50;&#x786E;&#x5B9A;&#xFF08;&#x7B5B;&#x9009;&#x8FC7;&#x540E;&#x7684;&#xFF09;">1.1 &#x9009;&#x80A1;&#x56E0;&#x5B50;&#x786E;&#x5B9A;&#xFF08;&#x7B5B;&#x9009;&#x8FC7;&#x540E;&#x7684;&#xFF09;</h3>
+<table>
+<thead>
+<tr>
+<th>&#x56E0;&#x5B50;&#x8BF4;&#x660E;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>fundamentals.eod_derivative_indicator.pe_ratio,            fundamentals.eod_derivative_indicator.pb_ratio,            fundamentals.eod_derivative_indicator.market_cap,            fundamentals.financial_indicator.ev,            fundamentals.financial_indicator.return_on_asset_net_profit,            fundamentals.financial_indicator.du_return_on_equity,            fundamentals.financial_indicator.earnings_per_share,            fundamentals.income_statement.revenue,            fundamentals.income_statement.total_expense</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-&#x6B65;&#x9AA4;">1.2 &#x6B65;&#x9AA4;</h3>
+<ul>
+<li>1&#x3001;&#x9009;&#x80A1;&#x56E0;&#x5B50;&#x56DE;&#x5F52;&#x7CFB;&#x6570;&#x786E;&#x5B9A;<ul>
+<li>&#x5728;&#x9009;&#x80A1;&#x65F6;&#x901A;&#x5E38;&#x6309;&#x7167;&#x6708;&#x8C03;&#x4ED3;&#xFF0C;&#x6240;&#x4EE5;&#x6211;&#x4EEC;&#x56DE;&#x5F52;&#x9009;&#x62E9;&#x7684;&#x662F;<strong>&#x8BE5;&#x6708;&#x7684;&#x6700;&#x540E;&#x4E00;&#x5929;&#x82E5;&#x5E72;&#x4E2A;&#x56E0;&#x5B50;&#x503C;</strong>&#x4E0E;<strong>&#x4E0B;&#x4E00;&#x4E2A;&#x6708;&#x7684;&#x80A1;&#x7968;&#x6536;&#x76CA;&#x7387;</strong>&#x8FDB;&#x884C;&#x6A2A;&#x622A;&#x9762;&#x56DE;&#x5F52;&#x65B9;&#x7A0B;&#x5EFA;&#x7ACB;&#x3002;</li>
+</ul>
+</li>
+<li>2&#x3001;&#x5229;&#x7528;&#x56DE;&#x5F52;&#x7CFB;&#x6570;&#x8BA1;&#x7B97;&#x7ED3;&#x679C;&#x9009;&#x80A1;</li>
+</ul>
+<h2 id="2&#x3001;&#x9009;&#x80A1;&#x56E0;&#x5B50;&#x56DE;&#x5F52;&#x7CFB;&#x6570;&#x786E;&#x5B9A;">2&#x3001;&#x9009;&#x80A1;&#x56E0;&#x5B50;&#x56DE;&#x5F52;&#x7CFB;&#x6570;&#x786E;&#x5B9A;</h2>
+<h3 id="&#x6700;&#x7EC8;&#x7ED3;&#x679C;">&#x6700;&#x7EC8;&#x7ED3;&#x679C;</h3>
+<pre><code>array([[-0.01864979, -0.04537212, -0.18487143, -0.06092573,  0.18599453,-0.02088234,  0.03341527,  0.91743347, -0.8066782]])
+</code></pre><p>&#x8981;&#x7684;&#x662F;&#x6BCF;&#x4E2A;&#x56E0;&#x5B50;&#x5728;&#x9009;&#x80A1;&#x65F6;&#x5019;&#x5BF9;&#x5E94;&#x7684;&#x6743;&#x91CD;</p>
+<h3 id="21-&#x65B9;&#x6CD5;&#x5206;&#x6790;">2.1 &#x65B9;&#x6CD5;&#x5206;&#x6790;</h3>
+<pre><code>1&#x3001;&#x56DE;&#x5F52;&#x8BAD;&#x7EC3;&#x533A;&#x95F4;
+
+2014-01-01  ~  2016-12-31
+
+2&#x3001;&#x56DE;&#x5F52;&#x80A1;&#x7968;&#x9009;&#x62E9;
+
+- &#x80A1;&#x7968;&#x9009;&#x62E9;&#xFF08;HS300&#x6307;&#x6570;&#xFF09;
+- &#x5982;&#x679C;&#x662F;&#x4EE5;A&#x80A1;&#x9009;&#x62E9;&#x56DE;&#x5F52;&#xFF0C;&#x90A3;&#x4E48;&#x56DE;&#x6D4B;&#x5C31;&#x4EE5;A&#x80A1;&#x53BB;&#x8FDB;&#x884C;&#x9009;&#x80A1;
+
+3&#x3001;&#x56DE;&#x5F52;&#x56E0;&#x5B50;&#x6570;&#x636E;&#x51C6;&#x5907;&#x3001;&#x6536;&#x76CA;&#x7387;&#x8BA1;&#x7B97;
+
+- &#x56E0;&#x5B50;&#x6570;&#x636E;&#xFF1A;&#x6A2A;&#x622A;&#x9762;&#x6570;&#x636E;&#x62FC;&#x63A5;&#xFF0C;&#x6DFB;&#x52A0;&#x65E5;&#x671F;&#x6570;&#x636E;&#x3001;&#x53BB;&#x9664;&#x7A7A;&#x503C;
+- &#x6536;&#x76CA;&#x7387;&#x8BA1;&#x7B97;: &#x6240;&#x6709;&#x6837;&#x672C;&#x7684;&#x6536;&#x76CA;&#x7387;&#x8BA1;&#x7B97;&#x3001;&#x53D6;&#x51FA;&#x4EF7;&#x683C;&#x4E3A;&#x7A7A;&#x503C;&#x7684;&#x8BA1;&#x7B97;
+- &#x8FD9;&#x4E2A;&#x56DE;&#x5F52;&#x5C31;&#x662F;&#x6BCF;&#x4E2A;&#x6708;&#x7528;&#x80A1;&#x7968;&#x7684;&#x56DE;&#x62A5;&#x7387;&#x5BF9;&#x80A1;&#x7968;&#x4E0A;&#x4E00;&#x671F;&#x672B;&#x7684;&#x56E0;&#x5B50;&#x503C;&#x505A;&#x4E00;&#x4E2A;&#x6A2A;&#x622A; &#x9762;&#x7684;&#x56DE;&#x5F52;&#x3002; 
+
+4&#x3001;&#x76EE;&#x6807;&#x503C;&#x7279;&#x5F81;&#x503C;&#x63D0;&#x53D6;&#x8FDB;&#x884C;&#x56DE;&#x5F52;&#x4F30;&#x8BA1;
+
+&#x6570;&#x636E;&#x5904;&#x7406;&#xFF1A;&#x53BB;&#x9664;&#x6536;&#x76CA;&#x4E3A;0(&#x4EF7;&#x683C;&#x6570;&#x636E;&#x4E0D;&#x5B58;&#x5728;)&#x3001;&#x53BB;&#x6781;&#x503C;&#x3001;&#x6807;&#x51C6;&#x5316;&#x5904;&#x7406;&#x3001;&#x5E02;&#x503C;&#x4E2D;&#x6027;&#x5316;&#x5904;&#x7406;
+</code></pre><h3 id="22-&#x4EE3;&#x7801;">2.2 &#x4EE3;&#x7801;</h3>
+<h4 id="221-&#x65E5;&#x671F;&#x5217;&#x8868;&#x6570;&#x636E;&#x51C6;&#x5907;">2.2.1 &#x65E5;&#x671F;&#x5217;&#x8868;&#x6570;&#x636E;&#x51C6;&#x5907;</h4>
+<ul>
+<li>&#x5904;&#x7406;&#x6210;&#x6BCF;&#x6708;&#x6700;&#x540E;&#x4E00;&#x4E2A;&#x4EA4;&#x6613;&#x65E5;&#x5217;&#x8868;</li>
+</ul>
+<pre><code class="lang-python"><span class="hljs-comment">#&#x83B7;&#x53D6;&#x4EA4;&#x6613;&#x65E5;&#x5217;&#x8868;</span>
+dates = get_trading_dates(start_date=<span class="hljs-string">&apos;2012-01-01&apos;</span>, end_date=<span class="hljs-string">&apos;2014-01-01&apos;</span>)
+<span class="hljs-comment"># &#x6BCF;&#x6708;&#x6700;&#x540E;&#x4E00;&#x4E2A;&#x4EA4;&#x6613;&#x65E5;, &#x6309;&#x6708;&#x8BA1;&#x7B97;&#x6536;&#x76CA;&#x7387;</span>
+month_date = []
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(len(dates) -<span class="hljs-number">1</span>):
+  <span class="hljs-keyword">if</span> dates[i].year != dates[i+<span class="hljs-number">1</span>].year:
+    month_date.append(dates[i])
+  <span class="hljs-keyword">elif</span> dates[i].month != dates[i+<span class="hljs-number">1</span>].month:
+    month_date.append(dates[i])
+
+<span class="hljs-comment">#&#x628A;&#x6700;&#x540E;&#x4E00;&#x4E2A;&#x4EA4;&#x6613;&#x65E5;&#x52A0;&#x5165;</span>
+month_date.append(dates[-<span class="hljs-number">1</span>])
+</code></pre>
+<h4 id="222-&#x5728;hs300&#x6307;&#x6570;&#x4E2D;&#x83B7;&#x53D6;&#x80A1;&#x7968;&#x7684;&#x56E0;&#x5B50;&#x6570;&#x636E;&#xFF08;&#x7279;&#x5F81;&#x503C;&#xFF09;">2.2.2 &#x5728;HS300&#x6307;&#x6570;&#x4E2D;&#x83B7;&#x53D6;&#x80A1;&#x7968;&#x7684;&#x56E0;&#x5B50;&#x6570;&#x636E;&#xFF08;&#x7279;&#x5F81;&#x503C;&#xFF09;</h4>
+<ul>
+<li>1&#x3001;&#x6A2A;&#x622A;&#x9762;&#x6570;&#x636E;&#x62FC;&#x63A5;&#xFF0C;&#x6DFB;&#x52A0;&#x65E5;&#x671F;&#x6570;&#x636E;</li>
+<li>2&#x3001;&#x9664;&#x53BB;&#x7A7A;&#x503C;</li>
+<li>3&#x3001;&#x65B0;&#x5EFA;&#x6536;&#x76CA;&#x7387;&#x5217;&#x8D4B;&#x503C;&#x4E3A;&#x7A7A;&#x503C;</li>
+</ul>
+<pre><code class="lang-python">stocks = index_components(<span class="hljs-string">&quot;000300.XSHG&quot;</span>)
+</code></pre>
+<pre><code class="lang-python">all_data = pd.DataFrame()
+
+<span class="hljs-comment"># &#x83B7;&#x53D6;&#x56E0;&#x5B50;&#x6570;&#x636E;</span>
+<span class="hljs-comment"># &#x6CE8;&#x610F;&#x6700;&#x540E;&#x4E00;&#x4E2A;&#x6708;&#x7684;&#x4EA4;&#x6613;&#x65E5;&#x56E0;&#x5B50;&#x6570;&#x636E;&#x5FFD;&#x7565;&#xFF0C;&#x56E0;&#x4E3A;&#x6700;&#x540E;&#x4E00;&#x4E2A;&#x6708;&#x7684;&#x4E0B;&#x671F;&#x6536;&#x76CA;&#x7387;&#x65E0;&#x6CD5;&#x8BA1;&#x7B97;(&#x6211;&#x4EEC;&#x56DE;&#x5F52;&#x7684;&#x4E0B;&#x671F;&#x65E5;&#x671F;&#x6CA1;&#x6709;)</span>
+<span class="hljs-keyword">for</span> date <span class="hljs-keyword">in</span> month_date[:-<span class="hljs-number">1</span>]:
+  q = query(fundamentals.eod_derivative_indicator.pe_ratio,
+         fundamentals.eod_derivative_indicator.pb_ratio,
+         fundamentals.eod_derivative_indicator.market_cap,
+         fundamentals.financial_indicator.return_on_asset_net_profit,
+         fundamentals.financial_indicator.du_return_on_equity,
+         fundamentals.financial_indicator.ev,
+         fundamentals.financial_indicator.earnings_per_share,
+         fundamentals.income_statement.revenue,  fundamentals.income_statement.total_expense).filter(fundamentals.stockcode.in_(stocks))
+
+  fund = get_fundamentals(q, entry_date=date)[:,<span class="hljs-number">0</span>,:]
+  fund[<span class="hljs-string">&apos;date&apos;</span>] = date
+  all_data = pd.concat([all_data, fund])
+
+<span class="hljs-comment"># &#x8FDB;&#x884C;&#x7B80;&#x5355;&#x7684;&#x6570;&#x636E;&#x5904;&#x7406;</span>
+all_data.dropna()
+all_data[<span class="hljs-string">&apos;return&apos;</span>] = np.nan
+</code></pre>
+<h4 id="223-&#x83B7;&#x53D6;&#x6BCF;&#x4E2A;&#x6708;&#x6700;&#x540E;&#x4E00;&#x4E2A;&#x4EA4;&#x6613;&#x65E5;&#x7684;&#x6536;&#x76D8;&#x4EF7;&#x683C;&#x6570;&#x636E;&#x5E76;&#x8BA1;&#x7B97;&#x6536;&#x76CA;&#x7387;">2.2.3 &#x83B7;&#x53D6;&#x6BCF;&#x4E2A;&#x6708;&#x6700;&#x540E;&#x4E00;&#x4E2A;&#x4EA4;&#x6613;&#x65E5;&#x7684;&#x6536;&#x76D8;&#x4EF7;&#x683C;&#x6570;&#x636E;&#x5E76;&#x8BA1;&#x7B97;&#x6536;&#x76CA;&#x7387;</h4>
+<ul>
+<li>&#x62FC;&#x63A5;&#x6BCF;&#x4E2A;&#x4EA4;&#x6613;&#x65E5;&#x7684;&#x6536;&#x76D8;&#x4EF7;&#x683C;</li>
+<li>&#x8F6C;&#x7F6E;&#x3001;&#x53BB;&#x9664;&#x4EF7;&#x683C;&#x7A7A;&#x503C;</li>
+<li>&#x8BA1;&#x7B97;&#x6BCF;&#x4E2A;&#x6708;&#x5BF9;&#x5E94;&#x7684;&#x76EE;&#x6807;&#x503C;&#xFF1A;&#x4E0B;&#x4E2A;&#x6708;&#x7684;&#x6536;&#x76CA;&#x7387;</li>
+</ul>
+<p>&#x4EF7;&#x683C;&#x6570;&#x636E;</p>
+<p><img src="../images/&#x56DE;&#x5F52;&#x6CD5;-&#x4EF7;&#x683C;&#x6570;&#x636E;&#x663E;&#x793A;.png" alt="&#x56DE;&#x5F52;&#x6CD5;-&#x4EF7;&#x683C;&#x6570;&#x636E;&#x663E;&#x793A;"></p>
+<p>&#x6536;&#x76CA;&#x7387;&#x6570;&#x636E;</p>
+<p><img src="../images/&#x56DE;&#x5F52;&#x6CD5;-&#x6536;&#x76CA;&#x7387;&#x663E;&#x793A;.png" alt="&#x56DE;&#x5F52;&#x6CD5;-&#x6536;&#x76CA;&#x7387;&#x663E;&#x793A;"></p>
+<pre><code class="lang-python">all_price = pd.DataFrame()
+<span class="hljs-keyword">for</span> date <span class="hljs-keyword">in</span> month_date:
+    price = get_price(stocks, start_date=date, end_date=date, fields=<span class="hljs-string">&apos;close&apos;</span>)
+    all_price = pd.concat([all_price, price])
+
+<span class="hljs-comment"># &#x8F6C;&#x7F6E;&#xFF0C;&#x65B9;&#x4FBF;&#x5904;&#x7406;&#x884C;&#x5217;&#x7D22;&#x5F15;</span>
+all_price = all_price.T
+all_price = all_price.dropna()
+</code></pre>
+<pre><code class="lang-python"><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(len(all_price.columns)-<span class="hljs-number">1</span>): 
+  all_price.iloc[:, i] = all_price.iloc[:, i+<span class="hljs-number">1</span>]/all_price.iloc[:, i] - <span class="hljs-number">1</span>
+</code></pre>
+<h4 id="224-&#x586B;&#x5145;&#x6536;&#x76CA;&#x7387;&#x6570;&#x636E;&#x5230;&#x56E0;&#x5B50;&#x6570;&#x636E;return&#x5217;">2.2.4 &#x586B;&#x5145;&#x6536;&#x76CA;&#x7387;&#x6570;&#x636E;&#x5230;&#x56E0;&#x5B50;&#x6570;&#x636E;return&#x5217;</h4>
+<ul>
+<li>&#x5C06;&#x6240;&#x6709;&#x5B58;&#x5728;&#x56E0;&#x5B50;&#x6570;&#x636E;&#x4E2D;&#x7684;&#x80A1;&#x7968;&#x548C;&#x65E5;&#x671F;&#x6570;&#x636E;&#x5BF9;&#x5E94;&#x7684;&#x6536;&#x76CA;&#x7387;&#x8FDB;&#x884C;&#x586B;&#x5145;<ul>
+<li>&#x6700;&#x540E;&#x5220;&#x9664;&#x6CA1;&#x6709;&#x8BA1;&#x7B97;&#x7684;&#x539F;&#x672C;&#x4E3A;np.nan&#x6570;&#x636E;&#xFF08;&#x4E3A;&#x56E0;&#x5B50;&#x6570;&#x636E;&#x5904;&#x7406;&#x3001;&#x56DE;&#x5F52;&#x505A;&#x51C6;&#x5907;&#xFF09;</li>
+</ul>
+</li>
+</ul>
+<pre><code class="lang-python"><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(len(all_data)):
+  stock = all_data.index[i]
+  date = all_data.ix[i, <span class="hljs-string">&apos;date&apos;</span>]
+  <span class="hljs-comment"># &#x5224;&#x65AD;&#x56E0;&#x5B50;&#x7684;&#x6570;&#x636E;&#x7ED3;&#x6784;&#x5F53;&#x4E2D;&#x662F;&#x5426;&#x5728;&#x4EF7;&#x683C;&#x5F53;&#x4E2D;&#x5B58;&#x5728;</span>
+  <span class="hljs-keyword">if</span> stock <span class="hljs-keyword">in</span> all_price.index <span class="hljs-keyword">and</span> date <span class="hljs-keyword">in</span> all_price.columns:
+    all_data.ix[i, <span class="hljs-string">&apos;return&apos;</span>] = all_price.loc[stock, date]
+
+all_data = all_data.dropna()
+</code></pre>
+<h4 id="225-&#x56E0;&#x5B50;&#x6570;&#x636E;&#xFF08;&#x7279;&#x5F81;&#x503C;&#xFF09;&#x5904;&#x7406;&#x3001;&#x6536;&#x76CA;&#x7387;&#xFF08;&#x76EE;&#x6807;&#x503C;&#xFF09;&#x5904;&#x7406;">2.2.5 &#x56E0;&#x5B50;&#x6570;&#x636E;&#xFF08;&#x7279;&#x5F81;&#x503C;&#xFF09;&#x5904;&#x7406;&#x3001;&#x6536;&#x76CA;&#x7387;&#xFF08;&#x76EE;&#x6807;&#x503C;&#xFF09;&#x5904;&#x7406;</h4>
+<ul>
+<li>1&#x3001;&#x9009;&#x51FA;&#x7279;&#x5F81;&#x503C;&#x3001;&#x76EE;&#x6807;&#x503C;&#xFF0C;&#x4FDD;&#x7559;&#x4E00;&#x4EFD;&#x539F;&#x59CB;market_cap&#x56E0;&#x5B50;&#x503C;&#xFF08;&#x4F5C;&#x4E3A;&#x4E2D;&#x6027;&#x5316;&#x5904;&#x7406;&#x7279;&#x5F81;&#x503C;&#xFF09;</li>
+</ul>
+<pre><code class="lang-python">y = all_data[<span class="hljs-string">&apos;return&apos;</span>]
+x_market_cap = all_data[<span class="hljs-string">&apos;market_cap&apos;</span>]
+x = all_data.drop([<span class="hljs-string">&apos;date&apos;</span>, <span class="hljs-string">&apos;return&apos;</span>], axis=<span class="hljs-number">1</span>)
+</code></pre>
+<ul>
+<li>2&#x3001;&#x7279;&#x5F81;&#x503C;-&#x53BB;&#x6781;&#x503C;&#x3001;&#x6807;&#x51C6;&#x5316;&#x3001;&#x5E02;&#x503C;&#x4E2D;&#x6027;&#x5316;</li>
+</ul>
+<pre><code class="lang-python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">mad</span><span class="hljs-params">(factor)</span>:</span>
+  <span class="hljs-string">&quot;&quot;&quot;3&#x500D;&#x4E2D;&#x4F4D;&#x6570;&#x53BB;&#x6781;&#x503C;
+  &quot;&quot;&quot;</span>
+  <span class="hljs-comment"># &#x6C42;&#x51FA;&#x56E0;&#x5B50;&#x503C;&#x7684;&#x4E2D;&#x4F4D;&#x6570;</span>
+  med = np.median(factor)
+
+  <span class="hljs-comment"># &#x6C42;&#x51FA;&#x56E0;&#x5B50;&#x503C;&#x4E0E;&#x4E2D;&#x4F4D;&#x6570;&#x7684;&#x5DEE;&#x503C;&#xFF0C;&#x8FDB;&#x884C;&#x7EDD;&#x5BF9;&#x503C;</span>
+  mad = np.median(np.abs(factor - med))
+
+  <span class="hljs-comment"># &#x5B9A;&#x4E49;&#x51E0;&#x500D;&#x7684;&#x4E2D;&#x4F4D;&#x6570;&#x4E0A;&#x4E0B;&#x9650;</span>
+  high = med + (<span class="hljs-number">3</span> * <span class="hljs-number">1.4826</span> * mad)
+  low = med - (<span class="hljs-number">3</span> * <span class="hljs-number">1.4826</span> * mad)
+
+  <span class="hljs-comment"># &#x66FF;&#x6362;&#x4E0A;&#x4E0B;&#x9650;&#x4EE5;&#x5916;&#x7684;&#x503C;</span>
+  factor = np.where(factor &gt; high, high, factor)
+  factor = np.where(factor &lt; low, low, factor)
+  <span class="hljs-keyword">return</span> factor
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">stand</span><span class="hljs-params">(factor)</span>:</span>
+    <span class="hljs-string">&quot;&quot;&quot;&#x6807;&#x51C6;&#x5316;
+    &quot;&quot;&quot;</span>
+    mean = np.mean(factor)
+    std = np.std(factor)
+    <span class="hljs-keyword">return</span> (factor - mean)/std
+</code></pre>
+<p>&#x56DE;&#x5F52;&#x7684;&#x7279;&#x5F81;&#x503C;&#x53BB;&#x6781;&#x503C;&#x3001;&#x6807;&#x51C6;&#x5316;</p>
+<pre><code class="lang-python"><span class="hljs-keyword">for</span> column <span class="hljs-keyword">in</span> x.columns:
+  x[column] = mad(x[column])
+  x[column] = stand(x[column])
+</code></pre>
+<p>&#x4E2D;&#x6027;&#x5316;&#xFF08;&#x5176;&#x5B83;&#x56E0;&#x5B50;&#x503C;&#x4E0E;&#x5E02;&#x503C;&#x8FDB;&#x884C;&#x56DE;&#x5F52;&#x53BB;&#x9664;&#xFF09;</p>
+<pre><code class="lang-python"><span class="hljs-comment"># &#x5E02;&#x503C;&#x4E2D;&#x6027;&#x5316;</span>
+<span class="hljs-keyword">for</span> factor <span class="hljs-keyword">in</span> x.columns:
+
+  <span class="hljs-comment"># &#x81EA;&#x8EAB;&#x5E02;&#x503C;&#x56E0;&#x5B50;&#x4E0D;&#x505A;&#x5904;&#x7406;</span>
+  <span class="hljs-keyword">if</span> factor == <span class="hljs-string">&quot;market_cap&quot;</span>:
+    <span class="hljs-keyword">continue</span>
+
+  y_factor = x[factor]
+
+  <span class="hljs-comment"># &#x56DE;&#x5F52;&#x9884;&#x6D4B;&#xFF0C;&#x4FDD;&#x7559;&#x8BEF;&#x5DEE;&#x5F53;&#x505A;&#x9664;&#x53BB;&#x5E02;&#x503C;&#x5F71;&#x54CD;&#x7684;&#x56E0;&#x5B50;&#x503C;</span>
+  lr = LinearRegression()
+
+  lr.fit(x_market_cap.values.reshape(-<span class="hljs-number">1</span>, <span class="hljs-number">1</span>), y_factor)
+
+  x[factor] = y_factor - lr.predict(x_market_cap.values.reshape(-<span class="hljs-number">1</span>, <span class="hljs-number">1</span>))
+</code></pre>
+<ul>
+<li>&#x56DE;&#x5F52;&#x6CD5;&#x786E;&#x5B9A;&#x6743;&#x91CD;&#x7CFB;&#x6570;&#x7684;&#x76EE;&#x6807;&#x503C;&#x8FDB;&#x884C;&#x6807;&#x51C6;&#x5316;</li>
+</ul>
+<pre><code>std = StandardScaler()
+y = std.fit_transform(y)
+</code></pre><h4 id="226-&#x5229;&#x7528;&#x56DE;&#x5F52;&#x786E;&#x5B9A;&#x7CFB;&#x6570;">2.2.6 &#x5229;&#x7528;&#x56DE;&#x5F52;&#x786E;&#x5B9A;&#x7CFB;&#x6570;</h4>
+<pre><code>lr = LinearRegression()
+lr.fit(x.values, y)
+</code></pre><ul>
+<li>&#x6700;&#x7EC8;&#x786E;&#x5B9A;&#x7CFB;&#x6570;&#x4E3A;</li>
+</ul>
+<pre><code class="lang-python">array([[-<span class="hljs-number">0.01864979</span>, -<span class="hljs-number">0.04537212</span>, -<span class="hljs-number">0.18487143</span>, -<span class="hljs-number">0.06092573</span>,  <span class="hljs-number">0.18599453</span>,-<span class="hljs-number">0.02088234</span>,  <span class="hljs-number">0.03341527</span>,  <span class="hljs-number">0.91743347</span>, -<span class="hljs-number">0.8066782</span> ]])
+</code></pre>
+<p>&#x53EF;&#x4EE5;&#x5C1D;&#x8BD5;&#x7528;&#x5176;&#x5B83;&#x7684;&#x5E26;&#x6B63;&#x5219;&#x5316;&#x7684;&#x56DE;&#x5F52;&#x65B9;&#x6CD5;</p>
+<h2 id="3&#x3001;&#x5229;&#x7528;&#x56DE;&#x5F52;&#x7CFB;&#x6570;&#x8BA1;&#x7B97;&#x7ED3;&#x679C;&#x9009;&#x80A1;">3&#x3001;&#x5229;&#x7528;&#x56DE;&#x5F52;&#x7CFB;&#x6570;&#x8BA1;&#x7B97;&#x7ED3;&#x679C;&#x9009;&#x80A1;</h2>
+<h3 id="31-&#x5206;&#x6790;">3.1 &#x5206;&#x6790;</h3>
+<p>&#x56DE;&#x6D4B;&#x533A;&#x95F4;&#x4E0E;&#x56DE;&#x5F52;&#x786E;&#x5B9A;&#x7CFB;&#x6570;&#x533A;&#x95F4;&#x6700;&#x597D;&#x4E0D;&#x4E00;&#x81F4;&#xFF0C;&#x8FBE;&#x5230;&#x9884;&#x6D4B;&#x7684;&#x6548;&#x679C;</p>
+<pre><code>1&#x3001;&#x56DE;&#x6D4B;&#x533A;&#x95F4;&#xFF1A;&#x56DE;&#x5F52;(2012-01-01~2014-01-01)
+   2014-01-01  ~  2016-01-01
+2&#x3001;&#x9009;&#x80A1;&#xFF1A;
+   &#x9009;&#x80A1;&#x533A;&#x95F4;&#xFF1A;&#x6CAA;&#x6DF1;300
+   &#x9009;&#x80A1;&#x56E0;&#x5B50;&#xFF1A;&#x7ECF;&#x8FC7;&#x56E0;&#x5B50;&#x5206;&#x6790;&#x4E4B;&#x540E;&#x7684;&#x82E5;&#x5E72;&#x56E0;&#x5B50;&#xFF0C;&#x53EF;&#x4EE5;&#x4E0D;&#x77E5;&#x65B9;&#x5411;
+   &#x9009;&#x80A1;&#x6743;&#x91CD;&#xFF1A;&#x56DE;&#x5F52;&#x8BAD;&#x7EC3;&#x7684;&#x6743;&#x91CD;
+   &#x6570;&#x636E;&#x5904;&#x7406;&#xFF1A;&#x7F3A;&#x5931;&#x503C;&#x3001;&#x53BB;&#x6781;&#x503C;&#x3001;&#x6807;&#x51C6;&#x5316;&#x3001;&#x5E02;&#x503C;&#x4E2D;&#x5FC3;&#x5316;&#x5904;&#x7406;&#xFF08;&#x9632;&#x6B62;&#x9009;&#x80A1;&#x96C6;&#x4E2D;&#xFF09;
+3&#x3001;&#x8C03;&#x4ED3;&#x5468;&#x671F;&#xFF1A;
+   &#x8C03;&#x4ED3;&#xFF1A;&#x6BCF;&#x6708;&#x8FDB;&#x884C;&#x4E00;&#x6B21;&#x8C03;&#x4ED3;
+   &#x4EA4;&#x6613;&#x89C4;&#x5219;&#xFF1A;&#x5356;&#x51FA;&#x5DF2;&#x6301;&#x6709;&#x7684;&#x80A1;&#x7968;
+         &#x4E70;&#x5165;&#x65B0;&#x7684;&#x80A1;&#x7968;&#x6C60;&#x5F53;&#x4E2D;&#x7684;&#x80A1;&#x7968;
+</code></pre><h4 id="312-&#x6B65;&#x9AA4;">3.1.2 &#x6B65;&#x9AA4;</h4>
+<ul>
+<li>&#x51C6;&#x5907;&#x56E0;&#x5B50;&#x6570;&#x636E;</li>
+<li>&#x5904;&#x7406;&#x6570;&#x636E;&#x51FD;&#x6570;<ul>
+<li>dealwith_data(context)</li>
+</ul>
+</li>
+<li>&#x9009;&#x80A1;&#x51FD;&#x6570;(&#x6BCF;&#x6708;&#x8C03;&#x6574;&#x80A1;&#x7968;&#x6C60;)<ul>
+<li>select_stocklist(context)</li>
+</ul>
+</li>
+<li>&#x5B9A;&#x671F;&#x8C03;&#x4ED3;&#x51FD;&#x6570;<ul>
+<li>rebalance(context)</li>
+</ul>
+</li>
+</ul>
+<h3 id="32-&#x5B8C;&#x6574;&#x4EE3;&#x7801;">3.2 &#x5B8C;&#x6574;&#x4EE3;&#x7801;</h3>
+<pre><code class="lang-python"><span class="hljs-comment"># &#x53EF;&#x4EE5;&#x81EA;&#x5DF1;import&#x6211;&#x4EEC;&#x5E73;&#x53F0;&#x652F;&#x6301;&#x7684;&#x7B2C;&#x4E09;&#x65B9;python&#x6A21;&#x5757;&#xFF0C;&#x6BD4;&#x5982;pandas&#x3001;numpy&#x7B49;&#x3002;</span>
+<span class="hljs-comment"># &#x56DE;&#x6D4B;&#x533A;&#x95F4;&#xFF1A;2014-01-01~2018-01-01</span>
+<span class="hljs-comment"># &#x9009;&#x80A1;&#xFF1A;</span>
+<span class="hljs-comment"># &#x8303;&#x56F4;&#xFF1A;&#x6CAA;&#x6DF1;300</span>
+<span class="hljs-comment"># &#x56E0;&#x5B50;&#xFF1A;</span>
+<span class="hljs-comment"># &#x65B9;&#x6CD5;&#xFF1A;&#x56DE;&#x5F52;&#x6CD5;&#xFF0C;&#x7CFB;&#x6570;&#x76F8;&#x4E58;&#xFF08;&#x77E9;&#x9635;&#x76F8;&#x4E58;&#x8FD0;&#x7B97;&#xFF09;&#x5F97;&#x51FA;&#x7ED3;&#x679C;&#x6392;&#x5E8F;</span>
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> pandas <span class="hljs-keyword">as</span> pd
+<span class="hljs-keyword">from</span> sklearn.preprocessing <span class="hljs-keyword">import</span> StandardScaler
+<span class="hljs-keyword">from</span> sklearn.linear_model <span class="hljs-keyword">import</span> LinearRegression
+
+
+<span class="hljs-comment"># &#x5728;&#x8FD9;&#x4E2A;&#x65B9;&#x6CD5;&#x4E2D;&#x7F16;&#x5199;&#x4EFB;&#x4F55;&#x7684;&#x521D;&#x59CB;&#x5316;&#x903B;&#x8F91;&#x3002;context&#x5BF9;&#x8C61;&#x5C06;&#x4F1A;&#x5728;&#x4F60;&#x7684;&#x7B97;&#x6CD5;&#x7B56;&#x7565;&#x7684;&#x4EFB;&#x4F55;&#x65B9;&#x6CD5;&#x4E4B;&#x95F4;&#x505A;&#x4F20;&#x9012;&#x3002;</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">init</span><span class="hljs-params">(context)</span>:</span>
+    <span class="hljs-comment"># &#x5B9A;&#x4E49;&#x8D2D;&#x4E70;&#x7684;&#x80A1;&#x7968;&#x6570;&#x91CF;</span>
+    context.stock_num = <span class="hljs-number">20</span>
+
+    <span class="hljs-comment"># &#x5B9A;&#x4E49;&#x6CAA;&#x6DF1;300&#x6307;&#x6570;&#x80A1;</span>
+    context.hs300 = index_components(<span class="hljs-string">&quot;000300.XSHG&quot;</span>)
+
+    <span class="hljs-comment"># &#x56DE;&#x5F52;&#x7CFB;&#x6570;</span>
+    context.weights = np.array([-<span class="hljs-number">0.01864979</span>, -<span class="hljs-number">0.04537212</span>, -<span class="hljs-number">0.18487143</span>, -<span class="hljs-number">0.06092573</span>,  <span class="hljs-number">0.18599453</span>,-<span class="hljs-number">0.02088234</span>,  <span class="hljs-number">0.03341527</span>,  <span class="hljs-number">0.91743347</span>, -<span class="hljs-number">0.8066782</span> ])
+
+
+    <span class="hljs-comment"># &#x56DE;&#x5F52;&#x9009;&#x80A1;&#x6CD5; &#x5B9A;&#x65F6;&#x51FD;&#x6570;&#xFF08;&#x6BCF;&#x6708;&#xFF09;</span>
+    scheduler.run_monthly(regression_select, tradingday=<span class="hljs-number">1</span>)
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">regression_select</span><span class="hljs-params">(context, bar_dict)</span>:</span>
+    <span class="hljs-string">&quot;&quot;&quot;&#x56DE;&#x5F52;&#x6CD5;&#x8FDB;&#x884C;&#x9009;&#x62E9;&#x80A1;&#x7968;
+    &#x51C6;&#x5907;&#x56E0;&#x5B50;&#x6570;&#x636E;&#x3001;&#x6570;&#x636E;&#x5904;&#x7406;(&#x7F3A;&#x5931;&#x503C;&#x3001;&#x53BB;&#x6781;&#x503C;&#x3001;&#x6807;&#x51C6;&#x5316;&#x3001;&#x4E2D;&#x6027;&#x5316;)
+    &#x9884;&#x6D4B;&#x6BCF;&#x4E2A;&#x80A1;&#x7968;&#x5BF9;&#x5E94;&#x8FD9;&#x4E00;&#x5929;&#x7684;&#x7ED3;&#x679C;&#xFF0C;&#x7136;&#x540E;&#x6392;&#x5E8F;&#x9009;&#x51FA;&#x524D;20&#x53EA;&#x80A1;&#x7968;
+    &quot;&quot;&quot;</span>
+    <span class="hljs-comment"># 1&#x3001;&#x51C6;&#x5907;&#x56E0;&#x5B50;&#x6570;&#x636E;</span>
+    q  = query(fundamentals.eod_derivative_indicator.pe_ratio,
+           fundamentals.eod_derivative_indicator.pb_ratio,
+           fundamentals.eod_derivative_indicator.market_cap,
+           fundamentals.financial_indicator.ev,
+           fundamentals.financial_indicator.return_on_asset_net_profit,
+           fundamentals.financial_indicator.du_return_on_equity,
+           fundamentals.financial_indicator.earnings_per_share,
+           fundamentals.income_statement.revenue,
+           fundamentals.income_statement.total_expense).filter(fundamentals.stockcode.in_(context.hs300))
+
+    fund = get_fundamentals(q)
+
+    context.factors_data = fund.T
+
+    <span class="hljs-comment"># 2&#x3001;&#x5904;&#x7406;&#x6570;&#x636E;&#x51FD;&#x6570;</span>
+    dealwith_data(context)
+
+    <span class="hljs-comment"># 3&#x3001;&#x9009;&#x80A1;&#x51FD;&#x6570;(&#x6BCF;&#x6708;&#x8C03;&#x6574;&#x80A1;&#x7968;&#x6C60;)</span>
+    select_stocklist(context)
+
+    <span class="hljs-comment"># 4&#x3001;&#x5B9A;&#x671F;&#x8C03;&#x4ED3;&#x51FD;&#x6570;</span>
+    rebalance(context)
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">dealwith_data</span><span class="hljs-params">(context)</span>:</span>
+    <span class="hljs-string">&quot;&quot;&quot;
+    &#x5904;&#x7406;&#x56E0;&#x5B50;&#x6570;&#x636E;&#x51FD;&#x6570;
+    &#x51C6;&#x5907;&#x56E0;&#x5B50;&#x6570;&#x636E;&#x3001;&#x6570;&#x636E;&#x5904;&#x7406;(&#x7F3A;&#x5931;&#x503C;&#x3001;&#x53BB;&#x6781;&#x503C;&#x3001;&#x6807;&#x51C6;&#x5316;&#x3001;&#x4E2D;&#x6027;&#x5316;)
+    &quot;&quot;&quot;</span>
+    <span class="hljs-comment"># &#x7F3A;&#x5931;&#x503C;</span>
+    context.factors_data = context.factors_data.dropna()
+    <span class="hljs-comment"># &#x4FDD;&#x7559;&#x539F;&#x6765;&#x7684;&#x6570;&#x636E;&#xFF0C;&#x540E;&#x7EED;&#x5904;&#x7406;</span>
+    x = context.factors_data[<span class="hljs-string">&quot;market_cap&quot;</span>]
+
+    <span class="hljs-comment"># &#x5FAA;&#x73AF;&#x5904;&#x7406;&#x56E0;&#x5B50;&#x6570;&#x636E;</span>
+    <span class="hljs-keyword">for</span> name <span class="hljs-keyword">in</span> context.factors_data.columns:
+
+        <span class="hljs-comment"># &#x53BB;&#x6781;&#x503C;&#x3001;&#x6807;&#x51C6;&#x5316;</span>
+        context.factors_data[name] = mad(context.factors_data[name])
+        context.factors_data[name] = stand(context.factors_data[name])
+
+        <span class="hljs-comment"># &#x5E02;&#x503C;&#x4E2D;&#x6027;&#x5316;&#x5904;&#x7406;</span>
+        <span class="hljs-comment"># x &#x5E02;&#x503C;&#x539F;&#x59CB;&#x6570;&#x636E;</span>
+        <span class="hljs-comment"># y &#x5BF9;&#x5E94;&#x56E0;&#x5B50;&#x7684;&#x5904;&#x7406;&#x597D;&#x7684;&#x6570;&#x636E;&#x3001;&#x7ECF;&#x8FC7;&#x4E86;&#x53BB;&#x6781;&#x503C;&#x548C;&#x6807;&#x51C6;&#x5316;&#x540E;&#x7684;&#x56E0;&#x5B50;&#x503C;</span>
+        <span class="hljs-keyword">if</span> name == <span class="hljs-string">&quot;market_cap&quot;</span>:
+            <span class="hljs-keyword">continue</span>
+        <span class="hljs-comment"># &#x53D6;&#x51FA;&#x56E0;&#x5B50;&#x4F5C;&#x4E3A;&#x76EE;&#x6807;&#x503C;</span>
+        y = context.factors_data[name]
+
+        <span class="hljs-comment"># &#x5EFA;&#x7ACB;&#x56DE;&#x5F52;&#x65B9;&#x7A0B;&#xFF0C;&#x5F97;&#x51FA;&#x9884;&#x6D4B;&#x7ED3;&#x679C;</span>
+        <span class="hljs-comment"># &#x7528;&#x771F;&#x662F;&#x7ED3;&#x679C;-&#x9884;&#x6D4B;&#x7ED3;&#x679C;&#x5F97;&#x5230;&#x6B8B;&#x5DEE;&#xFF0C;&#x5373;&#x4E3A;&#x65B0;&#x7684;&#x56E0;&#x5B50;&#x503C;</span>
+        lr = LinearRegression()
+
+        lr.fit(x.values.reshape(-<span class="hljs-number">1</span>, <span class="hljs-number">1</span>), y.values)
+
+        <span class="hljs-comment"># &#x9884;&#x6D4B;&#x7ED3;&#x679C;</span>
+        y_predict = lr.predict(x.values.reshape(-<span class="hljs-number">1</span>, <span class="hljs-number">1</span>))
+
+        <span class="hljs-comment"># &#x5F97;&#x51FA;&#x6CA1;&#x6709;&#x76F8;&#x5173;&#x6027;&#x7684;&#x6B8B;&#x5DEE;&#x90E8;&#x5206;</span>
+        <span class="hljs-comment"># &#x5C06;&#x6B8B;&#x5DEE;&#x90E8;&#x5206;&#x4F5C;&#x4E3A;&#x65B0;&#x7684;&#x56E0;&#x5B50;&#x503C;</span>
+        context.factors_data[name] = y - y_predict
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">select_stocklist</span><span class="hljs-params">(context)</span>:</span>
+    <span class="hljs-string">&quot;&quot;&quot;&#x9009;&#x62E9;&#x80A1;&#x7968;&#x6C60;&#x51FD;&#x6570;
+    &quot;&quot;&quot;</span>
+
+    <span class="hljs-comment"># &#x5EFA;&#x7ACB;&#x56DE;&#x5F52;&#x65B9;&#x7A0B;&#xFF0C;&#x5F97;&#x51FA;&#x9884;&#x6D4B;&#x7ED3;&#x679C;&#xFF0C;&#x7136;&#x540E;&#x6392;&#x5E8F;&#x9009;&#x51FA;30&#x4E2A;&#x80A1;&#x7968;</span>
+    <span class="hljs-comment"># &#x7279;&#x5F81;&#x503C;&#xFF1A;factors_data&#xFF1A;300&#x53EA;&#x80A1;&#x7968;9&#x4E2A;&#x56E0;&#x5B50;&#x7684;&#x7279;&#x5F81;&#x503C;</span>
+    <span class="hljs-comment"># &#x8BAD;&#x7EC3;&#x7684;&#x6743;&#x91CD;&#x7CFB;&#x6570;&#x4E3A;&#xFF1A;9&#x4E2A;&#x6743;&#x91CD;</span>
+    <span class="hljs-comment"># &#x5047;&#x5982;5&#x6708;1&#x65E5;&#x8C03;&#x5B8C;&#x4ED3;&#xFF0C;</span>
+    <span class="hljs-comment"># &#x5F97;&#x51FA;&#x7684;&#x7ED3;&#x679C;&#xFF1A;&#x76F8;&#x5F53;&#x4E8E;&#x9884;&#x6D4B;&#x63A5;&#x4E0B;&#x6765;&#x7684;5&#x6708;&#x4EFD;&#x6536;&#x76CA;&#x7387;&#xFF0C;&#x54EA;&#x4E2A;&#x6536;&#x76CA;&#x7387;&#x9AD8;&#x9009;&#x8C01;</span>
+
+    <span class="hljs-comment"># &#x8FDB;&#x884C;&#x7279;&#x5F81;&#x503C;&#x4E0E;&#x6743;&#x91CD;&#x4E4B;&#x95F4;&#x7684;&#x77E9;&#x9635;&#x8FD0;&#x7B97;</span>
+    <span class="hljs-comment"># (m&#x884C;&#xFF0C;n&#x5217;) *(n&#x884C;,l&#x5217;) = (m&#x884C;&#xFF0C;l&#x5217;)</span>
+    <span class="hljs-comment"># (300, 9) * (9, 1) = (300, 1)</span>
+
+    mat_res = np.dot(context.factors_data.values, context.weights)
+
+    context.factors_data[<span class="hljs-string">&apos;return&apos;</span>] = mat_res
+
+    <span class="hljs-comment"># &#x6309;&#x7167;&#x56DE;&#x5F52;&#x7ED3;&#x679C;&#x6392;&#x5E8F;&#xFF0C;&#x9884;&#x6D4B;&#x6536;&#x76CA;&#x9AD8;&#x7684;&#x4F5C;&#x4E3A;&#x80A1;&#x7968;&#x6C60;</span>
+    context.stock_list = context.factors_data.sort_values(by=<span class="hljs-string">&quot;return&quot;</span>, ascending=<span class="hljs-keyword">False</span>).index[:context.stock_num]
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">rebalance</span><span class="hljs-params">(context)</span>:</span>
+    <span class="hljs-string">&quot;&quot;&quot;&#x5B9A;&#x671F;&#x8C03;&#x4ED3;&#x51FD;&#x6570;
+    &quot;&quot;&quot;</span>
+    <span class="hljs-comment"># &#x5356;&#x51FA;</span>
+    <span class="hljs-keyword">for</span> stock <span class="hljs-keyword">in</span> context.portfolio.positions.keys():
+
+        <span class="hljs-keyword">if</span> context.portfolio.positions[stock].quantity &gt; <span class="hljs-number">0</span>:
+
+            <span class="hljs-keyword">if</span> stock <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> context.stock_list:
+
+                order_target_percent(stock, <span class="hljs-number">0</span>)
+
+    weight = <span class="hljs-number">1.0</span>/len(context.stock_list)
+    <span class="hljs-comment"># &#x4E70;&#x5165;</span>
+    <span class="hljs-keyword">for</span> stock <span class="hljs-keyword">in</span> context.stock_list:
+
+        order_target_percent(stock, weight)
+
+
+<span class="hljs-comment"># before_trading&#x6B64;&#x51FD;&#x6570;&#x4F1A;&#x5728;&#x6BCF;&#x5929;&#x7B56;&#x7565;&#x4EA4;&#x6613;&#x5F00;&#x59CB;&#x524D;&#x88AB;&#x8C03;&#x7528;&#xFF0C;&#x5F53;&#x5929;&#x53EA;&#x4F1A;&#x88AB;&#x8C03;&#x7528;&#x4E00;&#x6B21;</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">before_trading</span><span class="hljs-params">(context)</span>:</span>
+    <span class="hljs-keyword">pass</span>
+
+
+<span class="hljs-comment"># &#x4F60;&#x9009;&#x62E9;&#x7684;&#x8BC1;&#x5238;&#x7684;&#x6570;&#x636E;&#x66F4;&#x65B0;&#x5C06;&#x4F1A;&#x89E6;&#x53D1;&#x6B64;&#x6BB5;&#x903B;&#x8F91;&#xFF0C;&#x4F8B;&#x5982;&#x65E5;&#x6216;&#x5206;&#x949F;&#x5386;&#x53F2;&#x6570;&#x636E;&#x5207;&#x7247;&#x6216;&#x8005;&#x662F;&#x5B9E;&#x65F6;&#x6570;&#x636E;&#x5207;&#x7247;&#x66F4;&#x65B0;</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">handle_bar</span><span class="hljs-params">(context, bar_dict)</span>:</span>
+    <span class="hljs-keyword">pass</span>
+
+<span class="hljs-comment"># after_trading&#x51FD;&#x6570;&#x4F1A;&#x5728;&#x6BCF;&#x5929;&#x4EA4;&#x6613;&#x7ED3;&#x675F;&#x540E;&#x88AB;&#x8C03;&#x7528;&#xFF0C;&#x5F53;&#x5929;&#x53EA;&#x4F1A;&#x88AB;&#x8C03;&#x7528;&#x4E00;&#x6B21;</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">after_trading</span><span class="hljs-params">(context)</span>:</span>
+    <span class="hljs-keyword">pass</span>
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">mad</span><span class="hljs-params">(factor)</span>:</span>
+    <span class="hljs-string">&quot;&quot;&quot;3&#x500D;&#x4E2D;&#x4F4D;&#x6570;&#x53BB;&#x6781;&#x503C;
+    &quot;&quot;&quot;</span>
+    <span class="hljs-comment"># &#x6C42;&#x51FA;&#x56E0;&#x5B50;&#x503C;&#x7684;&#x4E2D;&#x4F4D;&#x6570;</span>
+    med = np.median(factor)
+
+    <span class="hljs-comment"># &#x6C42;&#x51FA;&#x56E0;&#x5B50;&#x503C;&#x4E0E;&#x4E2D;&#x4F4D;&#x6570;&#x7684;&#x5DEE;&#x503C;&#xFF0C;&#x8FDB;&#x884C;&#x7EDD;&#x5BF9;&#x503C;</span>
+    mad = np.median(np.abs(factor - med))
+
+    <span class="hljs-comment"># &#x5B9A;&#x4E49;&#x51E0;&#x500D;&#x7684;&#x4E2D;&#x4F4D;&#x6570;&#x4E0A;&#x4E0B;&#x9650;</span>
+    high = med + (<span class="hljs-number">3</span> * <span class="hljs-number">1.4826</span> * mad)
+    low = med - (<span class="hljs-number">3</span> * <span class="hljs-number">1.4826</span> * mad)
+
+    <span class="hljs-comment"># &#x66FF;&#x6362;&#x4E0A;&#x4E0B;&#x9650;&#x4EE5;&#x5916;&#x7684;&#x503C;</span>
+    factor = np.where(factor &gt; high, high, factor)
+    factor = np.where(factor &lt; low, low, factor)
+
+    <span class="hljs-keyword">return</span> factor
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">stand</span><span class="hljs-params">(factor)</span>:</span>
+    <span class="hljs-string">&quot;&quot;&quot;&#x6807;&#x51C6;&#x5316;
+    &quot;&quot;&quot;</span>
+    mean = np.mean(factor)
+    std = np.std(factor)
+    <span class="hljs-keyword">return</span> (factor - mean)/std
+</code></pre>
+
+                    
+                    </section>
+                
+                
+                </div>
+            </div>
+        </div>
+
+        
+        <a href="../day04/section2.html" class="navigation navigation-prev " aria-label="Previous page: 多因子打分法选股"><i class="fa fa-angle-left"></i></a>
+        
+        
+        <a href="../day04/section4.html" class="navigation navigation-next " aria-label="Next page: 技术分析策略"><i class="fa fa-angle-right"></i></a>
+        
+    </div>
+</div>
+
+        
+<script src="../gitbook/app.js"></script>
+
+    
+    <script src="../gitbook/plugins/gitbook-plugin-expandable-chapters-small/expandable-chapters-small.js"></script>
+    
+
+    
+    <script src="../gitbook/plugins/gitbook-plugin-search/lunr.min.js"></script>
+    
+
+    
+    <script src="../gitbook/plugins/gitbook-plugin-search/search.js"></script>
+    
+
+    
+    <script src="../gitbook/plugins/gitbook-plugin-sharing/buttons.js"></script>
+    
+
+    
+    <script src="../gitbook/plugins/gitbook-plugin-fontsettings/buttons.js"></script>
+    
+
+    
+    <script src="../gitbook/plugins/gitbook-plugin-livereload/plugin.js"></script>
+    
+
+<script>
+require(["gitbook"], function(gitbook) {
+    var config = {"katex":{},"expandable-chapters-small":{},"highlight":{},"search":{"maxIndexSize":1000000},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"livereload":{}};
+    gitbook.start(config);
+});
+</script>
+
+        
+    </body>
+    
+</html>

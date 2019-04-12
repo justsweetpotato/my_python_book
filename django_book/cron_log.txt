@@ -1,0 +1,92 @@
+-------- ©╙й╪хннЯ, ©╙й╪й╠╪Д: Thu Apr 11 14:16:06 2019 --------
+app[1]: 200
+app[2]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[3]: 200
+app[4]: 200
+app[5]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[6]: ('Connection aborted.', TimeoutError(10060, 'сисза╛╫с╥╫тзр╩╤нй╠╪Д╨Сц╩спуЩх╥╢П╦╢╩Ра╛╫с╣джВ╩Зц╩сп╥╢с╕ё╛а╛╫сЁ╒йтй╖╟э║ё', None, 10060, None))
+<<<<<<< HEAD
+-------- хннЯ╫АйЬ, ╫АйЬй╠╪Д: Thu Apr 11 14:16:38 2019 --------
+=======
+-------- хннЯ╫АйЬ, ╫АйЬй╠╪Д: Thu Apr 11 18:18:01 2019 --------
+-------- ©╙й╪хннЯ, ©╙й╪й╠╪Д: Thu Apr 11 18:18:01 2019 --------
+app[1]: 200
+app[2]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[3]: 200
+app[4]: 200
+app[5]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[6]: 200
+-------- хннЯ╫АйЬ, ╫АйЬй╠╪Д: Thu Apr 11 18:18:55 2019 --------
+-------- ©╙й╪хннЯ, ©╙й╪й╠╪Д: Thu Apr 11 18:20:29 2019 --------
+app[1]: 200
+app[2]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[3]: 200
+app[4]: 200
+app[5]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[6]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+-------- хннЯ╫АйЬ, ╫АйЬй╠╪Д: Thu Apr 11 18:20:40 2019 --------
+-------- ©╙й╪хннЯ, ©╙й╪й╠╪Д: Thu Apr 11 18:20:40 2019 --------
+app[1]: 200
+app[2]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[3]: 200
+app[4]: 200
+app[5]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[6]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+-------- хннЯ╫АйЬ, ╫АйЬй╠╪Д: Thu Apr 11 18:20:53 2019 --------
+-------- ©╙й╪хннЯ, ©╙й╪й╠╪Д: Thu Apr 11 18:22:33 2019 --------
+app[1]: 200
+app[2]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[3]: 200
+app[4]: 200
+app[5]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[6]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+-------- хннЯ╫АйЬ, ╫АйЬй╠╪Д: Thu Apr 11 18:22:49 2019 --------
+-------- ©╙й╪хннЯ, ©╙й╪й╠╪Д: Thu Apr 11 18:22:49 2019 --------
+app[1]: 200
+app[2]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[3]: 200
+app[4]: 200
+app[5]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[6]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+-------- хннЯ╫АйЬ, ╫АйЬй╠╪Д: Thu Apr 11 18:22:56 2019 --------
+-------- ©╙й╪хннЯ, ©╙й╪й╠╪Д: Thu Apr 11 18:24:59 2019 --------
+app[1]: 200
+app[2]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[3]: 200
+app[4]: 200
+app[5]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[6]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+-------- хннЯ╫АйЬ, ╫АйЬй╠╪Д: Thu Apr 11 18:25:08 2019 --------
+-------- ©╙й╪хннЯ, ©╙й╪й╠╪Д: Thu Apr 11 18:25:33 2019 --------
+app[1]: 200
+app[2]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[3]: 200
+app[4]: 200
+app[5]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[6]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+-------- хннЯ╫АйЬ, ╫АйЬй╠╪Д: Thu Apr 11 18:25:42 2019 --------
+-------- ©╙й╪хннЯ, ©╙й╪й╠╪Д: Thu Apr 11 18:25:42 2019 --------
+app[1]: 200
+app[2]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[3]: 200
+app[4]: 200
+app[5]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[6]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+-------- хннЯ╫АйЬ, ╫АйЬй╠╪Д: Thu Apr 11 18:25:51 2019 --------
+-------- ©╙й╪хннЯ, ©╙й╪й╠╪Д: Fri Apr 12 10:24:43 2019 --------
+app[1]: 503
+app[2]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[3]: 200
+app[4]: 503
+app[5]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[6]: 503
+-------- хннЯ╫АйЬ, ╫АйЬй╠╪Д: Fri Apr 12 10:24:57 2019 --------
+-------- ©╙й╪хннЯ, ©╙й╪й╠╪Д: Fri Apr 12 10:25:22 2019 --------
+app[1]: 503
+app[2]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[3]: 200
+app[4]: 503
+app[5]: ('Connection aborted.', ConnectionResetError(10054, 'т╤ЁлжВ╩Зг©фх╧ь╠уакр╩╦Жожсп╣да╛╫с║ё', None, 10054, None))
+app[6]: 503
+-------- хннЯ╫АйЬ, ╫АйЬй╠╪Д: Fri Apr 12 10:25:32 2019 --------
+>>>>>>> 0323f86... Г╩╖Г╩╜Ф╣▀Х╞∙Е╝ Ф≈╤Д╩╩Е┼║Д╦╜

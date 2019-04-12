@@ -1,0 +1,387 @@
+﻿<!DOCTYPE html>
+<html class="theme theme-white">
+<head>
+<meta charset="utf-8">
+ <a href="12.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="14.html">下一页</a>
+<title>Django-4.0-Day13</title>
+<link href="https://www.zybuluo.com/static/assets/template-theme-white.css" rel="stylesheet" media="screen">
+<style type="text/css">
+
+#wmd-preview h1  {
+    color: #0077bb; /* 将标题改为蓝色 */
+}</style>
+</head>
+<body class="theme theme-white">
+<div id="wmd-preview" class="wmd-preview wmd-preview-full-reader"><div class="md-section-divider"></div><div class="md-section-divider"></div><h1 data-anchor-id="6viz" id="django-40-day13">Django-4.0-Day13</h1><p data-anchor-id="qs41"><code>django</code></p><hr><div class="md-section-divider"></div><h2 data-anchor-id="2grd" id="复习">复习</h2><ul data-anchor-id="gibp">
+<li>商品模型 <br>
+<ul><li><strong>ER图</strong></li></ul></li>
+<li>FastDFS <br>
+构成、关系、client的使用</li>
+<li>Docker <br>
+<ul><li>虚拟化</li>
+<li>docker中的概念</li>
+<li>docker命令</li></ul></li>
+<li><p>富文本编辑器</p></li>
+<li><p>商品数据准备</p>
+
+<ul><li>sql</li>
+<li>图片</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="eeru" id="今日内容">今日内容</h2><ul data-anchor-id="xnrn">
+<li>业务 <br>
+<ul><li>首页</li>
+<li>详情页 <br>
+难点是 spu和sku的关联规格信息关系</li>
+<li>历史浏览记录</li></ul></li>
+<li>知识 <br>
+<ul><li><strong>静态化</strong></li>
+<li>django-crontab 定时任务</li>
+<li><strong>ModelAdmin</strong> 更新触发</li>
+<li><strong>drf-extensions</strong> 缓存加强</li>
+<li><strong>redis在历史浏览记录中的应用</strong></li>
+<li>其他 <br>
+<ul><li>vue更改模板变量</li></ul></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="3v0b" id="01页面静态化思想">01_页面静态化思想</h2><ul data-anchor-id="r7d4">
+<li><p>静态化</p>
+
+<ul><li>概念 <br>
+动态化1 =  模板 + 数据替换 <br>
+动态化2 =  模板 + 数据替换(缓存) <br>
+动态化3 =  html + js获取数据替换数据 <br>
+静态化 = HTML页面(数据预先写好)</li>
+<li>区别 <br>
+缓存 = 模板 + 数据(缓存) <br>
+静态化 = HTML页面(缓存)</li>
+<li>使用场景 <br>
+使用频繁，但数据变化少</li>
+<li>好处 <br>
+<ol><li>降低服务器数据库压力，应对大量用户访问</li>
+<li>提升用户体验，页面加载块</li></ol></li>
+<li>弊端 <br>
+无效数据、错误数据(比如商品价格)</li>
+<li><p>解决弊端</p>
+
+<ol><li>定时重新生成静态html</li>
+<li>数据变化时重新生成html</li></ol></li>
+<li><p>静态化 + 动态化 <br>
+主体内容静态化，部分内容动态化(使用js获取、显示)</p></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="yri3" id="02首页静态化编写">02_首页静态化编写</h2><ul data-anchor-id="17d6">
+<li><p>首页</p>
+
+<ul><li>界面 与 数据 <br>
+<img src="http://static.zybuluo.com/jsutqb/nzq5v3y71chuo68z2ckt7l0x/image_1cjecrau61tm01rhdbt67mrc9l9.png" alt="image_1cjecrau61tm01rhdbt67mrc9l9.png-704.4kB"></li>
+<li><p>数据 <br>
+通过查询获取数据，然后组织形式</p>
+
+<ol><li><p>商品分类 <br>
+channels = GoodsChannel.objects.order_by('group_id', 'sequence')</p>
+
+<ul><li>整体 = {组id:组1,组id:组2,组id:组#,组id:组4 } <br>
+这里使用使用了OrderedDict</li>
+<li>组 = {"channels":[频道1,频道2,频道3] ,"sub_cats":[分类1,分类2,分类3]}</li>
+<li>频道 = {"id": , "name":,"url":}</li>
+<li>分类 = {"id": , "name":,"sub_cat":[分类11,分类12,分类13]}</li></ul></li>
+<li><p>首页其他内容 <br>
+content_categories = ContentCategory.objects.all() <br>
+contents[cat.key] = cat.content_set.filter(status=True).order_by('sequence')</p>
+
+<ul><li>整体 = {类别1key:[内容1,内容2,内容3],类别2key:[内容6,内容7,内容8]}</li>
+<li>内容 = {"title","url","image","text"}</li></ul></li></ol></li>
+<li><p>加载模板生成静态首页</p>
+
+<ol><li>创建模板文件夹</li>
+<li>配置模板文件夹</li>
+<li>准备模板</li>
+<li>配置生成的静态文件的目录</li>
+<li>渲染模板并输出 <br>
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">context </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'categories'</span><span class="pun">:</span><span class="pln"> categories</span><span class="pun">,</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">'contents'</span><span class="pun">:</span><span class="pln"> contents</span></code></li><li class="L3"><code><span class="pun">}</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="kwd">template</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> loader</span><span class="pun">.</span><span class="pln">get_template</span><span class="pun">(</span><span class="str">'index.html'</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">html_text </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">template</span><span class="pun">.</span><span class="pln">render</span><span class="pun">(</span><span class="pln">context</span><span class="pun">)</span></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="com">#  return render() -&gt; HttpResponse(html文本)</span></code></li><li class="L9"><code></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="com"># 写到文件中，保存下来，形成 静态文件</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">file_path </span><span class="pun">=</span><span class="pln"> os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">join</span><span class="pun">(</span><span class="pln">settings</span><span class="pun">.</span><span class="pln">GENERATED_STATIC_HTML_FILES_DIR</span><span class="pun">,</span><span class="pln"> </span><span class="str">'index.html'</span><span class="pun">)</span></code></li><li class="L4"><code><span class="kwd">with</span><span class="pln"> open</span><span class="pun">(</span><span class="pln">file_path</span><span class="pun">,</span><span class="pln"> </span><span class="str">'w'</span><span class="pun">)</span><span class="pln"> </span><span class="kwd">as</span><span class="pln"> f</span><span class="pun">:</span></code></li><li class="L5"><code><span class="pln">    f</span><span class="pun">.</span><span class="pln">write</span><span class="pun">(</span><span class="pln">html_text</span><span class="pun">)</span></code></li></ol></pre></li></ol></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="e7j5" id="03更改vue变量语法避免与django模板冲突退出逻辑">03_更改Vue变量语法避免与Django模板冲突_退出逻辑</h2><ul data-anchor-id="szmm">
+<li><p>Vue与 django模板的冲突</p>
+
+<ul><li>问题的出现 <br>
+django 模板变量是放在 <code>{{}}</code> 中的 <br>
+vue 的模板变量默认也是放在 <code>{{}}</code> 中的 <br>
+在django渲染模板的时候会把<code>{{}}</code>里面的值替换掉，出错了就是空字符串 <br>
+那么后面在vue进行变量替换的时候，就无法处理了</li>
+<li><p>问题的解决 <br>
+vue支持更改 模板变量语法</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">var</span><span class="pln"> vm </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Vue</span><span class="pun">({</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com">//通过delimiters声明，将Vue的模板变量变为了[[、]]</span></code></li><li class="L2"><code><span class="pln">    delimiters</span><span class="pun">:</span><span class="pln"> </span><span class="pun">[</span><span class="str">'[['</span><span class="pun">,</span><span class="pln"> </span><span class="str">']]'</span><span class="pun">],</span></code></li><li class="L3"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L4"><code><span class="pun">})</span></code></li></ol></pre></li></ul></li>
+<li><p>登出逻辑 <br>
+在登出的点击事件中： <br>
+登录相关信息是保存在localStorage或sessionStorage中 <br>
+每次发送请求时携带信息 <br>
+删除掉localStorage 和 sessionStorage中的数据 <br>
+就不会携带登录相关信息了 <br>
+后端就认为登出了</p></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="9i0w" id="04crontab定时任务的使用">04_crontab定时任务的使用</h2><ul data-anchor-id="ib4h">
+<li><p>静态主页间隔一定时间执行</p>
+
+<ul><li><p>业务</p></li>
+<li><p>实现 <br>
+使用 django-crontab，它本质上使用了linux操作系统中的定时任务</p>
+
+<ol><li>安装 <br>
+<code>pip install django-crontab</code></li>
+<li><p>注册应用</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">INSTALLED_APPS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">'django_crontab'</span><span class="pun">,</span><span class="pln">  </span><span class="com"># 定时任务</span></code></li><li class="L3"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L4"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>配置定时任务</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln"> </span><span class="com"># 格式是：CRONJOBS = [每个任务一个元组 ]</span></code></li><li class="L1"><code><span class="pln"> </span><span class="com"># 元组中有3个元素： 执行间隔 任务路径 日志输出文件</span></code></li><li class="L2"><code><span class="pln"> </span><span class="com"># 执行间隔 ：* * * * * (分 时 日 月 周)</span></code></li><li class="L3"><code><span class="pln"> </span><span class="com"># * 表示任意， 如果用数字代替，就是特定的， 如果写成 */n 就代表 每n</span></code></li><li class="L4"><code><span class="pln">CRONJOBS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L5"><code><span class="pln">    </span><span class="com"># 每5分钟执行一次生成主页静态文件</span></code></li><li class="L6"><code><span class="pln">    </span><span class="pun">(</span><span class="str">'*/5 * * * *'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'contents.crons.generate_static_index_html'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'&gt;&gt; /Users/delron/Desktop/meiduo_mall/logs/crontab.log'</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>配置使用utf-8 <br>
+<code>CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'</code></p></li>
+<li>交由操作系统处理定时任务 <br>
+<ul><li>添加定时任务到系统中 <br>
+<code>python manage.py crontab add</code></li>
+<li>显示已经激活的定时任务 <br>
+<code>python manage.py crontab show</code></li>
+<li>移除定时任务 <br>
+<code>python manage.py crontab remove</code></li></ul></li></ol></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="t2b2" id="05编写首页生成静态文件的脚本">05_编写首页生成静态文件的脚本</h2><ul data-anchor-id="clya">
+<li>定时生成 <br>
+项目上线</li>
+<li><p>脚本生成 <br>
+开发使用 <br>
+script/regenerate_index_html.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln"> </span><span class="com">#!/usr/bin/env python</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="str">"""</span></code></li><li class="L3"><code><span class="str">功能：手动生成所有SKU的静态detail html文件</span></code></li><li class="L4"><code><span class="str">使用方法:</span></code></li><li class="L5"><code><span class="str">    ./regenerate_index_html.py</span></code></li><li class="L6"><code><span class="str">"""</span></code></li><li class="L7"><code><span class="pln"> </span><span class="com"># 准备执行环境</span></code></li><li class="L8"><code><span class="kwd">import</span><span class="pln"> sys</span></code></li><li class="L9"><code><span class="pln">sys</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="lit">0</span><span class="pun">,</span><span class="pln"> </span><span class="str">'../'</span><span class="pun">)</span></code></li><li class="L0"><code><span class="pln">sys</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="lit">0</span><span class="pun">,</span><span class="pln"> </span><span class="str">'../meiduo_mall/apps'</span><span class="pun">)</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln"> </span><span class="com"># 加载django的运行环境(包括数据库等环境)</span></code></li><li class="L3"><code><span class="kwd">import</span><span class="pln"> os</span></code></li><li class="L4"><code><span class="kwd">if</span><span class="pln"> </span><span class="kwd">not</span><span class="pln"> os</span><span class="pun">.</span><span class="pln">getenv</span><span class="pun">(</span><span class="str">'DJANGO_SETTINGS_MODULE'</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">    os</span><span class="pun">.</span><span class="pln">environ</span><span class="pun">[</span><span class="str">'DJANGO_SETTINGS_MODULE'</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="str">'meiduo_mall.settings.dev'</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln"> </span><span class="com"># 让django进行环境的初始化设置</span></code></li><li class="L8"><code><span class="kwd">import</span><span class="pln"> django</span></code></li><li class="L9"><code><span class="pln">django</span><span class="pun">.</span><span class="pln">setup</span><span class="pun">()</span></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="kwd">from</span><span class="pln"> contents</span><span class="pun">.</span><span class="pln">crons </span><span class="kwd">import</span><span class="pln"> generate_static_index_html</span></code></li><li class="L2"><code><span class="pun">手动运行时生成主页文件</span><span class="pln">    </span></code></li><li class="L3"><code><span class="kwd">if</span><span class="pln"> __name__ </span><span class="pun">==</span><span class="pln"> </span><span class="str">'__main__'</span><span class="pun">:</span></code></li><li class="L4"><code><span class="pln">    generate_static_index_html</span><span class="pun">()</span></code></li></ol></pre></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="hfwl" id="06商品详情页静态化分析">06_商品详情页静态化分析</h2><ul data-anchor-id="g8b5">
+<li>详情页面静态化 <br>
+<ul><li>静态化部分 <br>
+商品(SKU、SPU信息)</li>
+<li>动态化部分 <br>
+<ul><li>热销</li>
+<li>购物车</li>
+<li>商品评价</li></ul></li>
+<li>静态化的生成策略 <br>
+<ul><li>不是定时生成(商品多则性能太差)</li>
+<li>而是商品信息发生变化的时候生成(保证信息的准确性) <br>
+在后台修改商品相关信息时(django提供了对应机制) <br>
+需要使用celery进行异步生成</li></ul></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="hzbo" id="07商品详情页静态化说明">07_商品详情页静态化说明</h2><ul data-anchor-id="fr7l">
+<li><p>基本步骤</p>
+
+<ol><li>在celery_tasks中添加html包</li>
+<li>新建tasks.py</li>
+<li>编写生成函数</li>
+<li>注册成为任务函数</li>
+<li>注册任务</li></ol></li>
+<li><p>模板中需要的数据</p>
+
+<ol><li>SKU <br>
+id -&gt; sku</li>
+<li>所有商品分类  <br>
+首页做过了</li>
+<li>SPU <br>
+sku.goods</li>
+<li>商品规格 <br>
+复杂</li></ol></li>
+<li><p>规格信息 (SPU与SKU信息)</p>
+
+<ol><li>目标 <br>
+<img src="http://static.zybuluo.com/jsutqb/lv4uulpov7a9ty70im1r3ly1/image_1chnd4r6o1enj7831gp7135tn76p.png" alt="image_1chnd4r6o1enj7831gp7135tn76p.png-53.6kB" title=""></li>
+<li><p>最终数据(用于模板)</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">specs </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    </span><span class="pun">{</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">'name'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'屏幕尺寸'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">        </span><span class="str">'options'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L4"><code><span class="pln">            </span><span class="pun">{</span><span class="str">'id'</span><span class="pun">:</span><span class="pln"> xxx</span><span class="pun">,</span><span class="pln"> </span><span class="str">'value'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'13.3寸'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'sku_id'</span><span class="pun">:</span><span class="pln"> xxx</span><span class="pun">},</span></code></li><li class="L5"><code><span class="pln">            </span><span class="pun">{</span><span class="str">'id'</span><span class="pun">:</span><span class="pln"> xxx</span><span class="pun">,</span><span class="pln"> </span><span class="str">'value'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'15.4寸'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'sku_id'</span><span class="pun">:</span><span class="pln"> xxx</span><span class="pun">},</span></code></li><li class="L6"><code><span class="pln">        </span><span class="pun">]</span></code></li><li class="L7"><code><span class="pln">    </span><span class="pun">},</span></code></li><li class="L8"><code><span class="pln">    </span><span class="pun">{</span></code></li><li class="L9"><code><span class="pln">        </span><span class="str">'name'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'颜色'</span><span class="pun">,</span></code></li><li class="L0"><code><span class="pln">        </span><span class="str">'options'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">            </span><span class="pun">{</span><span class="str">'id'</span><span class="pun">:</span><span class="pln"> xxx</span><span class="pun">,</span><span class="pln"> </span><span class="str">'value'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'银色'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'sku_id'</span><span class="pun">:</span><span class="pln"> xxx</span><span class="pun">},</span></code></li><li class="L2"><code><span class="pln">            </span><span class="pun">{</span><span class="str">'id'</span><span class="pun">:</span><span class="pln"> xxx</span><span class="pun">,</span><span class="pln"> </span><span class="str">'value'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'黑色'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'sku_id'</span><span class="pun">:</span><span class="pln"> xxx</span><span class="pun">}</span></code></li><li class="L3"><code><span class="pln">        </span><span class="pun">]</span></code></li><li class="L4"><code><span class="pln">    </span><span class="pun">},</span></code></li><li class="L5"><code><span class="pln">    </span><span class="pun">{</span></code></li><li class="L6"><code><span class="pln">        </span><span class="str">'name'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'版本'</span><span class="pun">,</span></code></li><li class="L7"><code><span class="pln">        </span><span class="str">'options'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L8"><code><span class="pln">            </span><span class="pun">{</span><span class="str">'id'</span><span class="pun">:</span><span class="pln"> xxx</span><span class="pun">,</span><span class="pln"> </span><span class="str">'value'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'core i5/8G内存/256G存储'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'sku_id'</span><span class="pun">:</span><span class="pln"> xxx</span><span class="pun">},</span></code></li><li class="L9"><code><span class="pln">            </span><span class="pun">{</span><span class="str">'id'</span><span class="pun">:</span><span class="pln"> xxx</span><span class="pun">,</span><span class="pln"> </span><span class="str">'value'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'core i5/8G内存/128G存储'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'sku_id'</span><span class="pun">:</span><span class="pln"> xxx</span><span class="pun">},</span></code></li><li class="L0"><code><span class="pln">            </span><span class="pun">{</span><span class="str">'id'</span><span class="pun">:</span><span class="pln"> xxx</span><span class="pun">,</span><span class="pln"> </span><span class="str">'value'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'core i5/8G内存/512G存储/Multi-Touch Bar'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'sku_id'</span><span class="pun">:</span><span class="pln"> xxx</span><span class="pun">}</span></code></li><li class="L1"><code><span class="pln">        </span><span class="pun">]</span></code></li><li class="L2"><code><span class="pln">    </span><span class="pun">},</span></code></li><li class="L3"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>过程数据 <br>
+理论上 一个 spu对应有"乘法"个对应的sku <br>
+但在一个页面上，能够点击的是"加法"个商品</p>
+
+<ol><li><p>所有的 规格id与 sku的对应关系</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">spec_sku_map </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="pun">(规格</span><span class="lit">1</span><span class="pun">参数</span><span class="pln">id</span><span class="pun">,</span><span class="pln"> </span><span class="pun">规格</span><span class="lit">2</span><span class="pun">参数</span><span class="pln">id</span><span class="pun">,</span><span class="pln"> </span><span class="pun">规格</span><span class="lit">3</span><span class="pun">参数</span><span class="pln">id</span><span class="pun">,</span><span class="pln"> </span><span class="pun">...):</span><span class="pln"> sku_id</span><span class="pun">,</span></code></li><li class="L2"><code><span class="pln">    </span><span class="pun">(规格</span><span class="lit">1</span><span class="pun">参数</span><span class="pln">id</span><span class="pun">,</span><span class="pln"> </span><span class="pun">规格</span><span class="lit">2</span><span class="pun">参数</span><span class="pln">id</span><span class="pun">,</span><span class="pln"> </span><span class="pun">规格</span><span class="lit">3</span><span class="pun">参数</span><span class="pln">id</span><span class="pun">,</span><span class="pln"> </span><span class="pun">...):</span><span class="pln"> sku_id</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">    </span><span class="pun">...</span></code></li><li class="L4"><code><span class="pun">}</span></code></li></ol></pre></li>
+<li><p>当前商品的规格参数 <br>
+sku_key = [规格1参数id， 规格2参数id， 规格3参数id, ...]</p></li>
+<li><p>关联sku的规格参数</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">key </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(规格</span><span class="lit">1</span><span class="pun">参数</span><span class="pln">id</span><span class="pun">，</span><span class="pln"> </span><span class="pun">规格</span><span class="lit">2</span><span class="pun">参数</span><span class="pln">id</span><span class="pun">，</span><span class="pln"> </span><span class="pun">规格</span><span class="lit">3</span><span class="pun">参数</span><span class="pln">id</span><span class="pun">,</span><span class="pln"> </span><span class="pun">...)</span></code></li></ol></pre></li>
+<li><p>通过2做key，查1</p></li></ol></li>
+<li><p>代码</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln"> </span><span class="com"># 零 获取当前sku的信息</span></code></li><li class="L1"><code><span class="pln">sku </span><span class="pun">=</span><span class="pln"> SKU</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="pln">id</span><span class="pun">=</span><span class="pln">sku_id</span><span class="pun">)</span></code></li><li class="L2"><code><span class="pln">goods </span><span class="pun">=</span><span class="pln"> sku</span><span class="pun">.</span><span class="pln">goods</span></code></li><li class="L3"><code><span class="pln"> </span><span class="com"># 一    构建当前商品的规格键</span></code></li><li class="L4"><code><span class="pln"> </span><span class="com"># sku_key = [规格1参数id， 规格2参数id， 规格3参数id, ...]</span></code></li><li class="L5"><code><span class="pln">sku_specs </span><span class="pun">=</span><span class="pln"> sku</span><span class="pun">.</span><span class="pln">skuspecification_set</span><span class="pun">.</span><span class="pln">order_by</span><span class="pun">(</span><span class="str">'spec_id'</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">sku_key </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[]</span></code></li><li class="L7"><code><span class="kwd">for</span><span class="pln"> spec </span><span class="kwd">in</span><span class="pln"> sku_specs</span><span class="pun">:</span></code></li><li class="L8"><code><span class="pln">    sku_key</span><span class="pun">.</span><span class="pln">append</span><span class="pun">(</span><span class="pln">spec</span><span class="pun">.</span><span class="pln">option</span><span class="pun">.</span><span class="pln">id</span><span class="pun">)</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln"> </span><span class="com"># 获取当前商品的所有SKU</span></code></li><li class="L1"><code><span class="pln">skus </span><span class="pun">=</span><span class="pln"> goods</span><span class="pun">.</span><span class="pln">sku_set</span><span class="pun">.</span><span class="pln">all</span><span class="pun">()</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln"> </span><span class="com"># 二 构建不同规格参数（选项）的sku字典</span></code></li><li class="L4"><code><span class="pln"> </span><span class="com"># spec_sku_map = {</span></code></li><li class="L5"><code><span class="pln"> </span><span class="com">#     (规格1参数id, 规格2参数id, 规格3参数id, ...): sku_id,</span></code></li><li class="L6"><code><span class="pln"> </span><span class="com">#     (规格1参数id, 规格2参数id, 规格3参数id, ...): sku_id,</span></code></li><li class="L7"><code><span class="pln"> </span><span class="com">#     ...</span></code></li><li class="L8"><code><span class="pln"> </span><span class="com"># }</span></code></li><li class="L9"><code><span class="pln">spec_sku_map </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{}</span></code></li><li class="L0"><code><span class="kwd">for</span><span class="pln"> s </span><span class="kwd">in</span><span class="pln"> skus</span><span class="pun">:</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 获取sku的规格参数</span></code></li><li class="L2"><code><span class="pln">    s_specs </span><span class="pun">=</span><span class="pln"> s</span><span class="pun">.</span><span class="pln">skuspecification_set</span><span class="pun">.</span><span class="pln">order_by</span><span class="pun">(</span><span class="str">'spec_id'</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">    </span><span class="com"># 用于形成规格参数-sku字典的键</span></code></li><li class="L4"><code><span class="pln">    key </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[]</span></code></li><li class="L5"><code><span class="pln">    </span><span class="kwd">for</span><span class="pln"> spec </span><span class="kwd">in</span><span class="pln"> s_specs</span><span class="pun">:</span></code></li><li class="L6"><code><span class="pln">        key</span><span class="pun">.</span><span class="pln">append</span><span class="pun">(</span><span class="pln">spec</span><span class="pun">.</span><span class="pln">option</span><span class="pun">.</span><span class="pln">id</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pln">    </span><span class="com"># 向规格参数-sku字典添加记录</span></code></li><li class="L8"><code><span class="pln">    spec_sku_map</span><span class="pun">[</span><span class="pln">tuple</span><span class="pun">(</span><span class="pln">key</span><span class="pun">)]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> s</span><span class="pun">.</span><span class="pln">id</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln"> </span><span class="com"># 三 获取当前商品的规格信息</span></code></li><li class="L1"><code><span class="pln"> </span><span class="com">#specs = [</span></code></li><li class="L2"><code><span class="pln"> </span><span class="com">#    {</span></code></li><li class="L3"><code><span class="pln"> </span><span class="com">#        'name': '屏幕尺寸',</span></code></li><li class="L4"><code><span class="pln"> </span><span class="com">#        'options': [</span></code></li><li class="L5"><code><span class="pln"> </span><span class="com">#            {'value': '13.3寸', 'sku_id': xxx},</span></code></li><li class="L6"><code><span class="pln"> </span><span class="com">#            {'value': '15.4寸', 'sku_id': xxx},</span></code></li><li class="L7"><code><span class="pln"> </span><span class="com">#        ]</span></code></li><li class="L8"><code><span class="pln"> </span><span class="com">#    },</span></code></li><li class="L9"><code><span class="pln"> </span><span class="com">#    {</span></code></li><li class="L0"><code><span class="pln"> </span><span class="com">#        'name': '颜色',</span></code></li><li class="L1"><code><span class="pln"> </span><span class="com">#        'options': [</span></code></li><li class="L2"><code><span class="pln"> </span><span class="com">#            {'value': '银色', 'sku_id': xxx},</span></code></li><li class="L3"><code><span class="pln"> </span><span class="com">#            {'value': '黑色', 'sku_id': xxx}</span></code></li><li class="L4"><code><span class="pln"> </span><span class="com">#        ]</span></code></li><li class="L5"><code><span class="pln"> </span><span class="com">#    },</span></code></li><li class="L6"><code><span class="pln"> </span><span class="com">#    ...</span></code></li><li class="L7"><code><span class="pln"> </span><span class="com">#]</span></code></li><li class="L8"><code><span class="pln">specs </span><span class="pun">=</span><span class="pln"> goods</span><span class="pun">.</span><span class="pln">goodsspecification_set</span><span class="pun">.</span><span class="pln">order_by</span><span class="pun">(</span><span class="str">'id'</span><span class="pun">)</span></code></li><li class="L9"><code><span class="kwd">for</span><span class="pln"> index</span><span class="pun">,</span><span class="pln"> spec </span><span class="kwd">in</span><span class="pln"> enumerate</span><span class="pun">(</span><span class="pln">specs</span><span class="pun">):</span></code></li><li class="L0"><code><span class="pln">    </span><span class="com"># 复制当前sku的规格键</span></code></li><li class="L1"><code><span class="pln">    key </span><span class="pun">=</span><span class="pln"> sku_key</span><span class="pun">[:]</span></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># 该规格的选项</span></code></li><li class="L3"><code><span class="pln">    options </span><span class="pun">=</span><span class="pln"> spec</span><span class="pun">.</span><span class="pln">specificationoption_set</span><span class="pun">.</span><span class="pln">all</span><span class="pun">()</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">for</span><span class="pln"> option </span><span class="kwd">in</span><span class="pln"> options</span><span class="pun">:</span></code></li><li class="L5"><code><span class="pln">        </span><span class="com"># 在规格参数sku字典中查找符合当前规格的sku</span></code></li><li class="L6"><code><span class="pln">        key</span><span class="pun">[</span><span class="pln">index</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> option</span><span class="pun">.</span><span class="pln">id</span></code></li><li class="L7"><code><span class="pln">        option</span><span class="pun">.</span><span class="pln">sku_id </span><span class="pun">=</span><span class="pln"> spec_sku_map</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="pln">tuple</span><span class="pun">(</span><span class="pln">key</span><span class="pun">))</span></code></li><li class="L8"><code></code></li><li class="L9"><code><span class="pln">    spec</span><span class="pun">.</span><span class="pln">options </span><span class="pun">=</span><span class="pln"> options</span></code></li><li class="L0"><code></code></li></ol></pre></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="qk8c" id="08商品详情规格生成逻辑说明">08_商品详情规格生成逻辑说明</h2><ul data-anchor-id="4j7i">
+<li>基础中的一些细节 <br>
+<ol><li>复制列表</li>
+<li>元组不可变</li>
+<li>字典的键必须是不可变的</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="jneu" id="09商品详情静态化异步任务实现">09_商品详情静态化异步任务实现</h2><ul data-anchor-id="8tgl">
+<li>静态网页的位置 <br>
+front_end_pc/goods/{商品id}.html</li>
+<li>静态网页内容 <br>
+<ul><li>同一个模板 + 不同的context(不同sku_id查出的数据不同)</li>
+<li>render得到字符串内容</li>
+<li>通过写文件 写出去</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="e0hz" id="10通过模型admin管理器类的savemodel等方法调用静态化异步任务">10_通过模型Admin管理器类的save_model等方法调用静态化异步任务</h2><ul data-anchor-id="5ql0">
+<li><p>ModelAdmin</p>
+
+<ul><li><p>原理 <br>
+运营人员在通过Admin站点保存商品信息时，应该触发生成商品静态页的异步任务。 <br>
+我们需要调整Admin站点保存和删除商品信息时行为。</p>
+
+<table class="table table-striped-white table-bordered">
+<thead>
+<tr>
+ <th>工作人员在后台操作</th>
+ <th>对于ModelAdmin类方法</th>
+</tr>
+</thead>
+<tbody><tr>
+ <td>保存(包括新增和更新)</td>
+ <td>save_model()</td>
+</tr>
+<tr>
+ <td>删除</td>
+ <td>delete_model()</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>方法说明</p>
+
+<ul><li>def save_model(self, request, obj, form, change): <br>
+request 请求 <br>
+obj 模型对象 <br>
+form 表单 <br>
+change True为修改 False 为新增</li>
+<li>def delete_model(self, request, obj): <br>
+request 请求 <br>
+obj 模型对象</li></ul>
+
+<p>最重要的是 obj 模型对象</p></li></ul></li>
+<li><p>代码实现 <br>
+goods.admin.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">contrib </span><span class="kwd">import</span><span class="pln"> admin</span></code></li><li class="L1"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln"> </span><span class="kwd">import</span><span class="pln"> models</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">SKUAdmin</span><span class="pun">(</span><span class="pln">admin</span><span class="pun">.</span><span class="typ">ModelAdmin</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> save_model</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> obj</span><span class="pun">,</span><span class="pln"> form</span><span class="pun">,</span><span class="pln"> change</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">        obj</span><span class="pun">.</span><span class="pln">save</span><span class="pun">()</span></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">from</span><span class="pln"> celery_tasks</span><span class="pun">.</span><span class="pln">html</span><span class="pun">.</span><span class="pln">tasks </span><span class="kwd">import</span><span class="pln"> generate_static_sku_detail_html</span></code></li><li class="L7"><code><span class="pln">        generate_static_sku_detail_html</span><span class="pun">.</span><span class="pln">delay</span><span class="pun">(</span><span class="pln">obj</span><span class="pun">.</span><span class="pln">id</span><span class="pun">)</span></code></li><li class="L8"><code></code></li><li class="L9"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">SKUSpecificationAdmin</span><span class="pun">(</span><span class="pln">admin</span><span class="pun">.</span><span class="typ">ModelAdmin</span><span class="pun">):</span></code></li><li class="L0"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> save_model</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> obj</span><span class="pun">,</span><span class="pln"> form</span><span class="pun">,</span><span class="pln"> change</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">        obj</span><span class="pun">.</span><span class="pln">save</span><span class="pun">()</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">from</span><span class="pln"> celery_tasks</span><span class="pun">.</span><span class="pln">html</span><span class="pun">.</span><span class="pln">tasks </span><span class="kwd">import</span><span class="pln"> generate_static_sku_detail_html</span></code></li><li class="L3"><code><span class="pln">        generate_static_sku_detail_html</span><span class="pun">.</span><span class="pln">delay</span><span class="pun">(</span><span class="pln">obj</span><span class="pun">.</span><span class="pln">sku</span><span class="pun">.</span><span class="pln">id</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> delete_model</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> obj</span><span class="pun">):</span></code></li><li class="L5"><code><span class="pln">        sku_id </span><span class="pun">=</span><span class="pln"> obj</span><span class="pun">.</span><span class="pln">sku</span><span class="pun">.</span><span class="pln">id</span></code></li><li class="L6"><code><span class="pln">        obj</span><span class="pun">.</span><span class="kwd">delete</span><span class="pun">()</span></code></li><li class="L7"><code><span class="pln">        </span><span class="kwd">from</span><span class="pln"> celery_tasks</span><span class="pun">.</span><span class="pln">html</span><span class="pun">.</span><span class="pln">tasks </span><span class="kwd">import</span><span class="pln"> generate_static_sku_detail_html</span></code></li><li class="L8"><code><span class="pln">        generate_static_sku_detail_html</span><span class="pun">.</span><span class="pln">delay</span><span class="pun">(</span><span class="pln">sku_id</span><span class="pun">)</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">SKUImageAdmin</span><span class="pun">(</span><span class="pln">admin</span><span class="pun">.</span><span class="typ">ModelAdmin</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> save_model</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> obj</span><span class="pun">,</span><span class="pln"> form</span><span class="pun">,</span><span class="pln"> change</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">        obj</span><span class="pun">.</span><span class="pln">save</span><span class="pun">()</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">from</span><span class="pln"> celery_tasks</span><span class="pun">.</span><span class="pln">html</span><span class="pun">.</span><span class="pln">tasks </span><span class="kwd">import</span><span class="pln"> generate_static_sku_detail_html</span></code></li><li class="L4"><code><span class="pln">        generate_static_sku_detail_html</span><span class="pun">.</span><span class="pln">delay</span><span class="pun">(</span><span class="pln">obj</span><span class="pun">.</span><span class="pln">sku</span><span class="pun">.</span><span class="pln">id</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">        </span><span class="com"># 设置SKU默认图片</span></code></li><li class="L6"><code><span class="pln">        sku </span><span class="pun">=</span><span class="pln"> obj</span><span class="pun">.</span><span class="pln">sku</span></code></li><li class="L7"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> </span><span class="kwd">not</span><span class="pln"> sku</span><span class="pun">.</span><span class="pln">default_image_url</span><span class="pun">:</span></code></li><li class="L8"><code><span class="pln">            sku</span><span class="pun">.</span><span class="pln">default_image_url </span><span class="pun">=</span><span class="pln"> obj</span><span class="pun">.</span><span class="pln">image</span><span class="pun">.</span><span class="pln">url</span></code></li><li class="L9"><code><span class="pln">            sku</span><span class="pun">.</span><span class="pln">save</span><span class="pun">()</span></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> delete_model</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> obj</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">        sku_id </span><span class="pun">=</span><span class="pln"> obj</span><span class="pun">.</span><span class="pln">sku</span><span class="pun">.</span><span class="pln">id</span></code></li><li class="L3"><code><span class="pln">        obj</span><span class="pun">.</span><span class="kwd">delete</span><span class="pun">()</span></code></li><li class="L4"><code><span class="pln">        </span><span class="kwd">from</span><span class="pln"> celery_tasks</span><span class="pun">.</span><span class="pln">html</span><span class="pun">.</span><span class="pln">tasks </span><span class="kwd">import</span><span class="pln"> generate_static_sku_detail_html</span></code></li><li class="L5"><code><span class="pln">        generate_static_sku_detail_html</span><span class="pun">.</span><span class="pln">delay</span><span class="pun">(</span><span class="pln">sku_id</span><span class="pun">)</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">admin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="pln">models</span><span class="pun">.</span><span class="typ">GoodsCategory</span><span class="pun">)</span></code></li><li class="L8"><code><span class="pln">admin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="pln">models</span><span class="pun">.</span><span class="typ">GoodsChannel</span><span class="pun">)</span></code></li><li class="L9"><code><span class="pln">admin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="pln">models</span><span class="pun">.</span><span class="typ">Goods</span><span class="pun">)</span><span class="pln"> </span><span class="com"># 应该也添加，不过一次修改SPU对应要生成多个模板</span></code></li><li class="L0"><code><span class="pln">admin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="pln">models</span><span class="pun">.</span><span class="typ">Brand</span><span class="pun">)</span></code></li><li class="L1"><code><span class="pln">admin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="pln">models</span><span class="pun">.</span><span class="typ">GoodsSpecification</span><span class="pun">)</span></code></li><li class="L2"><code><span class="pln">admin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="pln">models</span><span class="pun">.</span><span class="typ">SpecificationOption</span><span class="pun">)</span></code></li><li class="L3"><code><span class="pln">admin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="pln">models</span><span class="pun">.</span><span class="pln">SKU</span><span class="pun">,</span><span class="pln"> </span><span class="typ">SKUAdmin</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">admin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="pln">models</span><span class="pun">.</span><span class="typ">SKUSpecification</span><span class="pun">,</span><span class="pln"> </span><span class="typ">SKUSpecificationAdmin</span><span class="pun">)</span></code></li><li class="L5"><code><span class="pln">admin</span><span class="pun">.</span><span class="pln">site</span><span class="pun">.</span><span class="kwd">register</span><span class="pun">(</span><span class="pln">models</span><span class="pun">.</span><span class="typ">SKUImage</span><span class="pun">,</span><span class="pln"> </span><span class="typ">SKUImageAdmin</span><span class="pun">)</span></code></li></ol></pre></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="d17x" id="11获取热销商品的后端编写">11_获取热销商品的后端编写</h2><ul data-anchor-id="hsuq">
+<li><p>热销商品 <br>
+在详情页面动态部分，所以需要详情页面单独请求</p></li>
+<li><p>设计</p>
+
+<ul><li>请求 GET /categories/{category_id}/hotskus/</li>
+<li>响应 {"id":id,"name":name,"price":price,"default_image_url":default_image_url,"comments":comments}</li></ul></li>
+<li><p>后端实现</p>
+
+<ul><li><p>goods.serializers.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">SKUSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">ModelSerializer</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""</span></code></li><li class="L2"><code><span class="str">    SKU序列化器</span></code></li><li class="L3"><code><span class="str">    """</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L5"><code><span class="pln">        model </span><span class="pun">=</span><span class="pln"> SKU</span></code></li><li class="L6"><code><span class="pln">        fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'id'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'name'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'price'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'default_image_url'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'comments'</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>goods.views.py <br>
+重写 get_queryset 针对每次请求都返回不同的查询集 <br>
+通过self.kwargs.get('category_id') 获取请求路径中的类别id <br>
+根据category_id进行过滤，排序，并限制为2条</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">HotSKUListView</span><span class="pun">(</span><span class="typ">ListAPIView</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""返回热销数据</span></code></li><li class="L2"><code><span class="str">    /categories/(?P&lt;category_id&gt;\d+)/hotskus/</span></code></li><li class="L3"><code><span class="str">    """</span></code></li><li class="L4"><code><span class="pln">    serializer_class </span><span class="pun">=</span><span class="pln"> </span><span class="typ">SKUSerializer</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> get_queryset</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">):</span></code></li><li class="L7"><code><span class="pln">        category_id </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">kwargs</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'category_id'</span><span class="pun">)</span></code></li><li class="L8"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> SKU</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">filter</span><span class="pun">(</span><span class="pln">category_id</span><span class="pun">=</span><span class="pln">category_id</span><span class="pun">,</span><span class="pln"> is_launched</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">).</span><span class="pln">order_by</span><span class="pun">(</span><span class="str">'-sales'</span><span class="pun">)[:</span><span class="lit">2</span><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>goods.urls.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'^categories/(?P&lt;category_id&gt;\d+)/hotskus/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">HotSKUListView</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">()),</span></code></li><li class="L2"><code><span class="pun">]</span></code></li></ol></pre></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="u6ws" id="12drf使用缓存的详细说明">12_DRF使用缓存的详细说明</h2><ul data-anchor-id="9eer">
+<li><p>drf-extensions中的缓存</p>
+
+<ol><li><p>函数装饰器 <br>
+rest_framework_extensions.cache.decorators.cache_response</p>
+
+<ul><li>@cache_response() <br>
+使用 配置文件中的共有配置</li>
+<li>@cache_response(timeout=60*60, cache='default') <br>
+自定义配置</li></ul>
+
+<p>原理是，根据视图方法的参数生成一个缓存key，先检查缓存中key对应是否有结果，如果没有，调用视图方法，获得响应，和key一起存入缓存，下次就能取出来了</p></li>
+<li><p>Mixin类 <br>
+本质还是函数装饰器</p>
+
+<ul><li>ListCacheResponseMixin <br>
+在list方法上进行装饰</li>
+<li>RetrieveCacheResponseMixin <br>
+在retrieve方法上进行装饰</li>
+<li>CacheResponseMixin <br>
+在list和retrieve方法上都进行装饰</li></ul></li></ol></li>
+<li><p>给热销商品添加缓存</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">HotSKUListView</span><span class="pun">(</span><span class="typ">ListCacheResponseMixin</span><span class="pun">,</span><span class="pln"> </span><span class="typ">ListAPIView</span><span class="pun">):</span></code></li></ol></pre></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="dt1s" id="13热销商品测试与图片路径问题解决说明">13_热销商品测试与图片路径问题解决说明</h2><ul data-anchor-id="zafk">
+<li><p>前端</p>
+
+<ol><li>获取当前分类</li>
+<li>拼接url，发送请求</li>
+<li>获得响应，展示数据 </li></ol></li>
+<li><p>购物车图片 <br>
+这里是无用代码，后面完成购物车的时候再说</p></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="8tj4" id="14用户浏览历史记录redis的设计讲解">14_用户浏览历史记录redis的设计讲解</h2><ul data-anchor-id="59th">
+<li>用户浏览历史记录特点 <br>
+<ol><li>访问详情时添加 (有顺序)</li>
+<li>访问用户中心时查看(有顺序)</li>
+<li>频繁变化</li>
+<li>只对登录用户进行处理</li>
+<li>非关键性数据(不影响网站的使用)</li></ol></li>
+<li>方案选取 <br>
+<ul><li>频繁变化 -&gt; redis (具备持久化功能)</li>
+<li>每个用户一个key(含用户id)而不是多人共享一个key</li>
+<li>有顺序 -&gt;list</li>
+<li>保存商品id(避免数据错误)</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="2usq" id="15用户浏览历史记录保存接口编写">15_用户浏览历史记录保存接口编写</h2><ul data-anchor-id="5sdk">
+<li><p>添加用户浏览记录</p>
+
+<ul><li><p>设计</p>
+
+<ul><li>请求 POST /browse_histories/  请求体中有 商品id  请求头中有用户信息</li>
+<li>响应 {"sku_id":sku_id}</li></ul></li>
+<li><p>实现</p>
+
+<ul><li><p>users.serializers.py</p>
+
+<ul><li>校验 <br>
+<ol><li>基本校验 <br>
+类属性定义整数且为正数</li>
+<li>数据库存在校验 (为了效率可以跳过此校验) <br>
+方法validate_sku_id</li></ol></li>
+<li>保存数据 <br>
+<ul><li>基本实现 <br>
+create <br>
+<ol><li>获取用户id，得到redis的key <br>
+self.context['request'].user.id</li>
+<li>删除重复的记录 lrem</li>
+<li>添加当前记录 lpush</li>
+<li>裁剪 ltrim</li>
+<li>注意，新建了名为history的redis缓存</li></ol></li>
+<li>优化 <br>
+使用管道</li></ul></li></ul>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">AddUserHistorySerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">Serializer</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    sku_id </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">IntegerField</span><span class="pun">(</span><span class="pln">min_value</span><span class="pun">=</span><span class="lit">1</span><span class="pun">)</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> validate_sku_id</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> value</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        </span><span class="kwd">try</span><span class="pun">:</span></code></li><li class="L5"><code><span class="pln">            SKU</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="pln">id</span><span class="pun">=</span><span class="pln">value</span><span class="pun">)</span></code></li><li class="L6"><code><span class="pln">        </span><span class="kwd">except</span><span class="pln"> SKU</span><span class="pun">.</span><span class="typ">DoesNotExist</span><span class="pun">:</span></code></li><li class="L7"><code><span class="pln">            </span><span class="kwd">raise</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">ValidationError</span><span class="pun">(</span><span class="str">"sku id 不存在"</span><span class="pun">)</span></code></li><li class="L8"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> value</span></code></li><li class="L9"><code></code></li><li class="L0"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> create</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> validated_data</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">        </span><span class="str">"""保存"""</span></code></li><li class="L2"><code><span class="pln">        </span><span class="com"># user_id</span></code></li><li class="L3"><code><span class="pln">        user_id </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">context</span><span class="pun">[</span><span class="str">'request'</span><span class="pun">].</span><span class="pln">user</span><span class="pun">.</span><span class="pln">id</span></code></li><li class="L4"><code><span class="pln">        sku_id </span><span class="pun">=</span><span class="pln"> validated_data</span><span class="pun">[</span><span class="str">'sku_id'</span><span class="pun">]</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">        </span><span class="com"># 保存记录到redis中</span></code></li><li class="L7"><code><span class="pln">        redis_conn </span><span class="pun">=</span><span class="pln"> get_redis_connection</span><span class="pun">(</span><span class="str">'history'</span><span class="pun">)</span></code></li><li class="L8"><code></code></li><li class="L9"><code><span class="pln">        pl </span><span class="pun">=</span><span class="pln"> redis_conn</span><span class="pun">.</span><span class="pln">pipeline</span><span class="pun">()</span></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="pln">        </span><span class="com"># 清除sku_id在redis中的记录</span></code></li><li class="L2"><code><span class="pln">        </span><span class="com"># lrem(name, count, value)</span></code></li><li class="L3"><code><span class="pln">        pl</span><span class="pun">.</span><span class="pln">lrem</span><span class="pun">(</span><span class="str">'history_%s'</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> user_id</span><span class="pun">,</span><span class="pln"> </span><span class="lit">0</span><span class="pun">,</span><span class="pln"> sku_id</span><span class="pun">)</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="pln">        </span><span class="com"># 向redis追加数据</span></code></li><li class="L6"><code><span class="pln">        </span><span class="com"># lpush  [1,2,3,4] 5   -&gt; [5,1,2,3,4]</span></code></li><li class="L7"><code><span class="pln">        pl</span><span class="pun">.</span><span class="pln">lpush</span><span class="pun">(</span><span class="str">'history_%s'</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> user_id</span><span class="pun">,</span><span class="pln"> sku_id</span><span class="pun">)</span></code></li><li class="L8"><code></code></li><li class="L9"><code><span class="pln">        </span><span class="com"># 如果超过数量，截断</span></code></li><li class="L0"><code><span class="pln">        </span><span class="com"># ltrim(name, start, end)</span></code></li><li class="L1"><code><span class="pln">        pl</span><span class="pun">.</span><span class="pln">ltrim</span><span class="pun">(</span><span class="str">'history_%s'</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> user_id</span><span class="pun">,</span><span class="pln"> </span><span class="lit">0</span><span class="pun">,</span><span class="pln"> constants</span><span class="pun">.</span><span class="pln">USER_BROWSING_HISTORY_COUNTS_LIMIT</span><span class="pun">-</span><span class="lit">1</span><span class="pun">)</span></code></li><li class="L2"><code><span class="pln">        pl</span><span class="pun">.</span><span class="pln">execute</span><span class="pun">()</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> validated_data</span></code></li></ol></pre></li>
+<li><p>users.views.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">UserHistoryView</span><span class="pun">(</span><span class="pln">mixins</span><span class="pun">.</span><span class="typ">CreateModelMixin</span><span class="pun">,</span><span class="pln"> </span><span class="typ">GenericAPIView</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""用户历史记录"""</span></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># 需要用户登录才能访问</span></code></li><li class="L3"><code><span class="pln">    permission_classes </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span><span class="typ">IsAuthenticated</span><span class="pun">]</span></code></li><li class="L4"><code><span class="pln">    </span><span class="com"># 使用序列化器校验数据 和保存数据</span></code></li><li class="L5"><code><span class="pln">    serializer_class </span><span class="pun">=</span><span class="pln"> serializers</span><span class="pun">.</span><span class="typ">AddUserHistorySerializer</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> post</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">        </span><span class="str">"""保存"""</span></code></li><li class="L9"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="kwd">self</span><span class="pun">.</span><span class="pln">create</span><span class="pun">(</span><span class="pln">request</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>users.urls.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'browse_histories/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">UserHistoryView</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">())</span></code></li><li class="L2"><code><span class="pun">]</span></code></li></ol></pre></li></ul></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="icgw" id="16用户浏览历史记录测试">16_用户浏览历史记录测试</h2><ul data-anchor-id="qfh9">
+<li><p>前端代码实现</p>
+
+<ol><li>判断登录</li>
+<li>登录了携带参数访问后端</li>
+<li>响应无所谓(接受了也无后续逻辑)</li></ol></li>
+<li><p>测试</p>
+
+<ol><li>浏览访问</li>
+<li>看数据库</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="oga1" id="17在用户中心查看浏览历史记录编写">17_在用户中心查看浏览历史记录编写</h2><ul data-anchor-id="p7ef">
+<li><p>获取用户浏览记录</p>
+
+<ul><li>设计 <br>
+<ul><li>请求 GET /browse_histories/</li>
+<li>响应 {"id":id,"name":name,"price":price,"default_image_url":default_image_url,"comments":comments}</li></ul></li>
+<li><p>实现</p>
+
+<ul><li><p>goods.serializers.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">SKUSerializer</span><span class="pun">(</span><span class="pln">serializers</span><span class="pun">.</span><span class="typ">ModelSerializer</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""</span></code></li><li class="L2"><code><span class="str">    SKU序列化器</span></code></li><li class="L3"><code><span class="str">    """</span></code></li><li class="L4"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L5"><code><span class="pln">        model </span><span class="pun">=</span><span class="pln"> SKU</span></code></li><li class="L6"><code><span class="pln">        fields </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="str">'id'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'name'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'price'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'default_image_url'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'comments'</span><span class="pun">)</span></code></li></ol></pre></li>
+<li><p>users.views.py <br>
+不能只返回id，因为前端要展示商品信息数据不够</p>
+
+<ol><li>获得用户，拼接redis查询的key</li>
+<li>获得浏览记录</li>
+<li>数据库查询得到对应商品，装入列表 <br>
+这里不能使用in 查询，in查询不能保证顺序</li>
+<li>序列化器返回 <br>
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">UserHistoryView</span><span class="pun">(</span><span class="pln">mixins</span><span class="pun">.</span><span class="typ">CreateModelMixin</span><span class="pun">,</span><span class="pln"> </span><span class="typ">GenericAPIView</span><span class="pun">):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"""用户历史记录"""</span></code></li><li class="L2"><code><span class="pln">    </span><span class="pun">...</span><span class="pln">             </span></code></li><li class="L3"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">        user_id </span><span class="pun">=</span><span class="pln"> request</span><span class="pun">.</span><span class="pln">user</span><span class="pun">.</span><span class="pln">id</span></code></li><li class="L5"><code><span class="pln">        </span><span class="com"># 查询redis数据库</span></code></li><li class="L6"><code><span class="pln">        redis_conn </span><span class="pun">=</span><span class="pln"> get_redis_connection</span><span class="pun">(</span><span class="str">'history'</span><span class="pun">)</span></code></li><li class="L7"><code><span class="pln">        sku_id_list </span><span class="pun">=</span><span class="pln"> redis_conn</span><span class="pun">.</span><span class="pln">lrange</span><span class="pun">(</span><span class="str">'history_%s'</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> user_id</span><span class="pun">,</span><span class="pln"> </span><span class="lit">0</span><span class="pun">,</span><span class="pln"> constants</span><span class="pun">.</span><span class="pln">USER_BROWSING_HISTORY_COUNTS_LIMIT</span><span class="pun">)</span></code></li><li class="L8"><code></code></li><li class="L9"><code><span class="pln">        </span><span class="com"># 根据redis返回的sku id 查询数据</span></code></li><li class="L0"><code><span class="pln">        </span><span class="com"># SKU.objects.filter(id__in=sku_id_list)</span></code></li><li class="L1"><code><span class="pln">        sku_list </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[]</span></code></li><li class="L2"><code><span class="pln">        </span><span class="kwd">for</span><span class="pln"> sku_id </span><span class="kwd">in</span><span class="pln"> sku_id_list</span><span class="pun">:</span></code></li><li class="L3"><code><span class="pln">            sku </span><span class="pun">=</span><span class="pln"> SKU</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="pln">id</span><span class="pun">=</span><span class="pln">sku_id</span><span class="pun">)</span></code></li><li class="L4"><code><span class="pln">            sku_list</span><span class="pun">.</span><span class="pln">append</span><span class="pun">(</span><span class="pln">sku</span><span class="pun">)</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">        </span><span class="com"># 使用序列化器序列化</span></code></li><li class="L7"><code><span class="pln">        serializer </span><span class="pun">=</span><span class="pln"> </span><span class="typ">SKUSerializer</span><span class="pun">(</span><span class="pln">sku_list</span><span class="pun">,</span><span class="pln"> many</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">)</span></code></li><li class="L8"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">Response</span><span class="pun">(</span><span class="pln">serializer</span><span class="pun">.</span><span class="pln">data</span><span class="pun">)</span></code></li></ol></pre></li></ol></li></ul></li></ul></li>
+</ul></div>
+<a href="12.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="14.html">下一页</a>
+</body>
+</html>

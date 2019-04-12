@@ -1,0 +1,504 @@
+﻿<!DOCTYPE html>
+<html class="theme theme-white">
+<head>
+<meta charset="utf-8">
+    <a href="2.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="4.html">下一页</a>
+<title>Django-4.0-Day3</title>
+<link href="https://www.zybuluo.com/static/assets/template-theme-white.css" rel="stylesheet" media="screen">
+<style type="text/css">
+
+#wmd-preview h1  {
+    color: #0077bb; /* 将标题改为蓝色 */
+}</style>
+</head>
+<body class="theme theme-white">
+<div id="wmd-preview" class="wmd-preview wmd-preview-full-reader"><div class="md-section-divider"></div><div class="md-section-divider"></div><h1 data-anchor-id="b70q" id="django-40-day3">Django-4.0-Day3</h1><p data-anchor-id="494m"><code>django</code></p><hr><div class="md-section-divider"></div><h2 data-anchor-id="1ux2" id="知识点复习">知识点复习</h2><ul data-anchor-id="eei0">
+<li>请求 <br>
+请求体 request.POST request.body <br>
+请求头 request.META</li>
+<li><p>响应 <br>
+HttpResponse <br>
+响应行 (响应码) <br>
+响应头 (Content-Type, 其他头) <br>
+响应体 </p></li>
+<li><p>会话</p>
+
+<ul><li><p>cookie</p>
+
+<ul><li>api</li></ul></li>
+<li><p>session</p>
+
+<ul><li>存储位置 <br>
+<ul><li>数据库</li>
+<li>内存</li>
+<li>redis</li></ul></li>
+<li><p>存储格式</p></li>
+<li><p>api</p></li></ul></li></ul></li>
+<li><p>类视图</p>
+
+<ul><li>好处 <br>
+<ol><li>可读性</li>
+<li>代码复用</li></ol></li>
+<li>使用方式 <br>
+<ol><li>继承django.view.generic.View</li>
+<li>实现方法 get/post</li>
+<li>配置url 使用as_view()</li></ol></li>
+<li>原理 <br>
+<ul><li>as_view</li>
+<li>dispatch</li>
+<li>get/post</li></ul></li></ul></li>
+<li><p>装饰器与类视图</p>
+
+<ol><li>作用</li>
+<li>使用方式 <br>
+<ol><li>在url中</li>
+<li>借助methd_decorator装饰视图类或者方法</li>
+<li>扩展类</li></ol></li></ol></li>
+<li><p>中间件</p>
+
+<ol><li>作用</li>
+<li>与中间件的区别</li>
+<li>定义</li>
+<li>配置</li>
+<li>单个运行流程</li>
+<li>多个运行流程</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="lxar" id="01数据库配置">01_数据库配置</h2><ul data-anchor-id="id6n">
+<li>构成 <br>
+<ul><li>orm <br>
+把方法调用转为sql语句 <br>
+把sql的直接结果封装到对象中</li>
+<li>驱动 <br>
+连接数据库，执行sql操作，接受结果</li></ul></li>
+<li><p>mysql数据库配置</p>
+
+<ol><li>安装pymysql <br>
+<code>pip install pymysql</code></li>
+<li><p>安装数据库驱动 <br>
+在项目的包中的<strong>init</strong>.py中</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> pymysql </span><span class="kwd">import</span><span class="pln"> install_as_MySQLdb</span></code></li><li class="L1"><code><span class="pln">install_as_MySQLdb</span><span class="pun">()</span></code></li></ol></pre></li>
+<li><p>准备数据库 <br>
+<code>CREATE DATABASE django_demo DEFAULT charset=utf8;</code> <br>
+注意一定要加上<code>charset=utf8</code> 不然存中文数据会报错</p></li>
+<li><p>修改数据配置</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">DATABASES </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'default'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">'ENGINE'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'django.db.backends.mysql'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">        </span><span class="str">'HOST'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'127.0.0.1'</span><span class="pun">,</span><span class="pln">  </span><span class="com"># 数据库主机</span></code></li><li class="L4"><code><span class="pln">        </span><span class="str">'PORT'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">3306</span><span class="pun">,</span><span class="pln">  </span><span class="com"># 数据库端口</span></code></li><li class="L5"><code><span class="pln">        </span><span class="str">'USER'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'root'</span><span class="pun">,</span><span class="pln">  </span><span class="com"># 数据库用户名</span></code></li><li class="L6"><code><span class="pln">        </span><span class="str">'PASSWORD'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'mysql'</span><span class="pun">,</span><span class="pln">  </span><span class="com"># 数据库用户密码</span></code></li><li class="L7"><code><span class="pln">        </span><span class="str">'NAME'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'django_demo'</span><span class="pln">  </span><span class="com"># 数据库名字</span></code></li><li class="L8"><code><span class="pln">    </span><span class="pun">}</span></code></li><li class="L9"><code><span class="pun">}</span></code></li></ol></pre></li></ol></li>
+<li><p>注意</p>
+
+<ol><li>不调用install_as_MySQLdb()会报错</li>
+<li>创建数据库的时候一定指定编码，否则无法添加中文数据</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="raiv" id="02django模型类的定义">02_Django模型类的定义</h2><ul data-anchor-id="6e9n">
+<li><p>步骤</p>
+
+<ol><li>找到应用的models.py</li>
+<li>写类(对应表)，继承于 models.Model</li>
+<li><strong>根据情况写类属性(对应表结构)</strong></li>
+<li>可选定义元选项(配置)</li>
+<li>进行迁移 <br>
+<ol><li>生成迁移文件</li>
+<li>进行数据库迁移</li></ol></li></ol></li>
+<li><p>模型类属性 <br>
+如果类属性间接继承于models.Field 则代表一个数据库中的一列</p>
+
+<ul><li>常用的属性 <br>
+<ul><li>字符串 <br>
+    <strong>CharField</strong> , 普通字符串 <br>
+    TextField , 超长字符串(&gt;=4000)</li>
+<li>数字 <br>
+<ul><li><strong>整数</strong> <br>
+IntegerField <br>
+SmallIntegerField <br>
+BigIntegerField <br>
+AutoField       自动增长的整数，一般用来做表的主键</li>
+<li>小数 <br>
+<strong>DecimalField</strong>  一般用于表示钱 <br>
+FloatField</li></ul></li>
+<li>布尔 <br>
+BooleanField        两种情况 <br>
+NullBooleanField    三种情况</li>
+<li>时间日期 <br>
+DateField <br>
+TimeField <br>
+DateTimeField</li>
+<li>文件 <br>
+FileField <br>
+ImageField</li>
+<li>关联属性 <br>
+ForeignKey 一对多关联 <br>
+OneToOne   一对一关联  <br>
+ManyToMany 多对多关联</li></ul></li>
+<li>模型字段选项 <br>
+<ul><li><strong>与字段类型相关</strong> <br>
+<ul><li>max_length <br>
+CharField 必须要有</li>
+<li>auto_now_add 和 auto_now <br>
+自动添加记录的创建时间，auto_now 自动添加记录的修改时间，都用于时间日期类型的3种字段，但只能使用一个</li>
+<li>max_digits 和 decimal_places <br>
+DecimalField 必须要要， 其中decimal_places表示小数点后的保留位数，max_digits指的是所有数字的总长度      </li>
+<li>on_delete <br>
+当外键关联的记录被删除，使用到外键关联的记录改怎么办 <br>
+值有 <br>
+models.CASCADE      级联删除 <br>
+models.PROTECT      报错，不让删 <br>
+models.SET_NULL     设为空，前提是该字段允许为空 <br>
+models.SET_DEFAULT  设为默认值(前提示该字段有默认值) <br>
+models.DO_NOTHING   什么也不做 <br>
+models.SET()        需在括号中传入函数，删除时会调用函数，并获得返回值，作为该字段的值</li>
+<li>choices <br>
+指定枚举，只能有这些，不能有其他，需要的值是元组套元组(外层的元组用来规定顺序， 内层的元组 第一个元素表示值，第二个元素表示对应的含义)</li></ul></li></ul></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="69wi" id="03模型类可以使用的类型与选项">03_模型类可以使用的类型与选项</h2><ul data-anchor-id="miaw">
+<li><p>其他模型字段选项</p>
+
+<ul><li>null  <br>
+True代表允许为空，默认是False</li>
+<li>blank <br>
+True代表允许为空白，默认是False</li>
+<li>null 与 blank的区别 <br>
+null是数据库范畴的， blank是表单验证范畴的</li>
+<li><strong>db_column</strong> <br>
+可以指定数据库中的列名，而不是与类属性相同</li>
+<li>db_index  <br>
+True代表建立索引（索引可以加快条件查询的速度），默认是False</li>
+<li><strong>default</strong>  <br>
+指定默认值，这个只是django层面的，指定与否不影响表结构</li>
+<li><strong>primary_key</strong>  <br>
+True代表这个字段是表的主键，默认是false</li>
+<li><strong>unique</strong>  <br>
+True代表这个字段在表中必须有唯一值（与其他所有不同），默认是False</li>
+<li>verbose_name <br>
+在后台显示一个友好的名称，默认是与类属性名称相同</li></ul></li>
+<li><p>注意</p>
+
+<ol><li>如果 对模型的修改会影响表结构，则需要重新进行迁移操作(makemigrations  migrate)</li>
+<li>default并没有添加数据库中的约束，只是在创建模型对象的时候给定了默认值，所以它不影响表结构</li>
+<li>blank只与后台有关，不影响表结构    </li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="w5v8" id="04数据库表名与迁移">04_数据库表名与迁移</h2><ul data-anchor-id="n27b">
+<li><p>元选项 <br>
+定义名为Meta的类，作为模型类的内部类</p>
+
+<ul><li>db_table 指定表名 <br>
+如果不指定默认是 应用名称_模型名称 (小写)</li>
+<li>verbose_name 后台显示的名称</li>
+<li>verbose_name_plural 后台显示的名称</li></ul></li>
+<li><p>迁移</p>
+
+<ol><li>生成迁移文件 <br>
+<code>python manage.py makemigrations</code></li>
+<li>进行数据库迁移 <br>
+<code>python manage.py migrate</code></li></ol></li>
+<li><p>注意</p>
+
+<ol><li><strong>前提是模型所在的应用 需要在settings.py中进行注册</strong></li>
+<li><strong>如果修改模型，会发生对应表结构的修改，则需要重新迁移(依次走两步)</strong></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="mu8c" id="05模型类的细节说明">05_模型类的细节说明</h2><ol data-anchor-id="o36p">
+<li><p>模型和表 <br>
+<img src="http://static.zybuluo.com/jsutqb/7y1590e1jrkv405np950uad2/image_1cg22k5bg1luhg3fh8i1arltk9.png" alt="image_1cg22k5bg1luhg3fh8i1arltk9.png-636.5kB"></p></li>
+<li><p>pk = id</p></li>
+<li><p>属性的命名规则</p>
+
+<ol><li>关键字</li>
+<li>连续下划线</li></ol></li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="iprs" id="06shell工具与mysql日志">06_shell工具与mysql日志</h2><ul data-anchor-id="oxnq">
+<li><p>django交互终端 <br>
+<code>python  manage.py shell</code> <br>
+会帮我们进行环境的初始化</p></li>
+<li><p>mysql日志的开启</p>
+
+<ol><li>修改配置文件</li>
+<li>重启mysql服务</li>
+<li>查看日志</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="kxlg" id="07添加数据的方法">07_添加数据的方法</h2><ul data-anchor-id="c45p">
+<li><p>两种方式</p>
+
+<ol><li><p>模型对象.save()</p>
+
+<ol><li>使用关键字参数创建出模型对象，调用模型对象的save方法</li>
+<li>[补充] 创建出'空白'的模型对象，对属性赋值，调用模型对象的save方法</li></ol></li>
+<li><p>模型类.objects.create() <br>
+使用关键字参数调用模型类的objects类属性的create方法</p></li></ol></li>
+<li><p>注意</p>
+
+<ol><li>一定要使用关键字参数的形式传参</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="17t3" id="08基本查询">08_基本查询</h2><p data-anchor-id="rtxe">模型.objects 上提供查询方法</p><ol data-anchor-id="lg5e">
+<li>all <br>
+查询出所有的数据，存在一个"列表"(其实不是列表类型)中 <br>
+不能传参数</li>
+<li>get <br>
+获取一条记录，可以通过关键字参数指定条件 <br>
+没有记录报错：模型.DoesNotE <br>
+[补充]记录多于一条：</li>
+<li>count <br>
+返回记录数</li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="g998" id="09过滤查询">09_过滤查询</h2><ul data-anchor-id="r3a2">
+<li><p>filter <br>
+查询出符合条件的所有的数据，存在一个"列表"(其实不是列表类型)中</p></li>
+<li><p>exclude <br>
+查询出<strong>不</strong>符合条件的所有的数据，存在一个"列表"(其实不是列表类型)中</p></li>
+<li><p>条件写法 <br>
+写法： 模型类属性名__条件名 = 值</p>
+
+<ol><li>相等  <br>
+<ul><li>exact  <code>id__exact=1</code> 等价于 <code>id=1</code></li>
+<li>iexact 大小写不敏感的相等</li></ul></li>
+<li>模糊 <br>
+<ul><li>包含 contains <code>btitle__contains='传'</code></li>
+<li>开始于 startswith <code>btitle__startswith='天'</code></li>
+<li>结束于 endswith <code>btitle__endswith='部'</code></li>
+<li>前面加i 表示不区分大小写</li></ul></li>
+<li>空查询 isnull <br>
+<ul><li>不为空 <code>btitle__isnull=False</code></li>
+<li>为空 <code>btitle__isnull=True</code></li></ul></li>
+<li>范围查询 in <br>
+<ul><li>列表形式 <code>btitle__in=[1,3,5]</code></li>
+<li>元组形式 <code>btitle__in=(1,3,5)</code></li>
+<li>注意 上面的不会匹配到2和4。 要想表示区间，应该使用range</li></ul></li>
+<li>比较 <br>
+<ul><li>大于 gt <code>id__gt=3</code></li>
+<li>小于 lt</li>
+<li>大于等于 gte</li>
+<li>小于等于 lte</li></ul></li>
+<li>日期 <br>
+<ul><li>年 year <code>bpub_date__year=1980</code></li>
+<li>月 month   <code>bpub_date__month=11</code></li>
+<li>日 day  <code>bpub_date__day=24</code></li>
+<li>比较&amp;相等 同上 <code>bpub_date__gt=date(1990,1,1)</code></li>
+<li>说明，年、月、日不支持比较操作 <br>
+比如 <code>bpub_date__year__gt=1990</code> 会报错</li></ul></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="9wbx" id="10f对象与q对象">10_F对象与Q对象</h2><ul data-anchor-id="u9n6">
+<li>F对象 <br>
+django.db.models.F 相对于Field <br>
+一般用于查询条件等号后面，代表一个字段</li>
+<li>Q对象 <br>
+django.db.models.Q 相对于Query <br>
+一般用于条件的复用 <br>
+<ul><li>&amp; 且</li>
+<li>| 或</li>
+<li>~ 非</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="ssro" id="11聚合排序与关联查询">11_聚合排序与关联查询</h2><ul data-anchor-id="x88n">
+<li><p>聚合查询 <br>
+把多条记录转为一个结果，称作聚合 <br>
+aggregate函数来进行聚合</p>
+
+<ul><li>聚合对象 <br>
+django.db.models.Sum\Max\Min\Avg\</li>
+<li><p>返回值 <br>
+只有一个键值对的字典 <br>
+键的规则是<code>构造聚合对象的内容__聚合类名</code>的小写</p></li>
+<li><p>返回值是个字典</p></li>
+<li>使用 <br>
+<ol><li>导入聚合类 <br>
+<code>from django.db.models import Sum,Count,Max,Min,Avg</code></li>
+<li>调用aggregate方法 <br>
+<code>aggregate(聚合类)</code></li></ol></li>
+<li><p>例子</p>
+
+<ul><li><p>Count</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">().</span><span class="pln">aggregate</span><span class="pun">(</span><span class="typ">Count</span><span class="pun">(</span><span class="str">'id'</span><span class="pun">))</span></code></li><li class="L1"><code><span class="pun">{</span><span class="str">'id__count'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">7</span><span class="pun">}</span></code></li></ol></pre>
+
+<p>注意，不能写*</p></li>
+<li><p>Max</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">().</span><span class="pln">aggregate</span><span class="pun">(</span><span class="typ">Max</span><span class="pun">(</span><span class="str">'bread'</span><span class="pun">))</span></code></li><li class="L1"><code><span class="pun">{</span><span class="str">'bread__max'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">58</span><span class="pun">}</span></code></li></ol></pre></li>
+<li><p>Min</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">().</span><span class="pln">aggregate</span><span class="pun">(</span><span class="typ">Min</span><span class="pun">(</span><span class="str">'bcomment'</span><span class="pun">))</span></code></li><li class="L1"><code><span class="pun">{</span><span class="str">'bcomment__min'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">0</span><span class="pun">}</span></code></li></ol></pre></li>
+<li><p>Avg</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">().</span><span class="pln">aggregate</span><span class="pun">(</span><span class="typ">Avg</span><span class="pun">(</span><span class="str">'bread'</span><span class="pun">))</span></code></li><li class="L1"><code><span class="pun">{</span><span class="str">'bread__avg'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">18.0</span><span class="pun">}</span></code></li></ol></pre></li>
+<li><p>Sum</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pun">&gt;&gt;&gt;</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="pln">all</span><span class="pun">().</span><span class="pln">aggregate</span><span class="pun">(</span><span class="typ">Sum</span><span class="pun">(</span><span class="str">'bread'</span><span class="pun">))</span></code></li><li class="L1"><code><span class="pun">{</span><span class="str">'bread__sum'</span><span class="pun">:</span><span class="pln"> </span><span class="typ">Decimal</span><span class="pun">(</span><span class="str">'28'</span><span class="pun">)}</span></code></li></ol></pre></li></ul></li></ul></li>
+<li><p>排序 <br>
+order_by(排序字段) <br>
+默认升序，如果需要降序，前面添加减号</p></li>
+<li><p>关联查询</p>
+
+<ol><li><p>通过模型对象查询</p>
+
+<ul><li>规则 <br>
+<ol><li>有一了，通过 模型名称_set.all() 查询多的所有对象</li>
+<li>有多了，通过 关联属性 查询一的对象</li></ol></li>
+<li><p>例子（多次查询）</p>
+
+<ol><li><p>查询图书id为1的所有英雄的信息。</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">book </span><span class="pun">=</span><span class="pln"> </span><span class="typ">BookInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="pln">id</span><span class="pun">=</span><span class="lit">1</span><span class="pun">)</span></code></li><li class="L1"><code><span class="pln">book</span><span class="pun">.</span><span class="pln">heroinfo_set</span><span class="pun">.</span><span class="pln">all</span><span class="pun">()</span></code></li></ol></pre>
+
+<p>等价于</p>
+
+<p><code>HeroInfo.objects.filter(hbook__id==1)</code></p></li>
+<li><p>查询id为1的英雄所属图书信息</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">hero </span><span class="pun">=</span><span class="typ">HeroInfo</span><span class="pun">.</span><span class="pln">objects</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="pln">id</span><span class="pun">=</span><span class="lit">1</span><span class="pun">)</span></code></li><li class="L1"><code><span class="pln">hero</span><span class="pun">.</span><span class="pln">hbook</span></code></li></ol></pre>
+
+<p>等价于 <br>
+<code>BookInfo.objects.filter(heroinfo__id=1)</code></p></li></ol></li>
+<li><p>从多查一</p></li></ul></li>
+<li><p>通过objects查询</p>
+
+<ul><li><p>规则</p>
+
+<ol><li>先确定要查什么信息，就用什么模型的objects</li>
+<li>再看查询条件 <br>
+<ol><li>如果当前模型类中有另一个的关联属性，则 <code>关联属性__字段__条件</code></li>
+<li>如果当前模型类中没有另一个的关联属性，则 <code>类名__字段__条件</code></li></ol></li></ol></li>
+<li><p>例子（一次查询）</p>
+
+<ol><li><p>例：查询图书信息，要求图书中英雄的描述包含'八'。 <br>
+<code>BookInfo.objects.filter(heroinfo__hcomment__contains='八')</code> <br>
+<img src="http://static.zybuluo.com/jsutqb/23v5t9rdgj2akak370cs4dkg/image_1buqi54pjipk1lim1cd3pre1v4g2q.png" alt="image_1buqi54pjipk1lim1cd3pre1v4g2q.png-27.1kB"></p></li>
+<li><p>例：查询图书信息，要求图书中的英雄的id大于3. <br>
+<code>BookInfo.objects.filter(heroinfo__id__gt=3)</code> <br>
+<img src="http://static.zybuluo.com/jsutqb/ys7l4cvk9vby06d7d5a26ti5/image_1buqicmom1ssv1d73l7tan71toh37.png" alt="image_1buqicmom1ssv1d73l7tan71toh37.png-25.6kB"></p></li>
+<li>例：查询书名为“天龙八部”的所有英雄。 <br>
+<code>HeroInfo.objects.filter(hbook__btitle='天龙八部')</code> <br>
+<img src="http://static.zybuluo.com/jsutqb/tgmdeea75xd11z1wz9zncrov/image_1buqiklchud61tf01tn17i6rl03k.png" alt="image_1buqiklchud61tf01tn17i6rl03k.png-24.8kB"></li></ol></li></ul></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="7u9a" id="12关联查询再次说明">！12_关联查询再次说明</h2><ol data-anchor-id="3l8r">
+<li>根据规则慢慢思考</li>
+<li>可以通过对象关联查询的话，可以不会通过objects进行关联查询</li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="nfy5" id="13数据库修改与删除">13_数据库修改与删除</h2><ul data-anchor-id="88qj">
+<li><p>修改</p>
+
+<ol><li>模型对象的save方法 <br>
+如果已经存在，就是更新，如果不存在，则新增</li>
+<li>update <br>
+对于多条数据，性能高 <br>
+返回结果是影响的行数</li></ol></li>
+<li><p>删除</p>
+
+<ol><li>[补充]模型对象的delete方法</li>
+<li>delete <br>
+对于多条数据，性能高 <br>
+返回结果是影响的行数</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="m41j" id="14模型类补充str方法">14_模型类补充<strong>str</strong>方法</h2><ul data-anchor-id="zm19">
+<li><code>__str__</code> <br>
+对于模型对象整体的命令行展示，会调用此方法，默认实现没有意义 <br>
+可以重写这个方法，返回一个有意义的字符串，用来区分对象</li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="uute" id="15查询集queryset">15_查询集QuerySet</h2><ul data-anchor-id="jae3">
+<li>QuerySet 查询集 <br>
+<ul><li>特点 <br>
+<ol><li>惰性 (还可以链式调用)</li>
+<li>缓存</li></ol></li>
+<li>切片 <br>
+<ol><li>[m:n] 可以返回一个新的查询集(一般用于分页)</li>
+<li>不支持负向索引</li></ol></li>
+<li>[补充]下标 <br>
+<ol><li>返回一个模型对象</li>
+<li>不支持负向索引</li></ol></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="87ho" id="16模型管理器">16_模型管理器</h2><ul data-anchor-id="ah88">
+<li><p>模型类管理器 (django.db.models.Manager)</p>
+
+<ol><li>是一个类属性，如果不写，则默认会提供一个名为objects的对象</li>
+<li>如果写了，则不会提供默认的</li>
+<li>一般就算自己写了，名字也叫objects</li></ol></li>
+<li><p>自定义模型管理器</p>
+
+<ul><li>目的 <br>
+<ol><li>修改默认的方法</li>
+<li>提供自己需要的方法</li></ol></li>
+<li>步骤 <br>
+<ol><li>定义一个类，继承于django.db.models.Manager</li>
+<li>覆盖父类的方法 或者 提供新的方法</li>
+<li>在模型类中定义类属性，为自定义类的实例对象</li></ol></li></ul></li>
+<li><p>注意</p>
+
+<ol><li>自定义管理器的名字，如果用于特定的模型，名字会叫做 模型名称Manager</li>
+<li>如果没有强烈理由，模型中的模型管理器类属性，的名称，一般都是objects，</li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="5n8a" id="17django使用模板方式">17_Django使用模板方式</h2><p data-anchor-id="dhh1">使用步骤</p><ol data-anchor-id="xuvc">
+<li>配置模板文件夹 <br>
+settings.py -&gt;TEMPLATES -&gt; 'DIRS': [os.path.join(BASE_DIR,'templates')],</li>
+<li>新建模板文件 <br>
+html +  模板特定语法</li>
+<li><p>在视图中使用模板</p>
+
+<ol><li><p>完整步骤</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code class="language-python"><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">http </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">HttpResponse</span></code></li><li class="L1"><code class="language-python"><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">template </span><span class="kwd">import</span><span class="pln"> loader</span></code></li><li class="L2"><code class="language-python"></code></li><li class="L3"><code class="language-python"><span class="kwd">def</span><span class="pln"> index</span><span class="pun">(</span><span class="pln">request</span><span class="pun">):</span></code></li><li class="L4"><code class="language-python"><span class="pln">    </span><span class="com"># 1.获取模板</span></code></li><li class="L5"><code class="language-python"><span class="pln">    template</span><span class="pun">=</span><span class="pln">loader</span><span class="pun">.</span><span class="pln">get_template</span><span class="pun">(</span><span class="str">'index.html'</span><span class="pun">)</span></code></li><li class="L6"><code class="language-python"></code></li><li class="L7"><code class="language-python"><span class="pln">    context</span><span class="pun">={</span><span class="str">'city'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'北京'</span><span class="pun">}</span></code></li><li class="L8"><code class="language-python"><span class="pln">    </span><span class="com"># 2.渲染模板</span></code></li><li class="L9"><code class="language-python"><span class="pln">    </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">HttpResponse</span><span class="pun">(</span><span class="pln">template</span><span class="pun">.</span><span class="pln">render</span><span class="pun">(</span><span class="pln">context</span><span class="pun">))</span></code></li></ol></pre></li>
+<li><p>简写步骤(建议使用)</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code class="language-python"><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">shortcuts </span><span class="kwd">import</span><span class="pln"> render</span></code></li><li class="L1"><code class="language-python"></code></li><li class="L2"><code class="language-python"><span class="kwd">def</span><span class="pln"> index</span><span class="pun">(</span><span class="pln">request</span><span class="pun">):</span></code></li><li class="L3"><code class="language-python"><span class="pln">    context</span><span class="pun">={</span><span class="str">'city'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'北京'</span><span class="pun">}</span></code></li><li class="L4"><code class="language-python"><span class="pln">    </span><span class="kwd">return</span><span class="pln"> render</span><span class="pun">(</span><span class="pln">request</span><span class="pun">,</span><span class="str">'index.html'</span><span class="pun">,</span><span class="pln">context</span><span class="pun">)</span></code></li></ol></pre></li></ol></li>
+</ol><div class="md-section-divider"></div><h2 data-anchor-id="lpsk" id="18django模板语法">18_Django模板语法</h2><ul data-anchor-id="2ul7">
+<li>模板变量 <br>
+<ul><li>简单使用 <br>
+<code>{{ 变量名称 }}</code>  变量名称就是字典中的key，会被替换为值</li>
+<li>复杂使用(带点) <br>
+<ol><li>会把点前面的看作字典 ，点后面的看作键</li>
+<li>会把点前面的看作对象 ，点后面的看作方法 或者是 属性</li>
+<li>会把点前面的看作列表 ，点后面的下标</li></ol></li></ul></li>
+<li><p>模板标签</p>
+
+<ul><li><p>if</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code class="language-python"><span class="pun">{%</span><span class="pln"> </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">%}</span></code></li><li class="L1"><code class="language-python"><span class="pun">逻辑</span><span class="lit">1</span></code></li><li class="L2"><code class="language-python"><span class="pun">{%</span><span class="pln"> </span><span class="kwd">elif</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">%}</span></code></li><li class="L3"><code class="language-python"><span class="pun">逻辑</span><span class="lit">2</span></code></li><li class="L4"><code class="language-python"><span class="pun">{%</span><span class="pln"> </span><span class="kwd">else</span><span class="pln"> </span><span class="pun">%}</span></code></li><li class="L5"><code class="language-python"><span class="pun">逻辑</span><span class="lit">3</span></code></li><li class="L6"><code class="language-python"><span class="pun">{%</span><span class="pln"> endif </span><span class="pun">%}</span></code></li></ol></pre>
+
+<p>if 中可以使用的条件表达式 <br>
+注意两边多空格</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pun">==</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pun">!=</span></code></li><li class="L3"><code><span class="pun">&lt;</span></code></li><li class="L4"><code><span class="pun">&gt;</span></code></li><li class="L5"><code><span class="pun">&lt;=</span></code></li><li class="L6"><code><span class="pun">&gt;=</span></code></li></ol></pre>
+
+<p>布尔运算符如下：</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">and</span></code></li><li class="L1"><code><span class="kwd">or</span></code></li><li class="L2"><code><span class="kwd">not</span></code></li></ol></pre></li>
+<li>for</li></ul>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code class="language-python"><span class="pun">{%</span><span class="pln"> </span><span class="kwd">for</span><span class="pln"> item </span><span class="kwd">in</span><span class="pln"> </span><span class="pun">列表</span><span class="pln"> </span><span class="pun">%}</span></code></li><li class="L1"><code class="language-python"></code></li><li class="L2"><code class="language-python"><span class="pun">循环逻辑</span></code></li><li class="L3"><code class="language-python"><span class="pun">{{</span><span class="pln">forloop</span><span class="pun">.</span><span class="pln">counter</span><span class="pun">}}表示当前是第几次循环，从</span><span class="lit">1</span><span class="pun">开始</span></code></li><li class="L4"><code class="language-python"><span class="pun">{%</span><span class="pln">empty</span><span class="pun">%}</span><span class="pln"> </span><span class="pun">列表为空或不存在时执行此逻辑</span></code></li><li class="L5"><code class="language-python"></code></li><li class="L6"><code class="language-python"><span class="pun">{%</span><span class="pln"> endfor </span><span class="pun">%}</span></code></li></ol></pre></li>
+<li><p>过滤器</p>
+
+<ul><li>使用管道符号|来应用过滤器，用于进行计算、转换操作，可以使用在变量、标签中。</li>
+<li><p>如果过滤器需要参数，则使用冒号:传递参数。</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code class="language-python"><span class="pun">变量|过滤器:参数</span></code></li></ol></pre></li></ul></li>
+<li><p>注释</p>
+
+<ul><li><p>单行注释</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code class="language-python"><span class="pun">{#...#}</span></code></li></ol></pre></li>
+<li><p>多行注释</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code class="language-python"><span class="pun">{%</span><span class="pln"> comment </span><span class="pun">%}</span></code></li><li class="L1"><code class="language-python"><span class="pun">...</span></code></li><li class="L2"><code class="language-python"><span class="pun">{%</span><span class="pln"> endcomment </span><span class="pun">%}</span></code></li></ol></pre></li></ul></li>
+<li><p>模板继承</p>
+
+<ul><li><p>继承 <br>
+父模板是一个完整的html，但子模板只能通过块的形式覆盖内容</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pun">{%</span><span class="pln"> </span><span class="kwd">extends</span><span class="pln"> </span><span class="str">"父模板路径"</span><span class="pun">%}</span></code></li></ol></pre></li>
+<li><p>块的定义和继承</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pun">{%</span><span class="pln"> block </span><span class="pun">名称</span><span class="pln"> </span><span class="pun">%}</span></code></li><li class="L1"><code><span class="pun">实际填充内容</span></code></li><li class="L2"><code><span class="pun">{{</span><span class="pln"> block</span><span class="pun">.</span><span class="kwd">super</span><span class="pln"> </span><span class="pun">}}用于获取父模板中</span><span class="pln">block</span><span class="pun">的内容</span></code></li><li class="L3"><code><span class="pun">{%</span><span class="pln"> endblock </span><span class="pun">名称</span><span class="pln"> </span><span class="pun">%}</span></code></li></ol></pre></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="mxzd" id="总结">总结</h2><ul data-anchor-id="vztm">
+<li><p>模型</p>
+
+<ol><li>mysql数据库配置</li>
+<li>定义模型类</li>
+<li>模型的查询方法 <br>
+<img src="http://static.zybuluo.com/jsutqb/ijewaxyzqv4yvjgmdfal1m98/image_1cadrr4gq185l17o41nir1nq615te9.png" alt="此处输入图片的描述"></li>
+<li>QuerySet的特点</li>
+<li>关联查询</li></ol></li>
+<li><p>模板</p>
+
+<ul><li>定义步骤</li>
+<li>模板语法</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="s9u1" id="重点及作业">重点及作业</h2><ul data-anchor-id="fo54">
+<li><p>必须掌握</p>
+
+<ol><li>mysql数据库配置</li>
+<li>模型类的定义 (看笔记)</li>
+<li>数据库的迁移</li>
+<li>数据的增删改</li>
+<li>查： get\filter\exclude\all  order_by</li>
+<li>QuerySet (惰性、缓存) 切片 下标</li>
+<li>关联查询</li></ol></li>
+<li><p>最好掌握 <br>
+F对象  、Q对象 、聚合、模型管理器</p></li>
+<li><p>做什么</p>
+
+<ol><li>配置mysql数据库</li>
+<li>图书模型类 和 英雄模型类 (<code>__str__</code>)</li>
+<li>导入已经提供的数据</li>
+<li>练习增删改<strong>查</strong> (可以在tests.py中写好，贴到交互终端中)</li>
+<li>练习关联查询</li></ol></li>
+</ul></div>
+<a href="2.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="4.html">下一页</a>
+</body>
+</html>

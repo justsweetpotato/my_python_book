@@ -1,0 +1,429 @@
+﻿<!DOCTYPE html>
+<html class="theme theme-white">
+<head>
+<meta charset="utf-8">
+ <a href="6.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="8.html">下一页</a>
+<title>Django-4.0-Day7</title>
+<link href="https://www.zybuluo.com/static/assets/template-theme-white.css" rel="stylesheet" media="screen">
+<style type="text/css">
+
+#wmd-preview h1  {
+    color: #0077bb; /* 将标题改为蓝色 */
+}</style>
+</head>
+<body class="theme theme-white">
+<div id="wmd-preview" class="wmd-preview wmd-preview-full-reader"><div class="md-section-divider"></div><div class="md-section-divider"></div><h1 data-anchor-id="i1at" id="django-40-day7">Django-4.0-Day7</h1><p data-anchor-id="y0y1"><code>django</code></p><hr><div class="md-section-divider"></div><h2 data-anchor-id="53ep" id="01知识点复习">01_知识点复习</h2><ul data-anchor-id="6aj6">
+<li><p>APIView <br>
+重点，视图类的基类</p>
+
+<ul><li><p>功能</p>
+
+<ol><li>转化请求和响应(parser +  render)</li>
+<li>访问控制 <br>
+<ol><li>认证</li>
+<li>权限校验</li>
+<li>限流</li></ol></li>
+<li>转化异常</li></ol></li>
+<li><p>属性定义</p>
+
+<ul><li>配置认证类 authentication_classes</li>
+<li>配置权限检查类 permissoin_classes </li>
+<li>配置限流类 throttle_classes</li></ul></li>
+<li><p>方法定义</p>
+
+<ul><li>get_exception_handler</li></ul></li></ul></li>
+<li><p>GenericApiView <br>
+是APIView的子类 <br>
+提供模型查询集 和 序列化相关方法和属性</p>
+
+<ul><li>属性配置(常用，必传) <br>
+queryset 列表视图的查询集 <br>
+serializer_class 视图使用的序列化器</li>
+<li>属性配置(不常用) <br>
+<ul><li>一般项目整体配置  <br>
+pagination_class 分页控制类 <br>
+filter_backends 过滤控制后端</li>
+<li>一般不配置，默认即可 <br>
+lookup_field 查询单一数据库对象时使用的条件字段，默认为'pk' <br>
+lookup_url_kwarg 查询单一数据时URL中的参数关键字名称，默认与look_field相同</li></ul></li>
+<li>方法配置 <br>
+get_serializer_class 后面视图集的时候，可以根据action返回不同的序列化类</li></ul></li>
+<li><p>扩展类 Mixin <br>
+通常和GenericApiView一起使用。自定义类多继承，把Mixin放在前面，把GenericApiView放后面</p>
+
+<ul><li>类和功能 <br>
+<ul><li>ListModelMixin</li>
+<li>CreateModelMixin</li>
+<li>RetrieveModelMixin</li>
+<li>UpdateModelMixin</li>
+<li>DestroyModelMixin</li></ul></li></ul></li>
+<li><p>已提供常用的模型相关视图类 <br>
+一般只需要简单配置queryset 和 serializer_class 类属性即可使用</p></li>
+<li><p>视图集 <br>
+多个url规则可以指向同一个视图类， 称为视图集</p>
+
+<ul><li>核心 <br>
+在配置url的时候，在as_view方法中指定请求方式和action方法之间的映射关系</li>
+<li>步骤 <br>
+<ol><li>定义视图集类</li>
+<li>配置url指定映射关系</li></ol></li>
+<li>常用的视图集 <br>
+<ul><li>ModelViewSet</li>
+<li>ReadOnlyModelViewSet</li></ul></li></ul></li>
+<li><p>路由 <br>
+简化视图集的配置</p>
+
+<ul><li>规则 <br>
+对于rest风格规定的方法，会自动映射 <br>
+对于自定义的action方法，需要添加 rest_framework.decorators.action装饰才能被路由发现</li>
+<li>使用方式 <br>
+urls.py <br>
+<ol><li>创建Router对象 <br>
+<code>router = routers.SimpleRouter()</code></li>
+<li>注册视图集 <br>
+<code>router.register(r'books', BookInfoViewSet, base_name='book')</code></li>
+<li>添加到urlpatterns <br>
+<ol><li>urlpatterns += router.urls</li>
+<li>include('^' , include(router.urls))</li></ol></li></ol></li></ul></li>
+<li><p>高级 <br>
+默认配置、项目级别配置、视图级别配置</p>
+
+<ul><li>访问控制 <br>
+<ul><li>认证</li>
+<li>权限</li>
+<li>限流</li></ul></li>
+<li>列表 <br>
+<ul><li>过滤</li>
+<li>分页</li></ul></li>
+<li>版本</li>
+<li>异常</li></ul></li>
+<li><p>文档</p>
+
+<ul><li>coreapi</li>
+<li>只对APIView及其子类有效</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="ayce" id="02每日反馈解答">02_每日反馈解答</h2><div class="md-section-divider"></div><h2 data-anchor-id="9kvw" id="03项目简介">03_项目简介</h2><ul data-anchor-id="lyxn">
+<li><p>美多商城 <br>
+电子商务类网站</p></li>
+<li><p>好处</p>
+
+<ul><li>业务容易理解 (专注于功能开发)</li>
+<li>使用到的技术点比较多，综合运用前面的知识</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="5w7j" id="04电商的商业模式">04_电商的商业模式</h2><ol data-anchor-id="co2s">
+<li>B2B--企业对企业 <br>
+案例:阿里巴巴、慧聪网 </li>
+<li>C2C--个人对个人 <br>
+案例:淘宝、易趣、瓜子二手车</li>
+<li>B2C--企业对个人 <br>
+案例:唯品会、乐蜂网 </li>
+<li>C2B--个人对企业  <br>
+案例:海尔商城、 尚品宅配 </li>
+<li>O2O--线上到线下  <br>
+案例:美团、饿了吗 </li>
+<li>F2C--工厂到个人  <br>
+案例:戴尔</li>
+<li>B2B2C -企业-企业-个人  <br>
+案例:京东商城、天猫商城 </li>
+</ol><p data-anchor-id="8mi1">美多商城是B2C模式</p><div class="md-section-divider"></div><h2 data-anchor-id="45vv" id="05项目开发的流程">05_项目开发的流程</h2><ul data-anchor-id="sdps">
+<li><p>开发流程</p>
+
+<p><img src="http://static.zybuluo.com/jsutqb/eyms5n20qko3mstprokt37wz/%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B.png" alt="开发流程.png-77.4kB"></p></li>
+<li><p>注意</p>
+
+<ul><li>架构设计 <br>
+分析可能用到的技术点 <br>
+前后端是否分离 <br>
+前端使用哪些框架 <br>
+后端使用哪些框架 <br>
+选择什么数据库 <br>
+如何实现缓存 <br>
+是否搭建分布式服务 <br>
+如何管理源代码</li>
+<li>数据库设计 <br>
+数据库表的设计至关重要 <br>
+根据项目需求，设计合适的数据库表 <br>
+数据库表在前期如果设计不合理，后期随需求增加会变得难以维护</li>
+<li>集成测试 <br>
+在测试阶段要留意测试反馈平台的bug报告</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="co5i" id="06后端需要思考设计的技术点">06_后端需要思考设计的技术点</h2><ul data-anchor-id="wdyj">
+<li><p>项目的目的</p>
+
+<ul><li>熟练掌握框架的使用</li>
+<li>理解业务逻辑，并用代码实现</li>
+<li>掌握实现业务中功能的技术点</li>
+<li>能够举一反三</li></ul></li>
+<li><p>注意 跟上！</p>
+
+<ul><li>项目是个连续的过程，前面没搞清楚，后面搞不懂</li>
+<li>上课注意听 (理解)</li>
+<li>多花时间敲代码 (实践)</li>
+<li>卡住后求助 (避免浪费时间)</li>
+<li>充分利用"学习"时间  并 根据个人情况利用"休息"时间</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="udeb" id="07项目业务需求说明">07_项目业务需求说明</h2><ul data-anchor-id="qitt">
+<li>用户模块 <br>
+<ol><li>用户注册</li>
+<li>用户登录</li>
+<li>找回密码</li>
+<li>第三方登录(QQ)</li>
+<li>用户中心 <br>
+<ul><li>浏览记录</li>
+<li>地址管理</li></ul></li></ol></li>
+<li>商品模块 <br>
+<ul><li>首页 <br>
+<ul><li>商品类别</li>
+<li>静态化</li></ul></li>
+<li>列表页</li>
+<li>详情页</li>
+<li>搜索</li></ul></li>
+<li>购物车模块 <br>
+<ul><li>购物车的增删改查</li>
+<li>区分登录与未登录购物车</li></ul></li>
+<li>订单模块 <br>
+<ul><li>订单结算</li>
+<li>订单列表</li>
+<li>订单评价</li>
+<li>支付宝支付</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="4i0e" id="08项目技术架构说明">08_项目技术架构说明</h2><ul data-anchor-id="z3m6">
+<li>前后端分离的项目架构 <br>
+<ul><li>前端 vue</li>
+<li>后端 django +  drf</li></ul></li>
+</ul><p data-anchor-id="3slq"><img src="http://static.zybuluo.com/jsutqb/cr35s8hueadubj7jymz0dw21/%E7%BE%8E%E5%A4%9A%E5%95%86%E5%9F%8E%E6%9E%B6%E6%9E%84.png" alt="美多商城架构.png-83kB"></p><div class="md-section-divider"></div><h2 data-anchor-id="twgg" id="09项目创建">09_项目创建</h2><ul data-anchor-id="wfxf">
+<li><p>基本思路</p>
+
+<ul><li>建立项目</li>
+<li>建立应用(目录)</li>
+<li>具体细节模型在实现的时候再讲</li></ul></li>
+<li><p>版本控制</p>
+
+<ul><li>选取gitee</li>
+<li>公司中开发会搭建私有的git服务器</li>
+<li>在码云上建立私有项目并添加.gitignore文件</li>
+<li>克隆项目</li>
+<li>建立dev分支</li>
+<li>添加前端文件夹</li>
+<li>提交到远程仓库</li>
+<li>添加合并请求</li>
+<li>[项目中其他人]进行代码审查、测试后 合并代码</li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="4uhu" id="10前端静态文件服务器liveserver的使用">10_前端静态文件服务器live_server的使用</h2><ul data-anchor-id="kjmf">
+<li>使用live_server访问前端资源 <br>
+<ol><li>安装live_server <br>
+<code>npm install -g live-server</code></li>
+<li>运行live_server <br>
+先切换到静态文件目录 <br>
+执行命令 <br>
+<code>live-server</code> <br>
+访问 <a href="http://127.0.0.1:8080" target="_blank">http://127.0.0.1:8080</a></li></ol></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="2fwe" id="11git使用ssh的说明">11_git使用ssh的说明</h2><ul data-anchor-id="p55d">
+<li><p>使用ssh进行git提交可以进行免密码认证</p>
+
+<ol><li>在本地电脑上生成公私钥</li>
+<li>把公钥添加到git服务器的仓库配置中</li>
+<li>把私钥放在本地当前用户家目录的</li>
+<li>使用命令进行免密代码提交</li></ol></li>
+<li><p>参考 <br>
+<a href="http://git.mydoc.io/?t=154712" target="_blank">http://git.mydoc.io/?t=154712</a></p></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="yeih" id="12工程配置">12_工程配置</h2><ul data-anchor-id="ctxx">
+<li><p>创建项目及目录 <br>
+<img src="http://static.zybuluo.com/jsutqb/fcuyiyjfvn7xs2v1k9c191v4/image_1ch8olgrm1dmo1gam3te1j331q6p1q.png" alt="image_1ch8olgrm1dmo1gam3te1j331q6p1q.png-170.5kB"></p>
+
+<ul><li><p>创建命令</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln"> </span><span class="com"># 进入虚拟环境 切换到最外面的meiduo_mall目录里</span></code></li><li class="L1"><code><span class="pln">django</span><span class="pun">-</span><span class="pln">admin startproject meiduo_mall</span></code></li><li class="L2"><code><span class="pln">cd meiduo_mall</span><span class="pun">/</span></code></li><li class="L3"><code><span class="pln">mkdir celery_tasks docs logs scripts</span></code></li><li class="L4"><code><span class="pln">cd meiduo_mall</span><span class="pun">/</span></code></li><li class="L5"><code><span class="pln">mkdir apps libs settings templates utils</span></code></li><li class="L6"><code><span class="pln">touch apps</span><span class="pun">/</span><span class="pln">__init__</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L7"><code><span class="pln">touch settings</span><span class="pun">/</span><span class="pln">__init__</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L8"><code><span class="pln">touch libs</span><span class="pun">/</span><span class="pln">__init__</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L9"><code><span class="pln">touch utils</span><span class="pun">/</span><span class="pln">__init__</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L0"><code><span class="pln">mv settings</span><span class="pun">.</span><span class="pln">py settings</span><span class="pun">/</span><span class="pln">dev</span><span class="pun">.</span><span class="pln">py</span></code></li><li class="L1"><code><span class="pln">touch settings</span><span class="pun">/</span><span class="pln">prod</span><span class="pun">.</span><span class="pln">py</span></code></li></ol></pre></li></ul></li>
+<li><p>修改开发配置文件</p>
+
+<ul><li>本地化</li>
+<li>BASE_DIR不需要变</li>
+<li><p>设置python导包环境</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln"> </span><span class="com"># 在BASE_DIR下面</span></code></li><li class="L1"><code><span class="pln"> </span><span class="kwd">import</span><span class="pln"> sys</span></code></li><li class="L2"><code><span class="pln"> sys</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="lit">0</span><span class="pun">,</span><span class="pln"> os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">join</span><span class="pun">(</span><span class="pln">BASE_DIR</span><span class="pun">,</span><span class="str">"apps"</span><span class="pun">))</span></code></li></ol></pre>
+
+<ul><li>优点 <br>
+简化应用的配置，省略apps.</li>
+<li>缺点 <br>
+pycharm 代码提示功能失效</li></ul></li>
+<li><p>配置数据库</p>
+
+<ul><li>建立数据库 <br>
+<code>create database meiduo_mall default charset=utf8;</code></li>
+<li>建立mysql用户 <br>
+<code>create user meiduo identified by 'meiduo';</code></li>
+<li>授权用户 <br>
+<code>grant all on meiduo_mall.* to 'meiduo'@'%'; <br>
+flush privileges;</code></li>
+<li><p>配置数据库</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">DATABASES </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'default'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">'ENGINE'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'django.db.backends.mysql'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">        </span><span class="str">'HOST'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'127.0.0.1'</span><span class="pun">,</span><span class="pln">  </span><span class="com"># 数据库主机</span></code></li><li class="L4"><code><span class="pln">        </span><span class="str">'PORT'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">3306</span><span class="pun">,</span><span class="pln">  </span><span class="com"># 数据库端口</span></code></li><li class="L5"><code><span class="pln">        </span><span class="str">'USER'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'meiduo'</span><span class="pun">,</span><span class="pln">  </span><span class="com"># 数据库用户名</span></code></li><li class="L6"><code><span class="pln">        </span><span class="str">'PASSWORD'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'meiduo'</span><span class="pun">,</span><span class="pln">  </span><span class="com"># 数据库用户密码</span></code></li><li class="L7"><code><span class="pln">        </span><span class="str">'NAME'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'meiduo_mall'</span><span class="pln">  </span><span class="com"># 数据库名字</span></code></li><li class="L8"><code><span class="pln">    </span><span class="pun">}</span></code></li><li class="L9"><code><span class="pun">}</span></code></li></ol></pre></li></ul></li>
+<li><p>配置redis</p>
+
+<ol><li>作为缓存</li>
+<li>作为session存储</li></ol>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">CACHES </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"default"</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">"BACKEND"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"django_redis.cache.RedisCache"</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">        </span><span class="str">"LOCATION"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"redis://127.0.0.1:6379/0"</span><span class="pun">,</span></code></li><li class="L4"><code><span class="pln">        </span><span class="str">"OPTIONS"</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L5"><code><span class="pln">            </span><span class="str">"CLIENT_CLASS"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"django_redis.client.DefaultClient"</span><span class="pun">,</span></code></li><li class="L6"><code><span class="pln">        </span><span class="pun">}</span></code></li><li class="L7"><code><span class="pln">    </span><span class="pun">},</span></code></li><li class="L8"><code><span class="pln">    </span><span class="str">"session"</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L9"><code><span class="pln">        </span><span class="str">"BACKEND"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"django_redis.cache.RedisCache"</span><span class="pun">,</span></code></li><li class="L0"><code><span class="pln">        </span><span class="str">"LOCATION"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"redis://127.0.0.1:6379/1"</span><span class="pun">,</span></code></li><li class="L1"><code><span class="pln">        </span><span class="str">"OPTIONS"</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L2"><code><span class="pln">            </span><span class="str">"CLIENT_CLASS"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"django_redis.client.DefaultClient"</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">        </span><span class="pun">}</span></code></li><li class="L4"><code><span class="pln">    </span><span class="pun">},</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pun">}</span></code></li><li class="L7"><code><span class="pln">SESSION_ENGINE </span><span class="pun">=</span><span class="pln"> </span><span class="str">"django.contrib.sessions.backends.cache"</span></code></li><li class="L8"><code><span class="pln">SESSION_CACHE_ALIAS </span><span class="pun">=</span><span class="pln"> </span><span class="str">"session"</span></code></li></ol></pre></li>
+<li><p>配置django日志</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">LOGGING </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'version'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">1</span><span class="pun">,</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">'disable_existing_loggers'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">False</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">    </span><span class="str">'formatters'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L4"><code><span class="pln">        </span><span class="str">'verbose'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L5"><code><span class="pln">            </span><span class="str">'format'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'%(levelname)s %(asctime)s %(module)s %(lineno)d %(message)s'</span></code></li><li class="L6"><code><span class="pln">        </span><span class="pun">},</span></code></li><li class="L7"><code><span class="pln">        </span><span class="str">'simple'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L8"><code><span class="pln">            </span><span class="str">'format'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'%(levelname)s %(module)s %(lineno)d %(message)s'</span></code></li><li class="L9"><code><span class="pln">        </span><span class="pun">},</span></code></li><li class="L0"><code><span class="pln">    </span><span class="pun">},</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'filters'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">'require_debug_true'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L3"><code><span class="pln">            </span><span class="str">'()'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'django.utils.log.RequireDebugTrue'</span><span class="pun">,</span></code></li><li class="L4"><code><span class="pln">        </span><span class="pun">},</span></code></li><li class="L5"><code><span class="pln">    </span><span class="pun">},</span></code></li><li class="L6"><code><span class="pln">    </span><span class="str">'handlers'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L7"><code><span class="pln">        </span><span class="str">'console'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L8"><code><span class="pln">            </span><span class="str">'level'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'DEBUG'</span><span class="pun">,</span></code></li><li class="L9"><code><span class="pln">            </span><span class="str">'filters'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">[</span><span class="str">'require_debug_true'</span><span class="pun">],</span></code></li><li class="L0"><code><span class="pln">            </span><span class="str">'class'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'logging.StreamHandler'</span><span class="pun">,</span></code></li><li class="L1"><code><span class="pln">            </span><span class="str">'formatter'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'simple'</span></code></li><li class="L2"><code><span class="pln">        </span><span class="pun">},</span></code></li><li class="L3"><code><span class="pln">        </span><span class="str">'file'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L4"><code><span class="pln">            </span><span class="str">'level'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'INFO'</span><span class="pun">,</span></code></li><li class="L5"><code><span class="pln">            </span><span class="str">'class'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'logging.handlers.RotatingFileHandler'</span><span class="pun">,</span></code></li><li class="L6"><code><span class="pln">            </span><span class="str">'filename'</span><span class="pun">:</span><span class="pln"> os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">join</span><span class="pun">(</span><span class="pln">os</span><span class="pun">.</span><span class="pln">path</span><span class="pun">.</span><span class="pln">dirname</span><span class="pun">(</span><span class="pln">BASE_DIR</span><span class="pun">),</span><span class="pln"> </span><span class="str">"logs/meiduo.log"</span><span class="pun">),</span></code></li><li class="L7"><code><span class="pln">            </span><span class="str">'maxBytes'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">300</span><span class="pln"> </span><span class="pun">*</span><span class="pln"> </span><span class="lit">1024</span><span class="pln"> </span><span class="pun">*</span><span class="pln"> </span><span class="lit">1024</span><span class="pun">,</span></code></li><li class="L8"><code><span class="pln">            </span><span class="str">'backupCount'</span><span class="pun">:</span><span class="pln"> </span><span class="lit">10</span><span class="pun">,</span></code></li><li class="L9"><code><span class="pln">            </span><span class="str">'formatter'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'verbose'</span></code></li><li class="L0"><code><span class="pln">        </span><span class="pun">},</span></code></li><li class="L1"><code><span class="pln">    </span><span class="pun">},</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">'loggers'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L3"><code><span class="pln">        </span><span class="str">'django'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L4"><code><span class="pln">            </span><span class="str">'handlers'</span><span class="pun">:</span><span class="pln"> </span><span class="pun">[</span><span class="str">'console'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'file'</span><span class="pun">],</span></code></li><li class="L5"><code><span class="pln">            </span><span class="str">'propagate'</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">True</span><span class="pun">,</span></code></li><li class="L6"><code><span class="pln">        </span><span class="pun">},</span></code></li><li class="L7"><code><span class="pln">    </span><span class="pun">}</span></code></li><li class="L8"><code><span class="pun">}</span></code></li></ol></pre></li>
+<li><p>修改manage.py中加载的配置文件 <br>
+manage.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln"> </span><span class="com"># os.environ.setdefault("DJANGO_SETTINGS_MODULE", "meiduo_mall.settings")</span></code></li><li class="L1"><code><span class="pln">os</span><span class="pun">.</span><span class="pln">environ</span><span class="pun">.</span><span class="pln">setdefault</span><span class="pun">(</span><span class="str">"DJANGO_SETTINGS_MODULE"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"meiduo_mall.settings.dev"</span><span class="pun">)</span></code></li></ol></pre></li></ul></li>
+<li>注意 <br>
+如果虚拟机使用了桥接，则ip可能变化，所以各种数据库ip最好使用127.0.0.1</li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="fpex" id="13补充数据库异常处理">13_补充数据库异常处理</h2><ul data-anchor-id="ngcr">
+<li><p>创建异常处理函数 <br>
+utils/exceptions.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">views </span><span class="kwd">import</span><span class="pln"> exception_handler </span><span class="kwd">as</span><span class="pln"> drf_exception_handler</span></code></li><li class="L1"><code><span class="kwd">import</span><span class="pln"> logging</span></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">db </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">DatabaseError</span></code></li><li class="L3"><code><span class="kwd">from</span><span class="pln"> redis</span><span class="pun">.</span><span class="pln">exceptions </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">RedisError</span></code></li><li class="L4"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">response </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">Response</span></code></li><li class="L5"><code><span class="kwd">from</span><span class="pln"> rest_framework </span><span class="kwd">import</span><span class="pln"> status</span></code></li><li class="L6"><code></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="pln">logger </span><span class="pun">=</span><span class="pln"> logging</span><span class="pun">.</span><span class="pln">getLogger</span><span class="pun">(</span><span class="str">'django'</span><span class="pun">)</span></code></li><li class="L9"><code></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="kwd">def</span><span class="pln"> exception_handler</span><span class="pun">(</span><span class="pln">exc</span><span class="pun">,</span><span class="pln"> context</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">"""</span></code></li><li class="L3"><code><span class="str">    自定义异常处理</span></code></li><li class="L4"><code><span class="str">    :param exc: 异常</span></code></li><li class="L5"><code><span class="str">    :param context: 抛出异常的上下文</span></code></li><li class="L6"><code><span class="str">    :return: Response响应对象</span></code></li><li class="L7"><code><span class="str">    """</span></code></li><li class="L8"><code><span class="pln">    </span><span class="com"># 调用drf框架原生的异常处理方法</span></code></li><li class="L9"><code><span class="pln">    response </span><span class="pun">=</span><span class="pln"> drf_exception_handler</span><span class="pun">(</span><span class="pln">exc</span><span class="pun">,</span><span class="pln"> context</span><span class="pun">)</span></code></li><li class="L0"><code></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">if</span><span class="pln"> response </span><span class="kwd">is</span><span class="pln"> </span><span class="kwd">None</span><span class="pun">:</span></code></li><li class="L2"><code><span class="pln">        view </span><span class="pun">=</span><span class="pln"> context</span><span class="pun">[</span><span class="str">'view'</span><span class="pun">]</span></code></li><li class="L3"><code><span class="pln">        </span><span class="kwd">if</span><span class="pln"> isinstance</span><span class="pun">(</span><span class="pln">exc</span><span class="pun">,</span><span class="pln"> </span><span class="typ">DatabaseError</span><span class="pun">)</span><span class="pln"> </span><span class="kwd">or</span><span class="pln"> isinstance</span><span class="pun">(</span><span class="pln">exc</span><span class="pun">,</span><span class="pln"> </span><span class="typ">RedisError</span><span class="pun">):</span></code></li><li class="L4"><code><span class="pln">            </span><span class="com"># 数据库异常</span></code></li><li class="L5"><code><span class="pln">            logger</span><span class="pun">.</span><span class="pln">error</span><span class="pun">(</span><span class="str">'[%s] %s'</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> </span><span class="pun">(</span><span class="pln">view</span><span class="pun">,</span><span class="pln"> exc</span><span class="pun">))</span></code></li><li class="L6"><code><span class="pln">            response </span><span class="pun">=</span><span class="pln"> </span><span class="typ">Response</span><span class="pun">({</span><span class="str">'message'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'服务器内部错误'</span><span class="pun">},</span><span class="pln"> status</span><span class="pun">=</span><span class="pln">status</span><span class="pun">.</span><span class="pln">HTTP_507_INSUFFICIENT_STORAGE</span><span class="pun">)</span></code></li><li class="L7"><code></code></li><li class="L8"><code><span class="pln">    </span><span class="kwd">return</span><span class="pln"> response</span></code></li></ol></pre></li>
+<li><p>配置文件中添加 <br>
+dev.py(开发坏境的配置文件)</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">REST_FRAMEWORK </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 异常处理</span></code></li><li class="L2"><code><span class="pln">    </span><span class="str">'EXCEPTION_HANDLER'</span><span class="pun">:</span><span class="pln"> </span><span class="str">'meiduo_mall.utils.exceptions.exception_handler'</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pun">}</span></code></li></ol></pre></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="tkzq" id="14用户模型类创建">14_用户模型类创建</h2><ul data-anchor-id="9o3e">
+<li>django自带的用户认证 <br>
+<ul><li>提供了比较完善的功能 <br>
+提供了创建用户、登录、注销、等功能 <br>
+不需要自己完成了，方便</li>
+<li>很多库的功能也依赖于django中用户认证 <br>
+比如drf <br>
+如果不用，则会很麻烦</li></ul></li>
+<li><p>实现步骤</p>
+
+<ol><li>创建用户应用 <br>
+<code>cd meiduo_mall/meiduo_mall/apps/ <br>
+ django-admin startapp users</code></li>
+<li><p>注册用户应用</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">INSTALLED_APPS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'users.apps.UsersConfig'</span><span class="pun">,</span></code></li><li class="L2"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>添加用户模型 <br>
+apps.users.models</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">contrib</span><span class="pun">.</span><span class="pln">auth</span><span class="pun">.</span><span class="pln">models </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">AbstractUser</span></code></li><li class="L1"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">User</span><span class="pun">(</span><span class="typ">AbstractUser</span><span class="pun">):</span></code></li><li class="L2"><code><span class="pln">    </span><span class="com"># 只有手机号是我们需要，而且默认没有的</span></code></li><li class="L3"><code><span class="pln">    mobile </span><span class="pun">=</span><span class="pln"> models</span><span class="pun">.</span><span class="typ">CharField</span><span class="pun">(</span><span class="pln">max_length</span><span class="pun">=</span><span class="lit">11</span><span class="pun">,</span><span class="pln"> unique</span><span class="pun">=</span><span class="kwd">True</span><span class="pun">,</span><span class="pln"> verbose_name</span><span class="pun">=</span><span class="str">"手机号"</span><span class="pun">)</span></code></li><li class="L4"><code></code></li><li class="L5"><code><span class="pln">    </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">Meta</span><span class="pun">:</span></code></li><li class="L6"><code><span class="pln">        db_table </span><span class="pun">=</span><span class="pln"> </span><span class="str">"tb_users"</span></code></li><li class="L7"><code><span class="pln">        verbose_name </span><span class="pun">=</span><span class="pln"> </span><span class="str">"用户信息"</span></code></li><li class="L8"><code><span class="pln">        verbose_name_plural </span><span class="pun">=</span><span class="pln"> verbose_name</span></code></li></ol></pre></li>
+<li><p>配置让项目使用我们的用户模型 <br>
+dev.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">AUTH_USER_MODEL </span><span class="pun">=</span><span class="pln"> </span><span class="str">'users.User'</span><span class="pln">    </span></code></li></ol></pre></li>
+<li><p>进行数据库迁移 <br>
+<code>python manage.py makemigrations <br>
+ python manage.py migrate <br>
+</code></p></li></ol></li>
+<li><p>表结构及原理</p>
+
+<p><img src="http://static.zybuluo.com/jsutqb/9xi79393qotmx6396jcji98a/image_1ch8rtjoh15kt8dq10qr18me1cok44.png" alt="image_1ch8rtjoh15kt8dq10qr18me1cok44.png-110.3kB"></p></li>
+<li><p>参考资料 <br>
+<a href="https://yiyibooks.cn/xx/Django_1.11.6/topics/auth/default.html" target="_blank">https://yiyibooks.cn/xx/Django_1.11.6/topics/auth/default.html</a></p></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="jtye" id="15图片验证码的后端编写">15_图片验证码的后端编写</h2><ul data-anchor-id="dtzb">
+<li><p>注册业务</p>
+
+<ul><li>常见</li>
+<li>一个业务功能 5个接口 <br>
+<ol><li>获得验证码</li>
+<li>发送校验短信</li>
+<li>注册功能</li>
+<li>校验用户名重复</li>
+<li>校验手机号重复</li></ol></li></ul></li>
+<li><p>图片验证码</p>
+
+<ul><li>分析 <br>
+<ul><li>请求 <br>
+<ol><li>get的请求方式</li>
+<li>url : /image_codes/<code>&lt;image_code_id&gt;</code>/ </li></ol></li>
+<li>响应 <br>
+返回图片</li></ul></li>
+<li><p>实现</p>
+
+<ol><li>创建应用 <br>
+<code>cd meiduo_mall/meiduo_mall/apps/ <br>
+django-admin startapp verifications</code> <br>
+`</li>
+<li><p>注册应用</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">INSTALLED_APPS </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">'verifications.apps.VerificationsConfig'</span><span class="pun">,</span></code></li><li class="L2"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li><p>编写视图类</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> django_redis </span><span class="kwd">import</span><span class="pln"> get_redis_connection</span></code></li><li class="L1"><code><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">http</span><span class="pun">.</span><span class="pln">response </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">HttpResponse</span></code></li><li class="L2"><code><span class="kwd">from</span><span class="pln"> rest_framework</span><span class="pun">.</span><span class="pln">views </span><span class="kwd">import</span><span class="pln"> </span><span class="typ">APIView</span></code></li><li class="L3"><code></code></li><li class="L4"><code><span class="kwd">from</span><span class="pln"> meiduo_mall</span><span class="pun">.</span><span class="pln">libs</span><span class="pun">.</span><span class="pln">captcha</span><span class="pun">.</span><span class="pln">captcha </span><span class="kwd">import</span><span class="pln"> captcha</span></code></li><li class="L5"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln"> </span><span class="kwd">import</span><span class="pln"> constants</span></code></li><li class="L6"><code></code></li><li class="L7"><code><span class="kwd">class</span><span class="pln"> </span><span class="typ">ImageCodeView</span><span class="pun">(</span><span class="typ">APIView</span><span class="pun">):</span></code></li><li class="L8"><code><span class="pln">    </span><span class="str">"""</span></code></li><li class="L9"><code><span class="str">    图片验证码</span></code></li><li class="L0"><code><span class="str">    """</span></code></li><li class="L1"><code><span class="pln">    </span><span class="com"># 请求时需要添加图片id</span></code></li><li class="L2"><code><span class="pln">    </span><span class="kwd">def</span><span class="pln"> </span><span class="kwd">get</span><span class="pun">(</span><span class="kwd">self</span><span class="pun">,</span><span class="pln"> request</span><span class="pun">,</span><span class="pln"> image_code_id</span><span class="pun">):</span></code></li><li class="L3"><code><span class="pln">        </span><span class="com"># 生成验证码图片 ,获取随机文本和对应图片</span></code></li><li class="L4"><code><span class="pln">        text</span><span class="pun">,</span><span class="pln"> image </span><span class="pun">=</span><span class="pln"> captcha</span><span class="pun">.</span><span class="pln">generate_captcha</span><span class="pun">()</span></code></li><li class="L5"><code></code></li><li class="L6"><code><span class="pln">        </span><span class="com"># 获取redis的连接对象 , 需要在配置文件中配置名为verify_codes的redis缓存</span></code></li><li class="L7"><code><span class="pln">        redis_conn </span><span class="pun">=</span><span class="pln"> get_redis_connection</span><span class="pun">(</span><span class="str">"verify_codes"</span><span class="pun">)</span></code></li><li class="L8"><code><span class="pln">        </span><span class="com"># 存入redis数据库，便于后面的业务进行校验</span></code></li><li class="L9"><code><span class="pln">        </span><span class="com"># 并指定过期时间 自动删除</span></code></li><li class="L0"><code><span class="pln">        </span><span class="com"># 与视频相比，这里简化了常量的定义</span></code></li><li class="L1"><code><span class="pln">        redis_conn</span><span class="pun">.</span><span class="pln">setex</span><span class="pun">(</span><span class="str">"img_%s"</span><span class="pln"> </span><span class="pun">%</span><span class="pln"> image_code_id</span><span class="pun">,</span><span class="lit">300</span><span class="pun">,</span><span class="pln"> text</span><span class="pun">)</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">        </span><span class="com"># 返回http响应 注意指定内容类型为image/jpg 表示图片</span></code></li><li class="L4"><code><span class="pln">        </span><span class="com"># 虽然我们使用的是APIView，但也可以返回 django中的 HttpResponse  drf 框架会做判断</span></code></li><li class="L5"><code><span class="pln">        </span><span class="kwd">return</span><span class="pln"> </span><span class="typ">HttpResponse</span><span class="pun">(</span><span class="pln">image</span><span class="pun">,</span><span class="pln"> content_type</span><span class="pun">=</span><span class="str">"image/jpg"</span><span class="pun">)</span></code></li><li class="L6"><code></code></li></ol></pre></li>
+<li><p>配置视图类的url</p>
+
+<ul><li><p>应用的</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">from</span><span class="pln"> django</span><span class="pun">.</span><span class="pln">conf</span><span class="pun">.</span><span class="pln">urls </span><span class="kwd">import</span><span class="pln"> url</span></code></li><li class="L1"><code><span class="kwd">from</span><span class="pln"> </span><span class="pun">.</span><span class="pln"> </span><span class="kwd">import</span><span class="pln"> views</span></code></li><li class="L2"><code></code></li><li class="L3"><code><span class="pln">urlpatterns </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[</span></code></li><li class="L4"><code><span class="pln">    url</span><span class="pun">(</span><span class="pln">r</span><span class="str">'image_codes/(?P&lt;image_code_id&gt;.+)/$'</span><span class="pun">,</span><span class="pln"> views</span><span class="pun">.</span><span class="typ">ImageCodeView</span><span class="pun">.</span><span class="pln">as_view</span><span class="pun">()),</span></code></li><li class="L5"><code><span class="pun">]</span></code></li></ol></pre></li>
+<li>项目的 <br>
+``` <br>
+urlpatterns = [ <br>
+... <br>
+url(r'^' , include('verifications.urls')) <br>
+]</li></ul>
+
+<p>``</p></li>
+<li>测试 <br>
+访问看看</li>
+<li><p>其他</p>
+
+<ul><li><p>定义缓存 <br>
+dev.py</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">CACHES </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L1"><code><span class="pln">    </span><span class="str">"verify_codes"</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L2"><code><span class="pln">        </span><span class="str">"BACKEND"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"django_redis.cache.RedisCache"</span><span class="pun">,</span></code></li><li class="L3"><code><span class="pln">        </span><span class="str">"LOCATION"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"redis://127.0.0.1:6379/2"</span><span class="pun">,</span></code></li><li class="L4"><code><span class="pln">        </span><span class="str">"OPTIONS"</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L5"><code><span class="pln">            </span><span class="str">"CLIENT_CLASS"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"django_redis.client.DefaultClient"</span><span class="pun">,</span></code></li><li class="L6"><code><span class="pln">        </span><span class="pun">}</span></code></li><li class="L7"><code><span class="pln">    </span><span class="pun">},</span></code></li><li class="L8"><code></code></li><li class="L9"><code><span class="pun">}</span></code></li></ol></pre></li></ul></li></ol></li></ul></li>
+<li><p>注意</p>
+
+<ul><li>pycharm <br>
+pycharm没有代码提示/显示红色 <br>
+解决：选中文件夹，右键 'Mark Directory as' 'Source Root'</li>
+<li>导包顺序 <br>
+好的习惯是按照下列顺序导入，并添加空行 <br>
+<ol><li>python的</li>
+<li>框架的</li>
+<li>第三方的</li>
+<li>我们的</li></ol></li>
+<li>图片是下载而不是显示，是因为  <br>
+content_type 应该是image/jpg 而不是image/jpg</li>
+<li><p>type annotation <br>
+python 3.5 提供的特性，可以为动态语言添加静态特性</p>
+
+<p>给方法添加返回值类型推导， 注意 <code>-&gt;</code></p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">def</span><span class="pln"> </span><span class="pun">方法(多个参数)</span><span class="pln"> </span><span class="pun">-&gt;</span><span class="pln"> </span><span class="pun">方法的返回值类型</span><span class="pln"> </span><span class="pun">:</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">pass</span></code></li></ol></pre>
+
+<p>给方法添加参数类型推导， 注意 <code>:</code></p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">def</span><span class="pln"> </span><span class="pun">方法(参数:</span><span class="pln"> </span><span class="pun">参数的类型):</span></code></li><li class="L1"><code><span class="pln">    </span><span class="kwd">pass</span></code></li></ol></pre></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="djnj" id="16图片验证码的前端编写">16_图片验证码的前端编写</h2><ul data-anchor-id="pcnq">
+<li><p>思路 <br>
+刚才写的是后端，现在写前端 <br>
+因为已经设计好了，现在需要结合前后端 <br>
+前端就是请求数据、显示数据</p></li>
+<li><p>显示验证码图片</p>
+
+<ul><li><p>js <br>
+register.js</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="kwd">var</span><span class="pln"> vm </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Vue</span><span class="pun">({</span></code></li><li class="L1"><code><span class="pln">    el</span><span class="pun">:</span><span class="pln"> </span><span class="str">'#app'</span><span class="pun">,</span></code></li><li class="L2"><code><span class="pln">    data</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L3"><code><span class="pln">        image_code_id</span><span class="pun">:</span><span class="pln"> </span><span class="str">''</span><span class="pun">,</span></code></li><li class="L4"><code><span class="pln">        image_code_url</span><span class="pun">:</span><span class="pln"> </span><span class="str">''</span></code></li><li class="L5"><code><span class="pln">    </span><span class="pun">},</span></code></li><li class="L6"><code><span class="pln">    </span><span class="com">// 生命周期方法</span></code></li><li class="L7"><code><span class="pln">    mounted</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(){</span></code></li><li class="L8"><code><span class="pln">        </span><span class="com">// 每次调用获得不同的uuid</span></code></li><li class="L9"><code><span class="pln">        </span><span class="kwd">this</span><span class="pun">.</span><span class="pln">image_code_id </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">this</span><span class="pun">.</span><span class="pln">generate_uuid</span><span class="pun">();</span></code></li><li class="L0"><code><span class="pln">        </span><span class="kwd">this</span><span class="pun">.</span><span class="pln">image_code_url </span><span class="pun">=</span><span class="pln"> </span><span class="str">"http://127.0.0.1:8000/image_codes/"</span><span class="pun">+</span><span class="pln"> </span><span class="kwd">this</span><span class="pun">.</span><span class="pln">image_code_id</span><span class="pun">+</span><span class="str">"/"</span><span class="pun">;</span></code></li><li class="L1"><code></code></li><li class="L2"><code><span class="pln">    </span><span class="pun">},</span></code></li><li class="L3"><code><span class="pln">    methods</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span></code></li><li class="L4"><code><span class="pln">        generate_uuid</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(){</span></code></li><li class="L5"><code><span class="pln">            </span><span class="com">// 略</span></code></li><li class="L6"><code><span class="pln">        </span><span class="pun">},</span></code></li><li class="L7"><code><span class="pln">    </span><span class="pun">}</span></code></li><li class="L8"><code><span class="pun">});</span></code></li></ol></pre></li>
+<li><p>html</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="com">&lt;!-- &lt;img :src="images/pic_code.jpg" alt="图形验证码" class="pic_code"&gt;--&gt;</span></code></li><li class="L1"><code><span class="tag">&lt;img</span><span class="pln"> :</span><span class="atn">src</span><span class="pun">=</span><span class="atv">"image_code_url"</span><span class="pln"> </span><span class="atn">alt</span><span class="pun">=</span><span class="atv">"图形验证码"</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"pic_code"</span><span class="tag">&gt;</span></code></li></ol></pre></li>
+<li><p>urls.py <br>
+注意因为使用了uuid格式，所以匹配的正则不再是\d+ 而是 [0-9a-fA-F-]+</p></li></ul></li>
+<li><p>复习</p>
+
+<ul><li>vue的使用 <br>
+<ol><li>el</li>
+<li>:</li>
+<li>@</li>
+<li>生命周期</li></ol></li>
+<li><p>使用axios获取数据</p>
+
+<pre class="prettyprint linenums prettyprinted"><ol class="linenums"><li class="L0"><code><span class="pln">axios</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">"http://127.0.0.1:8000/image_codes/"</span><span class="pun">+</span><span class="pln"> </span><span class="kwd">this</span><span class="pun">.</span><span class="pln">image_code_id</span><span class="pun">+</span><span class="str">"/"</span><span class="pun">)</span></code></li><li class="L1"><code><span class="pln">    </span><span class="pun">.</span><span class="kwd">then</span><span class="pun">(</span><span class="pln">response </span><span class="pun">=&gt;</span><span class="pln"> </span><span class="pun">{</span><span class="pln">         </span><span class="pun">})</span><span class="pln">  </span><span class="com">// 正常处理 响应码为 2xx</span></code></li><li class="L2"><code><span class="pln">    </span><span class="pun">.</span><span class="kwd">catch</span><span class="pun">(</span><span class="pln">error </span><span class="pun">=&gt;</span><span class="pln"> </span><span class="pun">{</span><span class="pln">           </span><span class="pun">})</span><span class="pln">  </span><span class="com">// 处理异常 响应码为 4xx 5xx</span></code></li></ol></pre></li></ul></li>
+</ul><div class="md-section-divider"></div><h2 data-anchor-id="frbg" id="作业">作业</h2><ol data-anchor-id="os15">
+<li>去码云开个空仓库</li>
+<li>远程初始化仓库</li>
+<li>git clone</li>
+<li>创建dev分支</li>
+<li>拷贝前端文件</li>
+<li>提交、pull request</li>
+<li><p>自己操作一下，dev 合并到master</p></li>
+<li><p>创建后端相关文件、文件夹 (用脚本)</p></li>
+<li>修改配置文件 包括 本地化、数据库、缓存、session、日志 ，和manage.py修改settings</li>
+<li>给rest_framework 添加全局的异常处理(使用日志) ，代码可复制</li>
+<li>创建用户应用，写模型，配用户模型，迁移</li>
+<li>创建verifications 应用，去实现验证码的逻辑</li>
+<li>结合前端进行测试 (前端代码可复制)</li>
+</ol></div>
+ <a href="6.html">上一页</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="8.html">下一页</a>
+</body>
+</html>

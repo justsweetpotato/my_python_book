@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block header %}
+    <h3>你好, 我是Lucy.</h3>
+    <!-- <small>用三行Python代码完成的人工智障</small> -->
+    <br>
+    <a href=""></a>
+    You&nbsp;:&nbsp;&nbsp;&nbsp;<a href="{{ msg }}">{{ msg }}</a><br>
+    Lucy:&nbsp;&nbsp;&nbsp;<a href="{{ f }}">{{ f }}</a>
+{% endblock header %}
+
+{% block content %}
+    <form action="/ai/" method="post">
+        {% csrf_token %}
+
+        <input type="text" autofocus="autofocus" name="text">
+{#        {{ form }}#}
+        <input type="submit">
+    </form>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+    <small>
+        * Lucy 目前处于测(zhi)试(zhang)阶段只会回答一些简单问题, 比如 吃了吗? <br>
+        * <b>[查看日期]</b> 输入 <b>date</b> 可以查看日期.<br>
+        * <b>[求质数]</b> 输入 <b>pn + 空格 + 数字</b> 可以求出输入数字以内的全部质数.<br>
+        * <b>[计算器]</b> 输入 <b>calc + 空格 + 表达式</b> 可以进行计算.<br>
+        * <b>[文本加密]</b> 输入 <b>crypto</b> 可以在对应页面进行文本加密.
+    </small>
+{% endblock content %}
