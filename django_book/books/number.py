@@ -48,7 +48,7 @@ def calc(x):
     except SyntaxError as e:
         return "[语法错误]: 不正确的格式 (例: calc 1+1)"
     except Exception as e:
-        return "[未知错误]: *(&#@%&$@("
+        return "[未知错误]: " + str(e)
 
     return res
 
