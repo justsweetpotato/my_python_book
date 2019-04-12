@@ -141,14 +141,10 @@ BOOTSTRAP3 = {
 # 定时任务
 CRONJOBS = [
     # 每小时启动一次这个函数, 注意这个定时任务不需要 Django 处于运行状态.
-<<<<<<< HEAD
-    ('* */1 * * *', 'books.crons.keep_apps_alive',),
-=======
     # ('* */1 * * *', 'books.crons.keep_apps_alive',),
     ('* */1 * * *', 'books.crons.keep_app1_alive',),
     ('* */1 * * *', 'books.crons.keep_app2_alive',),
     ('* */1 * * *', 'books.crons.keep_app3_alive',),
->>>>>>> 0323f86... 继续测试定时任务中
 
 ]
 
