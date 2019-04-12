@@ -41,4 +41,17 @@ def calc(x):
                 return "暂时仅支持单独的乘方运算."
             if len(str(y)) > 2:
                 return "暂时仅支持2位数以内的乘方运算."
-    return eval(x)
+    try:
+        res = eval(x)
+    except ZeroDivisionError as e:
+        return "[除零错误]: " + str(e)
+    except SyntaxError as e:
+        return "[语法错误]: 不正确的格式 (例: calc 1+1)"
+    except Exception as e:
+        return "[未知错误]: *(&#@%&$@("
+
+    return res
+
+
+if __name__ == '__main__':
+    print(calc("1/"))
