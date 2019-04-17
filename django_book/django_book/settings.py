@@ -33,7 +33,7 @@ CORS_ORIGIN_WHITELIST = (
     'localhost',
     'www.sweetpotato.xyz'
 )
-CORS_ALLOW_CREDENTIALS = True 
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -142,9 +142,9 @@ BOOTSTRAP3 = {
 CRONJOBS = [
     # 每小时启动一次这个函数, 注意这个定时任务不需要 Django 处于运行状态.
     # ('* */1 * * *', 'books.crons.keep_apps_alive',),
-    ('* */1 * * *', 'books.crons.keep_app1_alive',),
-    ('* */1 * * *', 'books.crons.keep_app2_alive',),
-    ('* */1 * * *', 'books.crons.keep_app3_alive',),
+    # ('* */1 * * *', 'books.crons.keep_app1_alive',),
+    # ('* */1 * * *', 'books.crons.keep_app2_alive',),
+    # ('* */1 * * *', 'books.crons.keep_app3_alive',),
 
 ]
 
