@@ -11,11 +11,15 @@ from .crypto2 import encrypt_oracle, decrypt_oralce
 # Create your views here.
 # index_list = ['index_1.html', 'index_2.html', 'index_3.html', 'index_4.html']
 # prob = [3, 3, 3, 1]
-index_list = ['index_1.html', 'index_1.html', 'index_1.html',
-              'index_2.html', 'index_2.html', 'index_2.html',
-              'index_3.html', 'index_3.html', 'index_3.html',
-              'index_4.html'
-              ]
+index_list = [
+    "index_1.html", "index_1.html", "index_1.html",
+    "index_2.html", "index_2.html", "index_2.html",
+    "index_3.html", "index_3.html", "index_3.html",
+    "index_4.html",
+    "index_5.html",
+    "index_6.html",
+    "index_7.html",
+]
 
 
 def index(request):

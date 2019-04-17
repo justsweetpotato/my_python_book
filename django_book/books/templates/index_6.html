@@ -1,0 +1,25 @@
+{% extends "base2.html" %}
+
+{% block header %}
+    <div class="jumbotron">
+        <h4>{{ msg }}</h4>
+    </div>
+    <style>
+        img {
+            border: 0;
+            display: inline;
+        }
+    </style>
+{% endblock header %}
+
+{% block content %}
+
+    <audio controls="controls">
+        <source src="/static/pdf/battlefield4.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+    <br>
+    <img src="/static/pdf/battlefield4.jpg" width="50%" height="50%"><img src="/static/pdf/battlefield4_2.jpg" width="50%" height="50%"><img src="/static/pdf/battlefield4_3.jpg" width="50%" height="50%"><img src="/static/pdf/battlefield4_4.png" width="50%" height="50%">
+    <br>
+    <br>
+{% endblock content %}
