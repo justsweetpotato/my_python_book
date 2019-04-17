@@ -1,19 +1,25 @@
-{%  extends "base2.html" %}
+{% extends "base2.html" %}
 
 {% block header %}
-  <div class="jumbotron">
-      <h4>{{ msg }}</h4>
-  </div>
+    <div class="jumbotron">
+        <h4>{{ msg }}</h4>
+    </div>
+    <style>
+        img {
+            border: 0;
+            display: inline;
+        }
+    </style>
 {% endblock header %}
 
 {% block content %}
 
     <audio controls="controls">
-        <source src="/static/pdf/Roam_mainmenu.mp3" type="audio/mp3" >
+        <source src="/static/pdf/Roam_mainmenu.mp3" type="audio/mp3">
         Your browser does not support the audio element.
     </audio>
     <br>
-    <img src="/static/pdf/csgo.jpg" width="100%" height="100%">
+    <img src="/static/pdf/csgo1.jpg" width="50%" height="50%"><img src="/static/pdf/csgo2.jpg" width="50%" height="50%"><img src="/static/pdf/csgo3.jpg" width="50%" height="50%"><img src="/static/pdf/csgo4.jpg" width="50%" height="50%">
     <br>
     <br>
 {% endblock content %}
