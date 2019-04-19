@@ -175,3 +175,7 @@ def crypto_lv2(request):
 
 def hidden(request):
     return render(request, 'hidden.html')
+
+
+def hello(request):
+    return HttpResponse("Congratulations!<br>You found this!<br><h3>42</h3><br>")

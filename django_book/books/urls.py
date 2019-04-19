@@ -12,6 +12,7 @@ urlpatterns = [
     url('^1984/$', views.bigbrother, name='1984'),
     url('^bbs/$', views.bbs, name='bbs'),
     url('^ai/$', views.ai, name='ai'),
+    url(r'^ai/\d+/$', views.hello, name='hello'),
     url('^crypto/$', views.crypto, name='crypto'),
     url('^decrypto/$', views.decrypto, name='decrypto'),
     url('^get_key/$', views.get_key, name='get_key'),
