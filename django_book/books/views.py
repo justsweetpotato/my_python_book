@@ -179,3 +179,7 @@ def hidden(request):
 
 def hello(request):
     return HttpResponse("Congratulations!<br>You found this!<br><h3>42</h3><br>")
+
+
+def test404(request):
+    return render(request, 'test404.html')

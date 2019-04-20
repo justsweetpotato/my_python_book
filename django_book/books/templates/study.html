@@ -2,53 +2,101 @@
 
 {% block header %}
     <div class="jumbotron">
-        <h4>如果你在写代码的时候，经常在一些【关键点】设置一些【条件恰当】的 assert，可以大量节约调试时间。</h4>
+        <h4><i>如果你在写代码的时候，经常在一些【关键点】设置一些【条件恰当】的 assert，可以大量节约调试时间。</i></h4>
     </div>
 {% endblock header %}
 
 {% block content %}
-    <h5>Python 教程</h5>
-    <a href='http://www.pythondoc.com/'>Python 中文学习大本营</a><br>
-    <a href="https://python3-cookbook.readthedocs.io/zh_CN/latest/index.html">Python Cookbook 3rd Edition Documentation</a><br>
-    <a href='/static/python_low/index.html'>Python 基础教程</a><br>
-    <a href='/static/python_hight/index.html'>Python 高级教程</a><br>
-    <a href='https://docs.python.org/zh-cn/3/tutorial/index.html'>Python 3 官方文档</a><br>
-    <a href='/static/flask/index.html'>Flask 教程</a><br>
-    <a href='/static/flask_project/index.html'>Flask 项目开发与部署</a><br>
-    <a href='/static/django/index.html'>Django 教程</a><br>
-    <a href='/static/drf/index.html'>Django REST framework 教程</a><br>
-    <a href='/static/project/index.html'>Django 项目开发与部署</a><br>
-    <a href='/static/qb/index.html'>Django 总结</a><br>
-    <a href="https://docs.djangoproject.com/zh-hans/2.2/">Django 官方文档</a><br>
-    <a href='https://code.ziqiangxuetang.com/django/django-tutorial.html'>自强学堂 Django 教程</a><br>
-    <a href='/static/spider/index.html'>Python 爬虫教程</a><br>
-    <a href='http://docs.python-requests.org/zh_CN/latest/user/quickstart.html'>Requests 官方文档</a><br>
-    <a href='/static/redis/index.html'>Redis 详解</a><br>
-    <a href='/static/celery/index.html'>Celery 详解</a><br>
-    <a href="http://docs.celeryproject.org/en/latest/">Celery 官方教程/en</a><br>
-    <a href='/static/data/index.html'>数据结构</a><br>
-    <a href='/static/data_find/index.html'>数据挖掘</a><br>
-    <a href='/static/ai/jqxx/index.html'>机器学习</a><br>
-    <a href='/static/ai/lhjy/index.html'>量化交易</a><br>
-    <a href='/static/ai/sdxx/index.html'>深度学习</a><br>
-    <a href='/static/web/index.html'>Web 技术教程</a><br>
-    <a href='http://www.w3school.com.cn/index.html'>W3school</a><br>
-      <br>
-    <h5>视频教程</h5>
-    <a href='https://youtu.be/tpIctyqH29Q'>速成班计算机科学-CrashCourse</a><br>
-    <a href='https://dev.tube/'>DevTube</a><br>
-    <a href='https://youtu.be/qgGIqRFvFFk'>Django Tutorial for Beginners-thenewboston</a><br>
-      <br>
-    <h5>扩展阅读</h5>
-    <a href='http://www.ruanyifeng.com/blog/'>阮一峰网络日志</a><br>
-    <a href='https://teddysun.com/'>秋水逸冰</a><br>
-    <a href='https://haoel.github.io/'>科学上网</a><br>
-    <a href='https://oi-wiki.org/'>OI Wiki</a><br>
-      <br>
+    <h4><i>Python 基础语法</i></h4>
+    <i>
+        <a href='https://docs.python.org/zh-cn/3/tutorial/index.html'>Python 3 文档</a><br>
+        <a href="https://python3-cookbook.readthedocs.io/zh_CN/latest/index.html">Python Cookbook 3rd Edition
+            Documentation</a><br>
+        <a href='/static/python_low/index.html'>Python 基础教程</a><br>
+        <a href='/static/python_hight/index.html'>Python 高级教程</a><br>
+    </i>
+    <hr>
+    <h4><i>Django</i></h4>
+    <i>
+        <a href="https://docs.djangoproject.com/zh-hans/2.2/">Django 文档</a><br>
+        <a href='/static/django/index.html'>Django 教程</a><br>
+        <a href="https://q1mi.github.io/Django-REST-framework-documentation/">django REST framework 文档</a><br>
+        <a href='/static/drf/index.html'>Django REST framework 教程</a><br>
+        <a href='/static/project/index.html'>Django 项目开发与部署</a><br>
+        <a href='/static/qb/index.html'>Django 总结</a><br>
+    </i>
+    <hr>
+    <h4><i>Flask</i></h4>
+    <i>
+        <a href="https://dormousehole.readthedocs.io/en/latest/">Flask 文档</a><br>
+        <a href='/static/flask/index.html'>Flask 教程</a><br>
+        <a href='/static/flask_project/index.html'>Flask 项目开发与部署</a><br>
+    </i>
+    <hr>
+    <h4><i>Python 网络爬虫</i></h4>
+    <i>
+        <a href='https://2.python-requests.org//zh_CN/latest/index.html'>Requests 文档</a><br>
+        <a href="https://scrapy-chs.readthedocs.io/zh_CN/0.24/index.html">Scrapy 文档</a><br>
+        <a href='/static/spider/index.html'>Python 爬虫教程</a><br>
+    </i>
+    <hr>
+    <h4><i>Web 开发</i></h4>
+    <i>
+        <a href="https://developer.mozilla.org/zh-CN/docs/learn">MDN Web docs</a><br>
+        <a href='http://www.w3school.com.cn/index.html'>W3school</a><br>
+        <a href='/static/web/index.html'>Web 开发教程</a><br>
+    </i>
+    <hr>
+    <h4><i>数据库</i></h4>
+    <i>
+        <a href="http://www.searchdoc.cn/rdbms/mysql/dev.mysql.com/doc/refman/5.7/en/index.com.coder114.cn.html">MySQL
+            5.7 参考手册</a><br>
+        <a href="http://www.searchdoc.cn/redis/redis.io/documentation.com.coder114.cn.html">Redis 文档</a><br>
+        <a href='/static/redis/index.html'>Redis 详解</a><br>
+        MongoDB 教程 <a href="http://www.mongodb.org.cn/tutorial/">中</a> / <a href="https://docs.mongodb.com/">英</a><br>
+    </i>
+    <hr>
+    <h4><i>Python 扩展</i></h4>
+    <i>
+        <a href="http://docs.jinkan.org/docs/celery/">Celery 文档</a><br>
+        <a href='/static/celery/index.html'>Celery 详解</a><br>
+        <a href="https://selenium-python-zh.readthedocs.io/en/latest/index.html">Selenium with Python 文档</a><br>
+    </i>
+    <hr>
+    <h4><i>Nginx</i></h4>
+    <i>
+        <a href="http://www.nginx.cn/doc/">Nginx 文档</a><br>
+        <a href="https://www.ruanyifeng.com/blog/2018/02/nginx-docker.html">Nginx 容器教程</a><br>
+    </i>
+    <hr>
+    <h4><i>Brave New World</i></h4>
+    <i>
+        <a href='/static/data/index.html'>数据结构</a><br>
+        <a href='/static/data_find/index.html'>数据挖掘</a><br>
+        <a href='/static/ai/jqxx/index.html'>机器学习</a><br>
+        <a href='/static/ai/lhjy/index.html'>量化交易</a><br>
+        <a href='/static/ai/sdxx/index.html'>深度学习</a><br>
+    </i>
+    <hr>
+    <h4><i>视频教程</i></h4>
+    <i>
+        <a href='https://youtu.be/tpIctyqH29Q'>Computer Science</a><br>
+        <a href='https://youtu.be/qgGIqRFvFFk'>Django Tutorial for Beginners</a><br>
+        <a href='https://dev.tube/'>DevTube</a><br>
+    </i>
+    <hr>
+    <h4><i>阅读</i></h4>
+    <i>
+        <a href='http://www.ruanyifeng.com/blog/'>阮一峰网络日志</a><br>
+        <a href='https://haoel.github.io/'>科学上网</a><br>
+        <a href='https://teddysun.com/'>秋水逸冰</a><br>
+        <a href='https://oi-wiki.org/'>OI Wiki</a><br>
+    </i>
+    <br>
     <!-- <h5>下载</h5>
     <a href='/static/pdf/mianshibaodian.pdf'>你问我答.pdf</a><br>
     <a href='/static/pdf/all_files.rar'>狂拽酷炫吊炸天.rar</a><br> -->
-      <br>
-      <br>
-{#    </div>#}
+    <br>
+    <br>
+    {#    </div>#}
 {% endblock content %}

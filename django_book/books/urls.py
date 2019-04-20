@@ -19,5 +19,5 @@ urlpatterns = [
     url('^crypto_lv2/$', views.crypto_lv2, name='crypto_lv2'),
     # url('^decrypto_lv2/$', views.decrypto_lv2, name='decrypto_lv2'),
     url('^hidden/$', views.hidden, name='hid'),
-
+    url('^404/$', views.test404),
 ]
