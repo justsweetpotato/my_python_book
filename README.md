@@ -45,6 +45,10 @@ server {
 ```
 chmod +x root
 ```
+重启 Nginx
+```
+nginx -s reload
+```
 
 gunicorn 启动命令
 ```
