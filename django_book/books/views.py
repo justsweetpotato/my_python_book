@@ -7,6 +7,7 @@ from .ai import fake_ai
 from .word import word
 from .crypto import getRandomKey, MonoAlphabeticCipher
 from .crypto2 import encrypt_oracle, decrypt_oralce
+from .ftp import list_dir_files
 
 # Create your views here.
 # index_list = ['index_1.html', 'index_2.html', 'index_3.html', 'index_4.html']
@@ -183,3 +184,8 @@ def hello(request):
 
 def dark(request):
     return render(request, 'dark.html')
+
+
+def ftp(request):
+    content = list_dir_files()
+    return render(request, 'ftp.html', content)
