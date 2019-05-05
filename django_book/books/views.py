@@ -189,3 +189,7 @@ def dark(request):
 def ftp(request):
     content = list_dir_files()
     return render(request, 'ftp.html', content)
+
+
+def page404(request):
+    return render(request, "./../../django_book/templates/404.html")
