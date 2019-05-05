@@ -2,7 +2,7 @@
 
  <i>警告: 不要直接 clone, 静态资源异常的大...</i> 
 
-### 使用
+### 部署
 
 nginx 配置<br>
 /etc/nginx/sites-available/default
