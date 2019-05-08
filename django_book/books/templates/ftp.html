@@ -16,9 +16,9 @@
 <a href="/study">返回</a>
 <h4>Django 文件传输 V1.0</h4>
 <hr>
-{% for foo in content %}
+{% for file, size in content.items %}
     <li style="list-style-type: none">
-        <a href="/static/pdf/share/{{ foo }}" download="">{{ foo }}</a>
+        <a href="/static/pdf/share/{{ file }}" download="">{{ file }}</a>&nbsp;&nbsp;{{ size }}
     </li>
 {% endfor %}
 
