@@ -4,23 +4,24 @@
 import os
 import time
 
+FILES = os.listdir('../static/pdf/share')
+
 
 def show_dir_files():
     # 返回当前目录下所有文件和大小
-    files = os.listdir('../static/pdf/share')
+
     t_list = get_FileModifyTime()
     files_size_list = get_FileSize()
 
-    content = {"content": list(zip(files, t_list, files_size_list))}
+    content = {"content": list(zip(FILES, t_list, files_size_list))}
 
     return content
 
 
 def get_FileSize():
-    files = os.listdir('../static/pdf/share')
     files_size_list = []
 
-    for file_name in files:
+    for file_name in FILES:
         file_path = '../static/pdf/share/{}'.format(file_name)
         file_size = os.path.getsize(file_path)
         file_size = file_size / 1024
@@ -40,10 +41,9 @@ def get_FileSize():
 
 
 def get_FileModifyTime():
-    files = os.listdir('../static/pdf/share')
     t_list = []
 
-    for file_name in files:
+    for file_name in FILES:
         file_path = '../static/pdf/share/{}'.format(file_name)
         t = os.path.getmtime(file_path)
         t_list.append(t)
