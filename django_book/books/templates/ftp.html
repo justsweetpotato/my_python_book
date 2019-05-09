@@ -3,61 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>ftp server</title>
-    <!-- <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"> -->
+{#    <meta name="viewport"#}
+{#          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">#}
     <style>
         a:link {
             text-decoration: none;
             color: blue
         }
-
-        #label1 {
-            width: 100%;
-            float: left;
-        }
-
-        #li1 {
-            list-style-type: none;
-        }
-
-        #a1 {
-            width: 65%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            display: block;
-            float: left;
-        }
-
-        #span1 {
-            width: 17%;
-            float: left;
-            display: block;
-        }
-
-        #span2 {
-            width: 18%;
-            float: left;
-            display: block;
-        }
-
-
     </style>
 </head>
 <body>
 <a href="/study">返回</a>
 <h4>Django 文件传输 V1.0</h4>
 <hr>
-<div>
-    <label id="label1">
-        {% for file_name, file_time, file_size in content %}
-            <li id="li1">
-                <a id="a1" href="/static/share/{{ file_name }}" download="">{{ file_name }}</a>
-                <span id="span1">{{ file_size }}</span>
-                <span id="span2">{{ file_time }}</span>
-            </li>
-        {% endfor %}
-    </label>
+<div style="width: 100%">
+    {% for file, file_time, file_size in content %}
+        <li style="list-style-type: none">
+            <a href="/static/pdf/share/{{ file }}" download="">{{ file }}</a>
+            <span style="width: 10%; float: right">{{ file_time }}</span>
+            <span style="width: 20%; float: right">{{ file_size }}</span>
+
+        </li>
+    {% endfor %}
 </div>
 </body>
 </html>
