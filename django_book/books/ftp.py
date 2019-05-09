@@ -7,7 +7,6 @@ import time
 
 def show_dir_files():
     # 返回当前目录下所有文件的 文件名, 修改时间, 文件大小
-
     files = os.listdir('../static/pdf/share')
     t_list = get_FileAccessTime()
     files_size_list = get_FileSize()
