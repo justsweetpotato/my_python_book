@@ -4,24 +4,24 @@
 import os
 import time
 
+FILES = os.listdir('../static/pdf/share')
+
 
 def show_dir_files():
-    # 返回当前目录下所有文件的 文件名, 修改时间, 文件大小
+    # 返回当前目录下所有文件和大小
 
-    files = os.listdir('../static/pdf/share')
-    t_list = get_FileAccessTime()
+    t_list = get_FileModifyTime()
     files_size_list = get_FileSize()
 
-    content = {"content": list(zip(files, t_list, files_size_list))}
+    content = {"content": list(zip(FILES, t_list, files_size_list))}
 
     return content
 
 
 def get_FileSize():
-    files = os.listdir('../static/pdf/share')
     files_size_list = []
 
-    for file_name in files:
+    for file_name in FILES:
         file_path = '../static/pdf/share/{}'.format(file_name)
         file_size = os.path.getsize(file_path)
         file_size = file_size / 1024
@@ -40,13 +40,12 @@ def get_FileSize():
     return files_size_list
 
 
-def get_FileAccessTime():
-    files = os.listdir('../static/pdf/share')
+def get_FileModifyTime():
     t_list = []
 
-    for file_name in files:
+    for file_name in FILES:
         file_path = '../static/pdf/share/{}'.format(file_name)
-        t = os.path.getatime(file_path)
+        t = os.path.getmtime(file_path)
         t_list.append(t)
 
     return TimeStampToTime(t_list)
@@ -57,7 +56,7 @@ def TimeStampToTime(timestamp_list):
 
     for timestamp in timestamp_list:
         timeStruct = time.localtime(timestamp)
-        timeStruct = time.strftime('%Y-%m-%d %H:%M:%S', timeStruct)
+        timeStruct = time.strftime('%Y-%m-%d', timeStruct)
         timeStruct_list.append(timeStruct)
 
     return timeStruct_list
