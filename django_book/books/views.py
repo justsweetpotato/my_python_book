@@ -7,7 +7,7 @@ from .ai import fake_ai
 from .word import word
 from .crypto import getRandomKey, MonoAlphabeticCipher
 from .crypto2 import encrypt_oracle, decrypt_oralce
-from .ftp import show_dir_files
+from .ftp import show_files_info
 
 # Create your views here.
 # index_list = ['index_1.html', 'index_2.html', 'index_3.html', 'index_4.html']
@@ -179,7 +179,7 @@ def hidden(request):
 
 
 def hello(request):
-    return HttpResponse("Congratulations!<br>You found this!<br><h3>42</h3><br>")
+    return HttpResponse("Congratulations!<br>You found this!<br><p>42</p><br>")
 
 
 def dark(request):
@@ -187,7 +187,7 @@ def dark(request):
 
 
 def ftp(request):
-    content = show_dir_files()
+    content = show_files_info()
     return render(request, 'ftp.html', content)
 
 
