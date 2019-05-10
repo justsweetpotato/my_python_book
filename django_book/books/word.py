@@ -4,20 +4,6 @@ from random import choice
 
 def word():
     word_list = [
-        # "一种东西发生蜕变并挣脱束缚, 原先的形体必将立即死亡",
-        # "未经反思自省的人生没有意义", "耐心是一切聪明才智的基础", "不知道自己的无知，乃是双倍的无知",
-        # "孩子怕黑暗情有可原，人生真正的悲剧是成人怕光明", "和一个人玩一个小时对他的了解,胜过于一年的对谈",
-        # "The measure of a man is what he does with power.", "任何问题都有两个方面",
-        # "一个骄傲的人，结果总是在骄傲里毁灭了自己", "真正的斗士，永远愿意承认自己的失败",
-        # "不要只因一次失败，就放弃你原来决心想达到的目的", "无数人的失败，都是失败于做事情不彻底，往往做到离成功只差一步就停下来",
-        # "人生就像是爬山, 好走的是下坡; 困难, 代表你正在往上", "Remember that time is money.",
-        # "活力和毅力能战胜一切", "Love Well,Whip Well.", "Without justice, courage is weak.",
-        # "任何牺牲基本自由以换取短暂安全的人，最后既得不到安全也得不到自由", "对所有人有礼，与多数人交际，和少数人亲近，交一位朋友，不与人为敌",
-        # "All men are created equal.", "使人疲惫的不是远方的高山，而是鞋里的一粒沙子", "整齊劃一，人們沒有獨立思考，社會表面平靜，並不是幸福，這不過是「沉默地划著船的奴隸的平靜」",
-        # "人生的意義不在於何以有生，而在於自己怎樣生活", "人生的大病根本在於不肯睜開眼睛來看世間的真實現狀",
-        # "真实的为我，便是最有益的为人", "中医不过是一种有意的或无意的骗子", "勇者憤怒，抽刃向更強者；怯者憤怒，卻抽刃向更弱者",
-        # "我期待，我将是中国绵绵不绝的文字狱的最后一个受害者，从此之后不再有人因言获罪"
-
         # 艾尔文
         "最好的学习, 就是不断的练习.",
         "你未来会过得如何, 取决于你现在如何去过.",
@@ -74,6 +60,20 @@ def word():
     ]
     msg = choice(word_list)
     return msg
+
+
+def read_site():
+    site_dict = {
+        "科学上网": 'https://haoel.github.io/',
+        "阮一峰网络日志": 'http://www.ruanyifeng.com/blog/',
+        "编程随想的博客": 'https://program-think.blogspot.com/',
+        "秋水逸冰": 'https://teddysun.com/',
+        "逗比根据地(镜像站)": 'https://doubibackup.com/',
+        "OI Wiki": 'https://oi-wiki.org/',
+
+    }
+    content = {"content": site_dict}
+    return content
 
 
 if __name__ == '__main__':

@@ -40,9 +40,10 @@
     <h4>Git</h4>
     <a href="https://git-scm.com/book/zh/v2">Pro Git</a>
     <hr>
-    <h4>Nginx</h4>
+    <h4>Nginx & Apache</h4>
     <a href="http://www.nginx.cn/doc/">Nginx 文档</a><br>
     <a href="https://www.ruanyifeng.com/blog/2018/02/nginx-docker.html">Nginx 容器教程</a><br>
+    <a href="https://httpd.apache.org/docs/">Apache 文档</a><br>
     <hr>
     <h4>视频教程</h4>
     <a href='https://youtu.be/tpIctyqH29Q'>Computer Science</a><br>
@@ -56,10 +57,11 @@
     <a href="/ftp/">Books</a>
     <hr>
     <h4>阅读</h4>
-    <a href='http://www.ruanyifeng.com/blog/'>阮一峰网络日志</a><br>
-    <a href='https://haoel.github.io/'>科学上网</a><br>
-    <a href='https://teddysun.com/'>秋水逸冰</a><br>
-    <a href='https://oi-wiki.org/'>OI Wiki</a><br>
+    {% for site_title, site_url in content.items %}
+        <li style="list-style-type: none;">
+            <a href="{{ site_url }}">{{ site_title }}</a>
+        </li>
+    {% endfor %}
     <br>
     <br>
 {% endblock content %}

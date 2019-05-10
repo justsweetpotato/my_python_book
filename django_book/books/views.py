@@ -4,7 +4,7 @@ from random import choice
 
 from .forms import BookForm, CryptoForm
 from .ai import fake_ai
-from .word import word
+from .word import word, read_site
 from .crypto import getRandomKey, MonoAlphabeticCipher
 from .crypto2 import encrypt_oracle, decrypt_oralce
 from .ftp import show_files_info
@@ -31,7 +31,8 @@ def index(request):
 
 
 def study(requset):
-    return render(requset, 'study.html')
+    content = read_site()
+    return render(requset, 'study.html', content)
 
 
 def info(request):

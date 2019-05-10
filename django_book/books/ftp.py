@@ -11,7 +11,7 @@ def show_files_info():
     t_list = get_FileAccessTime()
     files_size_list = get_FileSize()
 
-    content = {"content": list(zip(files, t_list, files_size_list))}
+    content = {"content": zip(files, t_list, files_size_list)}
 
     return content
 
