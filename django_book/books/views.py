@@ -30,9 +30,9 @@ def index(request):
     return render(request, choice(index_list), content)
 
 
-def study(requset):
+def study(request):
     content = read_site()
-    return render(requset, 'study.html', content)
+    return render(request, 'study.html', content)
 
 
 def info(request):
