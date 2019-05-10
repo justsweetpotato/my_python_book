@@ -5,7 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-    <pre>
+    <xmp>
 一、简化登录校验的处理
 
 
@@ -159,6 +159,6 @@ class CartView(CartMixin,APIView):
         serializer =  CartSKUSerializer(skus, many=True)
 
         return Response(serializer.data)
-    </pre>
+    </xmp>
 </body>
 </html>
