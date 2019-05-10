@@ -63,16 +63,15 @@ def word():
 
 
 def read_site():
-    site_dict = {
-        "科学上网": 'https://haoel.github.io/',
-        "阮一峰网络日志": 'http://www.ruanyifeng.com/blog/',
-        "编程随想的博客": 'https://program-think.blogspot.com/',
-        "秋水逸冰": 'https://teddysun.com/',
-        "逗比根据地(镜像站)": 'https://doubibackup.com/',
-        "OI Wiki": 'https://oi-wiki.org/',
-
-    }
-    content = {"content": site_dict}
+    site_list = (
+        ("科学上网", 'https://haoel.github.io/'),
+        ("阮一峰网络日志", 'http://www.ruanyifeng.com/blog/'),
+        ("编程随想的博客", 'https://program-think.blogspot.com/'),
+        ("秋水逸冰", 'https://teddysun.com/'),
+        ("逗比根据地(镜像站)", 'https://doubibackup.com/'),
+        ("OI Wiki", 'https://oi-wiki.org/'),
+    )
+    content = {"content": site_list}
     return content
 
 
