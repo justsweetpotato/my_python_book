@@ -65,6 +65,8 @@ def fake_ai(msg):
         return "https://sweetpotato.xyz/crypto_lv2/"
     elif msg == '匿名':
         return 'https://sweetpotato.xyz/hidden/'
+    elif msg == "敏感词":
+        return "https://sweetpotato.xyz/filter/"
     else:
         return choice(answer)
 

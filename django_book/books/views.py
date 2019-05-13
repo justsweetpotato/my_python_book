@@ -179,6 +179,10 @@ def hidden(request):
     return render(request, 'hidden.html')
 
 
+def filter(request):
+    return render(request, 'filter.html')
+
+
 def hello(request):
     return HttpResponse("Congratulations!<br>You found this!<br><p>42</p><br>")
 
