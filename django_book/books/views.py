@@ -1,33 +1,22 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from random import choice
 
 from .forms import BookForm, CryptoForm
 from .ai import fake_ai
-from .word import word, read_site
+from .word import word, read_site, hidden_site, random_index_html
 from .crypto import getRandomKey, MonoAlphabeticCipher
 from .crypto2 import encrypt_oracle, decrypt_oralce
 from .ftp import show_files_info
 
+
 # Create your views here.
-# index_list = ['index_1.html', 'index_2.html', 'index_3.html', 'index_4.html']
-# prob = [3, 3, 3, 1]
-index_list = [
-    "index_1.html", "index_1.html", "index_1.html",
-    "index_2.html", "index_2.html", "index_2.html",
-    "index_3.html", "index_3.html", "index_3.html",
-    "index_4.html",
-    "index_5.html",
-    # "index_6.html",
-    # "index_7.html",
-]
 
 
 def index(request):
     msg = word()
     content = {'msg': msg}
-    # return render(request, choices(index_list, prob), content)  # 3.7 新特性
-    return render(request, choice(index_list), content)
+    index_html = random_index_html()
+    return render(request, index_html, content)
 
 
 def study(request):
@@ -67,7 +56,8 @@ def test(request):
 
 
 def bigbrother(request):
-    return render(request, 'bigbrother.html')
+    content = hidden_site()
+    return render(request, 'bigbrother.html', content)
 
 
 def bbs(request):
@@ -197,4 +187,5 @@ def ftp(request):
 
 
 def page404(request):
-    return render(request, "./../../django_book/templates/404.html")
+    # return render(request, "./../../django_book/templates/404.html")
+    return render(request, "404.html")

@@ -57,8 +57,10 @@ def word():
         # 名言佳句
         "It's better to light a candle than curse the darkness.",
         "Move in silence, only speak when it’s time to say Checkmate.",
+        "在初学者的头脑中有很多可能性，在专家的头脑中，可能性很少。——铃木俊隆"
     ]
     msg = choice(word_list)
+    # msg = word_list[-1]
     return msg
 
 
@@ -73,6 +75,39 @@ def read_site():
     )
     content = {"content": site_list}
     return content
+
+
+def hidden_site():
+    site_list = (
+        ("生成短链接", "https://app.bitly.com/"),
+        ("文件分享(自动失效)", "https://send.firefox.com"),
+        ("加密消息(自动失效)", "https://temp.pm/"),
+        ("接收邮件", "https://temp-mail.org/"),
+        ("接收短信", "https://smsreceivefree.com/"),
+        ("接收短信(包括 +86)", "https://www.pdflibr.com/"),
+        ("生成 UUID", "https://www.uuidgenerator.net/"),
+        ('生成"真人"头像', "https://thispersondoesnotexist.com/"),
+        ("生成个人信息(美国公民)", "https://www.fakenamegenerator.com/"),
+        ("Discord 在线聊天室", "https://discordapp.com/"),
+    )
+    content = {"content": site_list}
+    return content
+
+
+def random_index_html():
+    # index_list = ['index_1.html', 'index_2.html', 'index_3.html', 'index_4.html']
+    # prob = [3, 3, 3, 1]
+    index_list = [
+        "index_1.html", "index_1.html", "index_1.html",
+        "index_2.html", "index_2.html", "index_2.html",
+        "index_3.html", "index_3.html", "index_3.html",
+        "index_4.html",
+        "index_5.html",
+        # "index_6.html",
+        # "index_7.html",
+    ]
+    # return render(request, choices(index_list, prob), content)  # 3.7 新特性
+    return choice(index_list)
 
 
 if __name__ == '__main__':
