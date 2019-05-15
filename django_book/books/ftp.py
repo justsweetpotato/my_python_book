@@ -2,61 +2,46 @@
 # -*- coding: utf-8 -*-
 
 import os
-import time
+import glob
+from time import localtime, strftime
+
+SUFFIXES = {1000: ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+            1024: ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']}
+
+
+def approximate_size(size, a_kilobyte_is_1024_bytes=True):
+    '''Convert a file size to human-readable form.
+    Keyword arguments:
+    size -- file size in bytes
+    a_kilobyte_is_1024_bytes -- if True (default), use multiples of 1024
+                                if False, use multiples of 1000
+    Returns: string
+    '''
+    if size < 0:
+        raise ValueError('number must be non-negative')
+
+    multiple = 1024 if a_kilobyte_is_1024_bytes else 1000
+
+    for suffix in SUFFIXES[multiple]:
+        size /= multiple
+        if size < multiple:
+            return '{0:.1f} {1}'.format(size, suffix)
+
+    raise ValueError('number too large')
 
 
 def show_files_info():
     # 返回当前目录下所有文件的 文件名, 修改时间, 文件大小
-    files = os.listdir('../static/pdf/share')
-    t_list = get_FileAccessTime()
-    files_size_list = get_FileSize()
+    files = glob.glob("../static/pdf/share/*")
+    # files_name = os.listdir('../static/pdf/share')
+    files_name = []
+    files_atime = []
+    files_size = []
 
-    content = {"content": zip(files, t_list, files_size_list)}
+    for file in files:
+        files_name.append(os.path.split(file)[-1])
+        files_atime.append(strftime('%Y-%m-%d %H:%M:%S', localtime(os.stat(file).st_atime)))
+        files_size.append(approximate_size(os.stat(file).st_size))
+    content = {"content": zip(files_name, files_atime, files_size)}
 
     return content
-
-
-def get_FileSize():
-    files = os.listdir('../static/pdf/share')
-    files_size_list = []
-
-    for file_name in files:
-        file_path = '../static/pdf/share/{}'.format(file_name)
-        file_size = os.path.getsize(file_path)
-        file_size = file_size / 1024
-
-        if file_size >= 1000:
-            file_size = file_size / 1024
-            if file_size >= 1000:
-                file_size = file_size / 1024
-                file_size = "{:>7.2f} {}".format(file_size, "GB")
-            else:
-                file_size = "{:>7.2f} {}".format(file_size, "MB")
-        else:
-            file_size = "{:>7.2f} {}".format(file_size, "KB")
-        files_size_list.append(file_size)
-
-    return files_size_list
-
-
-def get_FileAccessTime():
-    files = os.listdir('../static/pdf/share')
-    t_list = []
-
-    for file_name in files:
-        file_path = '../static/pdf/share/{}'.format(file_name)
-        t = os.path.getatime(file_path)
-        t_list.append(t)
-
-    return TimeStampToTime(t_list)
-
-
-def TimeStampToTime(timestamp_list):
-    timeStruct_list = []
-
-    for timestamp in timestamp_list:
-        timeStruct = time.localtime(timestamp)
-        timeStruct = time.strftime('%Y-%m-%d %H:%M:%S', timeStruct)
-        timeStruct_list.append(timeStruct)
-
-    return timeStruct_list
