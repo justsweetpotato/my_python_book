@@ -1,9 +1,29 @@
 {% extends "base.html" %}
 
 {% block header %}
-    <center><h2><i>服务器内部错误。 (500)</i></h2></center>
+    <h3>
+        <small><i>Internal Server Error.</i></small>
+    </h3>
 {% endblock header %}
 
 {% block content %}
-    <center><img src="/static/pdf/500.jpg" alt="500" width="60%" height="60%"></center>
+    <div>
+        <xmp>
+              _____  ___   ___
+             | ____|/ _ \ / _ \
+             | |__ | | | | | | |
+             |___ \| | | | | | |
+              ___) | |_| | |_| |
+             |____/ \___/ \___/
+
+              NOTHING COMES FROM NOTHING.
+             -----------------------------/ ^^^^^^^ \
+           /                             |  | * * |  |
+          / |   )                   |  ||\__/  @  \__/
+        \/   \ / /----------\______/ \ //     '-'
+              ||=|=                   ||=|=
+
+        ------------------------------------------------
+        </xmp>
+    </div>
 {% endblock content %}
