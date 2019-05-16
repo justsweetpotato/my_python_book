@@ -3,7 +3,7 @@ from random import choice
 
 
 def word():
-    word_list = [
+    word_list = (
         # 艾尔文
         "最好的学习, 就是不断的练习.",
         "你未来会过得如何, 取决于你现在如何去过.",
@@ -58,7 +58,7 @@ def word():
         "It's better to light a candle than curse the darkness.",
         "Move in silence, only speak when it’s time to say Checkmate.",
         "在初学者的头脑中有很多可能性，在专家的头脑中，可能性很少。——铃木俊隆"
-    ]
+    )
     msg = choice(word_list)
     # msg = word_list[-1]
     return msg
@@ -97,7 +97,7 @@ def hidden_site():
 def random_index_html():
     # index_list = ['index_1.html', 'index_2.html', 'index_3.html', 'index_4.html']
     # prob = [3, 3, 3, 1]
-    index_list = [
+    index_list = (
         "index_1.html", "index_1.html", "index_1.html",
         "index_2.html", "index_2.html", "index_2.html",
         "index_3.html", "index_3.html", "index_3.html",
@@ -105,7 +105,7 @@ def random_index_html():
         "index_5.html",
         # "index_6.html",
         # "index_7.html",
-    ]
+    )
     # return render(request, choices(index_list, prob), content)  # 3.7 新特性
     return choice(index_list)
 
