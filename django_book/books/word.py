@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from random import choice
 
 
@@ -95,20 +97,11 @@ def hidden_site():
 
 
 def random_index_html():
-    # index_list = ['index_1.html', 'index_2.html', 'index_3.html', 'index_4.html']
-    # prob = [3, 3, 3, 1]
     index_list = (
         "index_1.html", "index_1.html", "index_1.html",
         "index_2.html", "index_2.html", "index_2.html",
         "index_3.html", "index_3.html", "index_3.html",
         "index_4.html",
         "index_5.html",
-        # "index_6.html",
-        # "index_7.html",
     )
-    # return render(request, choices(index_list, prob), content)  # 3.7 新特性
     return choice(index_list)
-
-
-if __name__ == '__main__':
-    print(word())
