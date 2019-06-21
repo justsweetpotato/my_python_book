@@ -1,7 +1,9 @@
 #!/usr/bin/env python
+from func_timeout import func_set_timeout
 
 
 def pn(x):
+    # todo: 可改进
     # 求质数
     try:
         x = int(x)
@@ -28,6 +30,7 @@ def pn(x):
     return list_n
 
 
+@func_set_timeout(5)
 def calc(x):
     # 计算器
     if '**' in x:
@@ -41,6 +44,8 @@ def calc(x):
                 return "暂时仅支持单独的乘方运算."
             if len(str(y)) > 2:
                 return "暂时仅支持2位数以内的乘方运算."
+    if ('import' in x) or ('open' in x) or ('os' in x) or ('rm' in x) or ('while' in x) or ('for' in x):
+        return 'error'
     try:
         res = eval(x)
     except ZeroDivisionError as e:
@@ -54,4 +59,4 @@ def calc(x):
 
 
 if __name__ == '__main__':
-    print(calc("1/"))
+    print(calc("time.sleep(10)"))

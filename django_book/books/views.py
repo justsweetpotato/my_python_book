@@ -174,7 +174,7 @@ def filter(request):
 
 
 def hello(request):
-    return HttpResponse("Congratulations!<br>You found this!<br><p>42</p><br>")
+    return HttpResponse("Congratulations!<br>You found this!<br><br>The answer is <b>42</b>.<br>")
 
 
 def dark(request):
