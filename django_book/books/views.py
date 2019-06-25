@@ -9,9 +9,6 @@ from .crypto2 import encrypt_oracle, decrypt_oralce
 from .ftp import show_files_info
 
 
-# Create your views here.
-
-
 def index(request):
     msg = word()
     content = {'msg': msg}
@@ -53,6 +50,10 @@ def test(request):
         'text12': request.META['SERVER_PORT'],
     }
     return render(request, 'test.html', content)
+
+
+def f451(request):
+    return render(request, './../../django_book/templates/451.html', status=451)
 
 
 def bigbrother(request):

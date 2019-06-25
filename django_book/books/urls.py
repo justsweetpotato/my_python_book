@@ -10,6 +10,7 @@ urlpatterns = [
     url('^live/$', views.live, name='live'),
     url('^why/$', views.why, name='why'),
     url('^test/$', views.test, name='test'),
+    url('^451/$', views.f451, name='451'),
     url('^1984/$', views.bigbrother, name='1984'),
     url('^bbs/$', views.bbs, name='bbs'),
     url('^ai/$', views.ai, name='ai'),

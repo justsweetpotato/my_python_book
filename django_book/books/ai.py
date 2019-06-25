@@ -42,7 +42,7 @@ def fake_ai(msg):
     if re.match('(ls|ll)', msg):
         return os.listdir(os.getcwd())
     if re.search('(翻墙|科学上网)', msg):
-        return "https://sweetpotato.xyz/1984/"
+        return "https://sweetpotato.xyz/451/"
     if re.match('([Ll]ucy)$', msg):
         return '你好, 我能为你做些什么?'
     if re.match('(语雀)$', msg):
