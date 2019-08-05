@@ -28,12 +28,12 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'sweetpotato.xyz', 'www.sweetpotato.xyz']
 
-CORS_ORIGIN_WHITELIST = (
-    '127.0.0.1',
-    'localhost',
-    'www.sweetpotato.xyz'
-)
-CORS_ALLOW_CREDENTIALS = True
+# CORS_ORIGIN_WHITELIST = (
+#     '127.0.0.1',
+#     'localhost',
+#     'www.sweetpotato.xyz'
+# )
+# CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
