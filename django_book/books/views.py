@@ -192,5 +192,5 @@ def page404(request):
     return render(request, "404.html")
 
 
-def page_redirect():
+def page_redirect(request):
     return render(request, "redirect.html")
