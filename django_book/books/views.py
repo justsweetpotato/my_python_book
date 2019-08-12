@@ -190,3 +190,7 @@ def ftp(request):
 def page404(request):
     # return render(request, "./../../django_book/templates/404.html")
     return render(request, "404.html")
+
+
+def page_redirect():
+    return render(request, "redirect.html")

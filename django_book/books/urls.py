@@ -24,4 +24,5 @@ urlpatterns = [
     url("^filter/$", views.filter, name="filter"),
     url("^ftp/$", views.ftp, name='ftp'),
     url("^404/$", views.page404),
+    url("^redirect/$", views.page_redirect, name='redirect'),
 ]
