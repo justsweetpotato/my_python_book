@@ -25,4 +25,5 @@ urlpatterns = [
     url("^ftp/$", views.ftp, name='ftp'),
     url("^404/$", views.page404),
     url("^search/$", views.page_search, name='search'),
+    url('^attack/$', views.attack, name='attack'),
 ]

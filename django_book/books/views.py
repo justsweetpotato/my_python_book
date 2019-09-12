@@ -194,3 +194,7 @@ def page404(request):
 
 def page_search(request):
     return render(request, "search.html")
+
+
+def attack(request):
+    return render(request, 'attack.html')
