@@ -1,0 +1,29 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+gunicorn = "==19.9.0"
+django-bootstrap3 = "==11.1.0"
+django-cors-headers = "==3.1.0"
+django-crontab = "==0.7.1"
+func-timeout = "==4.3.5"
+crypto = "*"
+pycrypto = "==2.6.1"
+requests = "*"
+certifi = "==2019.9.11"
+chardet = "==3.0.4"
+idna = "==2.8"
+pytz = "==2019.2"
+shellescape = "==3.4.1"
+sqlparse = "==0.3.0"
+urllib3 = "==1.25.3"
+Django = "==2.2.5"
+Naked = "==0.1.31"
+PyYAML = "==5.1.2"
+
+[requires]
+python_version = "3.7"
