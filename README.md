@@ -3,6 +3,14 @@
 #### 为了更方便的查阅 Python 相关文档、教程而做.
 
  <i>警告: 不要直接 clone, 静态资源异常的大...</i> 
+ <br>
+ ```
+ curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+ sudo apt install git-lfs
+ git lfs install
+ ...
+ git lfs pull
+ ```
 
 ### 部署
 
