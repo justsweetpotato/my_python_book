@@ -7,6 +7,7 @@ from func_timeout.exceptions import FunctionTimedOut
 
 from .number import pn, calc
 
+URL = 'littlepotato.life'
 
 def fake_ai(msg):
     yes_or_no = ['是', '不是!']
@@ -42,7 +43,7 @@ def fake_ai(msg):
     if re.match('(ls|ll)', msg):
         return os.listdir(os.getcwd())
     if re.search('(翻墙|科学上网)', msg):
-        return "https://sweetpotato.xyz/451/"
+        return "https://{}/451/".format(URL)
     if re.match('([Ll]ucy)$', msg):
         return '你好, 我能为你做些什么?'
     if re.match('(语雀)$', msg):
@@ -66,10 +67,10 @@ def fake_ai(msg):
     if re.match('eval', msg):
         return "拒绝访问! 权限认证失败."
     if re.match('crypto?', msg):
-        return "https://sweetpotato.xyz/crypto_lv2/"
+        return "https://{}/crypto_lv2/".format(URL)
     if re.match('(匿名|[Hh]idden])$', msg):
         return 'https://sweetpotato.xyz/hidden/'
     if re.match("(敏感词|64|谈笑风生|螳臂[当挡]车|8964)$", msg):
-        return "https://sweetpotato.xyz/filter/"
+        return "https://{}/filter/".format(URL)
     else:
         return choice(answer)
