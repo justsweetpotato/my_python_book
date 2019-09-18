@@ -1,28 +1,26 @@
 {% extends 'base.html' %}
 
 {% block header %}
-<style type="text/css">
-  .divcss5{ border:1px solid #FFF; width:600px }
-</style>
-  <div class="jumbotron">
-      <h4>The unexamined life is not worth living.</h4>
-  </div>
+    <style type="text/css">
+        .divcss5 {
+            border: 1px solid #FFF;
+            width: 600px
+        }
+    </style>
+    <div class="jumbotron">
+        <h4>The unexamined life is not worth living.</h4>
+    </div>
 {% endblock header %}
 
 {% block content %}
-{#    <div style="text-align:center">#}
     <ul>
-{#        <li><a href="https://search-books.herokuapp.com/">土豆书籍搜索</a></li><br>#}
-        <li><a href="{% url 'books:search' %}">土豆书籍搜索</a></li><br>
-        <li><a href="{% url 'books:ai' %}">Lucy(beta)</a></li><br>
-        <li><a href="{% url 'books:crypto_lv2' %}">文本加密</a></li><br>
-        <li><a href="https://note.littlepotato.life/">笔记本</a></li><br>
-        <li><a href='https://www.16personalities.com/ch/%E4%BA%BA%E6%A0%BC%E6%B5%8B%E8%AF%95'>MBTI 16种人格测试</a></li><br>
-{#        <img src="../static/img/2.jpg" height="350" width="600" /><br></li><br>#}
-        <li><a href='{% url "books:live" %}'>国际空间站直播画面(需翻墙)</a></li><br>
-{#        <img src="../static/img/1.jpg" height="350" width="600" /><br></li>#}
-        <li><a href="{% url "books:attack" %}">实时网络攻击</a></li><br>
+        <li><h4><a href="https://search.littlepotato.life">土豆搜索</a></h4></li>
+        <li><h4><a href="{% url 'books:ai' %}">Lucy(beta)</a></h4></li>
+        <li><h4><a href="{% url 'books:crypto_lv2' %}">文本加密</a></h4></li>
+        <li><h4><a href="https://note.littlepotato.life/">笔记本</a></h4></li>
+        <li><h4><a href="{% url "books:attack" %}">实时网络攻击</a></h4></li>
+        <li><h4><a href='{% url "books:live" %}'>国际空间站直播画面(需翻墙)</a></h4></li>
+        <li><h4><a href='https://www.16personalities.com/ch/%E4%BA%BA%E6%A0%BC%E6%B5%8B%E8%AF%95'>MBTI 16种人格测试</a></h4></li>
     </ul>
     <br>
-{#    </div>#}
- {% endblock content %}
+{% endblock content %}

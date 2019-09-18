@@ -19,11 +19,10 @@ urlpatterns = [
     url('^decrypto/$', views.decrypto, name='decrypto'),
     url('^get_key/$', views.get_key, name='get_key'),
     url('^crypto_lv2/$', views.crypto_lv2, name='crypto_lv2'),
-    # url('^decrypto_lv2/$', views.decrypto_lv2, name='decrypto_lv2'),
     url('^hidden/$', views.hidden, name='hid'),
     url("^filter/$", views.filter, name="filter"),
     url("^ftp/$", views.ftp, name='ftp'),
     url("^404/$", views.page404),
-    url("^search/$", views.page_search, name='search'),
+    url("^youtube/$", views.youtube, name='youtube'),
     url('^attack/$', views.attack, name='attack'),
 ]

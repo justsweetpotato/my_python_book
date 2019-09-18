@@ -1,3 +1,6 @@
+# /usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from django.shortcuts import render
 from django.http import HttpResponse
 
@@ -192,8 +195,8 @@ def page404(request):
     return render(request, "404.html")
 
 
-def page_search(request):
-    return render(request, "search.html")
+def youtube(request):
+    return render(request, "youtube.html")
 
 
 def attack(request):
