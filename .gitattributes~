@@ -4,5 +4,6 @@
 *.css linguist-language=Python
 *.html linguist-language=Python
 *.mp4 filter=lfs diff=lfs merge=lfs -text
+.mkv filter=lfs diff=lfs merge=lfs -text
 *.mp3 filter=lfs diff=lfs merge=lfs -text
 *.mkv filter=lfs diff=lfs merge=lfs -text
