@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>ftp server</title>
-    <!-- <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"> -->
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <style>
         a:link {
             text-decoration: none;
@@ -20,15 +20,6 @@
             list-style-type: none;
         }
 
-        #a1 {
-            width: 65%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            display: block;
-            float: left;
-        }
-
         #span1 {
             width: 17%;
             float: left;
@@ -41,11 +32,44 @@
             display: block;
         }
 
+        #a1 {
+            width: 65%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+            float: left;
+        }
 
+        #btn1 {
+            width: 100px;
+            background-color: lightskyblue;
+            border: none;
+            padding: 1px;
+            line-height: 38px;
+            color: white;
+            font-size: 16px;
+            margin: 0px;
+            border-radius: 25px;
+        }
+
+        /* 手机版样式 */
+        @media screen and (max-device-width: 767px) {
+
+            #span1 {
+                display: none;
+            }
+
+            #span2 {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
-<a href="{% url 'books:info' %}">返回</a>
+<button class="btn1" id="btn1"
+        onclick="window.location.href='{% url 'books:info' %}'">返回
+</button>
 <h4>Django 文件传输 V1.0</h4>
 <hr>
 <div>
