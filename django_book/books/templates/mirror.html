@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>mirror</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <style>
+        a:link {
+            text-decoration: none;
+            color: blue
+        }
+
+        #btn1 {
+            width: 60px;
+            background-color: lightskyblue;
+            border: none;
+            padding: 1px;
+            line-height: 30px;
+            color: white;
+            font-size: 16px;
+            margin: 0px;
+            border-radius: 15px;
+        }
+
+        .title {
+            text-align: center;
+        }
+
+        .table {
+            width: 100%;
+        }
+
+        .th1, .th3 {
+            width: 30%;
+        }
+
+        .th2 {
+            width: 40%;
+        }
+
+        .td1, .td3 {
+            width: 30%;
+            text-align: center;
+        }
+
+        .td2 {
+            width: 40%;
+            text-align: center;
+        }
+
+        .a1 {
+            color: gray;
+        }
+
+        .a2 {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+<button class="btn1" id="btn1"
+        onclick="window.location.href='{% url 'books:info' %}'">返回
+</button>
+<h2 class="title">Mirror sites</h2>
+<hr>
+<div>
+    <table class="table">
+        <tr>
+            <th class="th1">原网站</th>
+            <th class="th2">镜像网站</th>
+            <th class="th3">使用技术</th>
+        </tr>
+        {% for x, y, z in content %}
+            <tr>
+                <td class="td1"><a class="a1" href="https://{{ x }}">{{ x }}</a>
+                </td>
+                <td class="td2"><a class="a2" href="https://{{ y }}">{{ y }}</a>
+                </td>
+                <td class="td3">{{ z }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+</body>
+</html>

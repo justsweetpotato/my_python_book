@@ -25,4 +25,5 @@ urlpatterns = [
     url("^404/$", views.page404),
     url("^youtube/$", views.youtube, name='youtube'),
     url('^attack/$', views.attack, name='attack'),
+    url('^mirror/$', views.mirror, name='mirror'),
 ]

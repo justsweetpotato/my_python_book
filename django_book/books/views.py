@@ -201,3 +201,14 @@ def youtube(request):
 
 def attack(request):
     return render(request, 'attack.html')
+
+
+def mirror(request):
+    content = (
+        ('www.google.com', 'go.littlepotato.life', 'WorkersProxy'),
+        ('zh.wikipedia.org', 'wiki.littlepotato.life', 'WorkersProxy'),
+        ('www.youtube.com', 'bot-yt-1.herokuapp.com', 'You2Php'),
+        ('drive.google.com', 'drive.littlepotato.life', 'GoIndex'),
+    )
+
+    return render(request, 'mirror.html', {'content': content})
