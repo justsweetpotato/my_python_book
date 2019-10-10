@@ -205,12 +205,13 @@ def attack(request):
 
 def mirror(request):
     content = (
-        ('Google', 'go.littlepotato.life', 'WorkersProxy'),
+        ('Google A', 'go.littlepotato.life', 'WorkersProxy'),
+        ('Google B', 'google.littlepotato.life', 'NginxGoogle'),
         ('Google Drive', 'drive.littlepotato.life', 'GoIndex'),
         ('Wikipedia', 'wiki.littlepotato.life', 'WorkersProxy'),
         ('YouTube', 'bot-yt-1.herokuapp.com', 'You2Php'),
-        ('WebProxy A', 'proxy.littlepotato.life', 'jsproxy'),
-        ('WebProxy B', 'bot-go-2.herokuapp.com', 'node-unblocker'),
+        ('WebProxy A', 'proxy.littlepotato.life', 'JsProxy'),
+        ('WebProxy B', 'bot-go-2.herokuapp.com', 'NodeUnblocker'),
     )
 
     return render(request, 'mirror.html', {'content': content})
