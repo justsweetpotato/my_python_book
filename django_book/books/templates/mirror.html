@@ -61,18 +61,18 @@
 <button class="btn1" id="btn1"
         onclick="window.location.href='{% url 'books:info' %}'">返回
 </button>
-<h2 class="title">Mirror sites</h2>
+<h2 class="title">Mirror Sites</h2>
 <hr>
 <div>
     <table class="table">
         <tr>
-            <th class="th1">原网站</th>
-            <th class="th2">镜像网站</th>
-            <th class="th3">使用技术</th>
+            <th class="th1">Name</th>
+            <th class="th2">Mirror</th>
+            <th class="th3">Technology</th>
         </tr>
         {% for x, y, z in content %}
             <tr>
-                <td class="td1"><a class="a1" href="https://{{ x }}">{{ x }}</a>
+                <td class="td1">{{ x }}
                 </td>
                 <td class="td2"><a class="a2" href="https://{{ y }}">{{ y }}</a>
                 </td>
