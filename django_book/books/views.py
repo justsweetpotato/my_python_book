@@ -209,8 +209,8 @@ def mirror(request):
         ('Google Drive', 'drive.littlepotato.life', 'GoIndex'),
         ('Wikipedia', 'wiki.littlepotato.life', 'WorkersProxy'),
         ('YouTube', 'bot-yt-1.herokuapp.com', 'You2Php'),
-        ('Web Proxy A', 'proxy.littlepotato.life', 'jsproxy'),
-        ('Web Proxy B', 'bot-go-2.herokuapp.com', 'node-unblocker'),
+        ('WebProxy A', 'proxy.littlepotato.life', 'jsproxy'),
+        ('WebProxy B', 'bot-go-2.herokuapp.com', 'node-unblocker'),
     )
 
     return render(request, 'mirror.html', {'content': content})
